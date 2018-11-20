@@ -1,0 +1,36 @@
+{
+  "twitter": {
+    "accounts": [
+      "@brnomycity",
+      "@DPMBofficial",
+      "@UdalostiBrno"
+    ],
+    "hashtags": [
+      "#Brno"
+    ]
+  },
+  "facebook": {
+    "pages": [
+      "brnomycity",
+      "GOtoBRNOcz"
+    ],
+    "groups": [
+      "livinginbrno"
+    ]
+  },
+  "meetup": {
+    "locations": [
+      "Brno"
+    ]
+  },
+  "reddit": {
+    "forums": [
+      "Brno"
+    ]
+  },
+  "news": {
+    "rss": [
+      "http://servis.idnes.cz/rss.aspx?c=brnoh"
+    ]
+  }
+}
