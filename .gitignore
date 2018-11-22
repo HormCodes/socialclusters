@@ -10,3 +10,9 @@ gen
 .firebaserc
 
 /backend/config.json
+backend/__pycache__/
+frontend/src/views/
+node_modules/
+package-lock.json
+venv/
+yarn.lock
