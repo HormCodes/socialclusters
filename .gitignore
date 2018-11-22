@@ -9,4 +9,4 @@ out
 gen
 .firebaserc
 
-backend/congig.json
+/backend/config.json
