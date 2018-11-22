@@ -1,0 +1,14 @@
+{
+  "keys": {
+    "twitter": {
+      "consumer": {
+        "key": "consumer-api-key",
+        "secret": "consumer-api-secret-key"
+      },
+      "accessToken": {
+        "token": "access-token",
+        "secret": "access-token-secret"
+      }
+    }
+}
+}
