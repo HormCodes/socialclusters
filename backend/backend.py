@@ -25,8 +25,8 @@ def get_twitter_accounts(sources):
 
 
 # TODO - Test
-def get_twitter_account_timeline_url(username):
-    return TWITTER_API_BASE_URL + "statuses/user_timeline.json?screen_name=" + username
+def get_twitter_account_timeline_url():
+    return TWITTER_API_BASE_URL + "statuses/user_timeline.json"
 
 
 def get_twitter_keys(config):
@@ -58,7 +58,8 @@ oauth = OAuth1(get_twitter_consumer(twitter_keys)["key"],
 
 session = requests.session()
 session.auth = oauth
-response = session.get(get_twitter_account_timeline_url("brnomycity"))
+session.params = {'screen_name': "brnomycity", 'tweet_mode': 'extended'}
+response = session.get(get_twitter_account_timeline_url())
 
 results = json.loads(response.content)
 
