@@ -22,3 +22,7 @@ firebase init hosting
 ## Deploy
 
 [//]: # "TODO - Add deploy info"
+
+## Credits
+
+- Stopwords list taken from: [stopwords-iso](https://github.com/stopwords-iso/stopwords-iso)
