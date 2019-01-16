@@ -11,6 +11,8 @@ services:
     - ./mongodb/data/db:/data/db
     ports:
     - "27017:27017"
+    environment:
+    - MONGODB_DATABASE=content_database # TODO - Name
 
   databese:
     image: postgres:latest

@@ -5,6 +5,8 @@ from pojo import TweetAuthor, Tweet
 
 from requests_oauthlib import OAuth1
 
+from pymongo import MongoClient
+
 CONFIG_JSON_FILE_NAME = "../config.json"
 
 SOURCES_JSON_FILE_NAME = "../sources.json"
@@ -169,6 +171,11 @@ tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources))
 
 texts = []
 
+mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_db = mongo_client['content_database']
+twitter_collection = mongo_db['twitter']
+
+
 for tweet in tweet_responses:
     tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
                                tweet["user"]["followers_count"])
@@ -176,6 +183,8 @@ for tweet in tweet_responses:
                          tweet["favorite_count"], tweet_author)
     texts.append(tweet_object)
     print(tweet_object.get_dict_object())
+    if twitter_collection.find_one(tweet_object.get_dict_object()) is None:
+        twitter_collection.insert_one(tweet_object.get_dict_object())
 
 # TODO - Duplicity
 
