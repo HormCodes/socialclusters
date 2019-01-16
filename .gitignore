@@ -9,10 +9,13 @@ out
 gen
 .firebaserc
 
-/backend/config.json
-backend/__pycache__/
-frontend/src/views/
+/ml_backend/config.json
+/ml_backend/__pycache__/
 node_modules/
 package-lock.json
 venv/
 yarn.lock
+/ml_backend/stopwords-iso.json
+/docker/postgres/
+.DS_Store
+/docker/mongodb/

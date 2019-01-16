@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+
+  # frontend:
+  # backend:
+  # ml_backend:
+
+  ml_database:
+    image: mongo:latest
+    volumes:
+    - ./mongodb/data/db:/data/db
+    ports:
+    - "27017:27017"
+
+  databese:
+    image: postgres:latest
+    volumes:
+    - ./postgres/data:/var/lib/postgresql/data
+    ports:
+    - 127.0.0.1:3312:5432
+    environment:
+    - POSTGRES_DB=user_database # TODO - Name

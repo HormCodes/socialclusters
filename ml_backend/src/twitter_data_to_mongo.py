@@ -3,8 +3,8 @@ import sys
 import requests
 import json
 
-from pprint import pprint
-import codecs
+
+from pojo import TweetAuthor, Tweet
 
 sys.path.append('/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages')
 
@@ -13,6 +13,7 @@ from requests_oauthlib import OAuth1
 CONFIG_JSON_FILE_NAME = "config.json"
 
 SOURCES_JSON_FILE_NAME = "sources.json"
+STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
 TWITTER_KEY = "twitter"
 ACCOUNTS_KEY = "accounts"
 WORDS_KEY = "words"
@@ -119,6 +120,35 @@ def get_twitter_hashtag_tweets(hashtags):
     return tweets
 
 
+def removeNotNeccessaryChars(text):
+    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!"]
+    returned_text = text
+
+    for char in chars:
+        returned_text = text.replace(char, "")
+
+    return returned_text
+
+def remove_stopwords_from_text(tweet, stopwords):
+    tweet_words = removeNotNeccessaryChars(tweet.text).lower().split()
+
+    if tweet.language == "und":
+        return tweet_words
+
+    localized_stopwords = (stopwords[tweet.language])
+
+    words = []
+
+    for word in tweet_words:
+        if word not in localized_stopwords:
+            words.append(word)
+
+    return words
+
+
+def remove_stopwords_from_tweets(tweets):
+    for index, tweet in tweets.items():
+        tweets[index] = remove_stopwords_from_text(tweet["text"])
 
 
 with open(CONFIG_JSON_FILE_NAME) as file:
@@ -126,6 +156,9 @@ with open(CONFIG_JSON_FILE_NAME) as file:
 
 with open(SOURCES_JSON_FILE_NAME) as file:
     sources = json.load(file)
+
+with open(STOPWORDS_JSON_FILE_NAME) as file:
+    stopwords = json.load(file)
 
 
 twitter_keys = get_twitter_keys(config)
@@ -135,24 +168,13 @@ tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources)
 tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources)))
 tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources)))
 
+
 texts = []
 for tweet in tweet_responses:
-    texts.append({
-        "text": tweet["full_text"],
-        "timestamp": tweet["created_at"],
-        "id": tweet["id"],
-        "language": tweet["lang"],
-        "retweets": tweet["retweet_count"],
-        "favourites": tweet["favorite_count"],
-        "author": {
-            "username": tweet["user"]["screen_name"],
-            "location": tweet["user"]["location"],
-            "followers": tweet["user"]["followers_count"]
-        }
-
-    })
-
-pprint(((texts)))
+    tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"], tweet["user"]["followers_count"])
+    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id"], tweet["lang"], tweet["retweet_count"], tweet["favorite_count"], tweet_author)
+    texts.append(tweet_object)
+    print(tweet_object.get_dict_object())
 
 # TODO - Duplicity
 
