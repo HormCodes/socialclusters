@@ -1,19 +1,14 @@
-import sys
-
 import requests
 import json
 
-
 from pojo import TweetAuthor, Tweet
-
-sys.path.append('/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages')
 
 from requests_oauthlib import OAuth1
 
-CONFIG_JSON_FILE_NAME = "config.json"
+CONFIG_JSON_FILE_NAME = "../config.json"
 
-SOURCES_JSON_FILE_NAME = "sources.json"
-STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
+SOURCES_JSON_FILE_NAME = "../sources.json"
+STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
 TWITTER_KEY = "twitter"
 ACCOUNTS_KEY = "accounts"
 WORDS_KEY = "words"
@@ -30,10 +25,12 @@ TWITTER_API_HASHTAG_URL = "https://api.twitter.com/1.1/tweets/search/30day/%s.js
 def get_twitter_accounts(sources):
     return sources[TWITTER_KEY][ACCOUNTS_KEY]
 
+
 # TODO - Test
 # TODO - Rename
 def get_twitter_search_words(sources):
     return sources[TWITTER_KEY][WORDS_KEY]
+
 
 # TODO - Test
 # TODO - Rename
@@ -78,6 +75,7 @@ def get_twitter_accounts_tweets(accounts):
 
     return tweets
 
+
 def get_twitter_search_tweets(words):
     tweets = []
 
@@ -91,6 +89,7 @@ def get_twitter_search_tweets(words):
         results = json.loads(response.content)
         tweets.extend(results["statuses"])
     return tweets
+
 
 def get_twitter_bearer_token():
     session = requests.session()
@@ -109,7 +108,7 @@ def get_twitter_hashtag_tweets(hashtags):
 
     for hashtag in hashtags:
         session = requests.session()
-        session.headers = {"Authorization":"Bearer " + bearer_token}
+        session.headers = {"Authorization": "Bearer " + bearer_token}
         session.params = {"q": hashtag + " AND -filter:retweets", 'tweet_mode': 'extended'}
 
         #  TODO - response = session.get(TWITTER_API_HASHTAG_URL)
@@ -128,6 +127,7 @@ def removeNotNeccessaryChars(text):
         returned_text = text.replace(char, "")
 
     return returned_text
+
 
 def remove_stopwords_from_text(tweet, stopwords):
     tweet_words = removeNotNeccessaryChars(tweet.text).lower().split()
@@ -160,7 +160,6 @@ with open(SOURCES_JSON_FILE_NAME) as file:
 with open(STOPWORDS_JSON_FILE_NAME) as file:
     stopwords = json.load(file)
 
-
 twitter_keys = get_twitter_keys(config)
 
 tweet_responses = []
@@ -168,11 +167,13 @@ tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources)
 tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources)))
 tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources)))
 
-
 texts = []
+
 for tweet in tweet_responses:
-    tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"], tweet["user"]["followers_count"])
-    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id"], tweet["lang"], tweet["retweet_count"], tweet["favorite_count"], tweet_author)
+    tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
+                               tweet["user"]["followers_count"])
+    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id"], tweet["lang"], tweet["retweet_count"],
+                         tweet["favorite_count"], tweet_author)
     texts.append(tweet_object)
     print(tweet_object.get_dict_object())
 
