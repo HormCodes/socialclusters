@@ -182,14 +182,12 @@ for tweet in tweet_responses:
     tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id"], tweet["lang"], tweet["retweet_count"],
                          tweet["favorite_count"], tweet_author)
     texts.append(tweet_object)
-    print(tweet_object.get_dict_object())
-    if twitter_collection.find_one(tweet_object.get_dict_object()) is None:
+    if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
+        print(tweet_object.get_dict_object())
         twitter_collection.insert_one(tweet_object.get_dict_object())
 
 # TODO - Duplicity
 
-# TODO - Get Data
 
 # TODO - Remove stopwords (https://github.com/stopwords-iso/stopwords-iso)
 
-# TODO - Print texts

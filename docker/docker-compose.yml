@@ -14,11 +14,11 @@ services:
     environment:
     - MONGODB_DATABASE=content_database # TODO - Name
 
-  databese:
-    image: postgres:latest
-    volumes:
-    - ./postgres/data:/var/lib/postgresql/data
-    ports:
-    - 127.0.0.1:3312:5432
-    environment:
-    - POSTGRES_DB=user_database # TODO - Name
+  # databese:
+  #   image: postgres:latest
+  #   volumes:
+  #   - ./postgres/data:/var/lib/postgresql/data
+  #   ports:
+  #   - 127.0.0.1:3312:5432
+  #   environment:
+  #   - POSTGRES_DB=user_database # TODO - Name
