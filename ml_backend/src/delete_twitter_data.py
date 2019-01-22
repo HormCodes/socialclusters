@@ -35,4 +35,4 @@ def delete_duplicity():
 
     print(documents.count())
 
-delete_duplicity()
+delete_without_topics()

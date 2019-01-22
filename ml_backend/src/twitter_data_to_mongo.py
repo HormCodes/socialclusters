@@ -126,7 +126,7 @@ def removeNotNeccessaryChars(text):
     returned_text = text
 
     for char in chars:
-        returned_text = text.replace(char, "")
+        returned_text = returned_text.replace(char, "")
 
     return returned_text
 
