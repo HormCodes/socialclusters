@@ -123,36 +123,12 @@ def get_twitter_hashtag_tweets(hashtags):
 
 
 
-def remove_stopwords_from_text(tweet, stopwords):
-    tweet_words = removeNotNeccessaryChars(tweet.text).lower().split()
-
-    if tweet.language == "und":
-        return tweet_words
-
-    localized_stopwords = (stopwords[tweet.language])
-
-    words = []
-
-    for word in tweet_words:
-        if word not in localized_stopwords:
-            words.append(word)
-
-    return words
-
-
-def remove_stopwords_from_tweets(tweets):
-    for index, tweet in tweets.items():
-        tweets[index] = remove_stopwords_from_text(tweet["text"])
-
-
 with open(CONFIG_JSON_FILE_NAME) as file:
     config = json.load(file)
 
 with open(SOURCES_JSON_FILE_NAME) as file:
     sources = json.load(file)
 
-with open(STOPWORDS_JSON_FILE_NAME) as file:
-    stopwords = json.load(file)
 
 twitter_keys = get_twitter_keys(config)
 
@@ -178,8 +154,4 @@ for tweet in tweet_responses:
         print(tweet_object.get_dict_object())
         twitter_collection.insert_one(tweet_object.get_dict_object())
 
-# TODO - Duplicity
-
-
-# TODO - Remove stopwords (https://github.com/stopwords-iso/stopwords-iso)
 
