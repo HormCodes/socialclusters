@@ -10,7 +10,6 @@ from pymongo import MongoClient
 CONFIG_JSON_FILE_NAME = "../config.json"
 
 SOURCES_JSON_FILE_NAME = "../sources.json"
-STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
 TWITTER_KEY = "twitter"
 ACCOUNTS_KEY = "accounts"
 WORDS_KEY = "words"
@@ -121,14 +120,7 @@ def get_twitter_hashtag_tweets(hashtags):
     return tweets
 
 
-def removeNotNeccessaryChars(text):
-    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!"]
-    returned_text = text
 
-    for char in chars:
-        returned_text = returned_text.replace(char, "")
-
-    return returned_text
 
 
 def remove_stopwords_from_text(tweet, stopwords):
