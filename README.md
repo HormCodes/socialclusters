@@ -22,7 +22,14 @@ firebase init hosting
 ## Deploy
 
 [//]: # "TODO - Add deploy info"
+...
 
-## Credits
+## License & Credits
 
-- Stopwords list taken from: [stopwords-iso](https://github.com/stopwords-iso/stopwords-iso)
+Created by [Matěj Horák](https://horm.cz) as a bachelor thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) at BUT FIT and sources are under [BUT FIT Open Source License](https://github.com/Horm/socialclusters/blob/master/LICENSE).
+
+Used third party sources:
+
+- Stopwords list: [stopwords-iso](https://github.com/stopwords-iso/stopwords-iso)
+
+
