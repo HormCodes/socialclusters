@@ -2,3 +2,5 @@ requests
 requests_oauthlib
 pymongo
 nose
+sklearn
+pandas

@@ -31,3 +31,11 @@ class Tweet:
 
 
     }
+
+
+def get_author_object_from_dict(author_dict):
+    return TweetAuthor(author_dict["username"], author_dict["location"], author_dict["followers"])
+
+
+def get_tweet_object_from_dict(tweet_dict):
+    return Tweet(tweet_dict["text"], tweet_dict["timestamp"], tweet_dict["id"], tweet_dict["language"], tweet_dict["retweets"], tweet_dict["favourites"], get_author_object_from_dict(tweet_dict["author"]))
