@@ -5,6 +5,14 @@ Work in progress...
 
 ## Setup
 
+### Docker
+
+You have tu setup docker containers for Mongo and Postgres Databases... 
+```$xslt
+cd docker
+docker-compose up -d
+```
+
 ### Firebase 
 
 First you have to install Firebase tools and log in:
