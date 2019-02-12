@@ -1,12 +1,13 @@
 import json
 import pandas as pd
 
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 from sklearn.metrics import accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
 
 from pojo import Tweet, get_tweet_object_from_dict
 
@@ -40,9 +41,37 @@ def remove_stopwords_from_text(tweet, stopwords):
     return words
 
 
+def get_data_frame_from_text_objects(text_objects, topic_ids):
+    data_frame_input = {'id': [], 'text': []}
+    for topic in topic_ids:
+        data_frame_input[topic] = []
+
+    for tweet in text_objects:
+        data_frame_input['id'].append(tweet['_id']['$oid'])
+        data_frame_input['text'].append(
+            ("@" + tweet["author"]["username"]) + " " + remove_stopwords_from_text(get_tweet_object_from_dict(tweet),
+                                                                           stopwords))
+        for topic in topic_ids:
+            if topic in tweet["topics"]:
+                data_frame_input[topic].append(True)
+            else:
+                data_frame_input[topic].append(False)
+
+    return pd.DataFrame(data_frame_input)
+
+
+def get_data_frame_stats(data_frame):
+    df_toxic = data_frame.drop(['id', 'text'], axis=1)
+    counts = []
+    categories = list(df_toxic.columns.values)
+    for i in categories:
+        counts.append((i, df_toxic[i].sum()))
+    df_stats = pd.DataFrame(counts, columns=['category', 'number_of_tweets'])
+    return df_stats
+
+
 with open("../topics.json") as file:
     topics = json.load(file)
-
 
 with open("../twitter.json") as file:
     tweets = json.load(file)
@@ -55,49 +84,32 @@ topic_ids = []
 for topic in topics["topics"]:
     topic_ids.append(topic["id"])
 
-print(topic_ids)
+tweets_data_frame = get_data_frame_from_text_objects(tweets, topic_ids)
 
-data_frame_input = {'id': [], 'text': []}
-for topic in topic_ids:
-    data_frame_input[topic] = []
-
-for tweet in tweets:
-    data_frame_input['id'].append(tweet['_id']['$oid'])
-    data_frame_input['text'].append(tweet["author"]["username"] + " " + remove_stopwords_from_text(get_tweet_object_from_dict(tweet), stopwords))
-    for topic in topic_ids:
-        if topic in tweet["topics"]:
-            data_frame_input[topic].append(True)
-        else:
-            data_frame_input[topic].append(False)
-
-tweets_data_frame = pd.DataFrame(data_frame_input)
-
-print(tweets_data_frame["text"])
-
-df_toxic = tweets_data_frame.drop(['id', 'text'], axis=1)
-print(df_toxic)
-counts = []
-categories = list(df_toxic.columns.values)
-print(categories)
-for i in categories:
-    counts.append((i, df_toxic[i].sum()))
-df_stats = pd.DataFrame(counts, columns=['category', 'number_of_tweets'])
-print(df_stats)
-
-
-
+print("Tweet Count: {}".format(len(tweets_data_frame)))
+print("Topic Stats")
+print(get_data_frame_stats(tweets_data_frame))
 
 train, test = train_test_split(tweets_data_frame, random_state=42, test_size=0.33, shuffle=True)
-
 X_train = train.text
 X_test = test.text
 
 NB_pipeline = Pipeline([
-    ('tfidf', TfidfVectorizer(stop_words=stopwords)),
-    ('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None))),
+    ('tfidf', TfidfVectorizer()),
+    ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
 ])
 
+models = []
 for topic_id in topic_ids:
-    NB_pipeline.fit(X_train, train[topic_id])
+    model = NB_pipeline.fit(X_train, train[topic_id])
+    models.append({"topic": topic_id, "model": model})
     prediction = NB_pipeline.predict(X_test)
-    print('{}: Test accuracy is {}'.format(topic_id ,accuracy_score(test[topic_id], prediction)))
+
+    print('{}: Test accuracy is {}'.format(topic_id, accuracy_score(test[topic_id], prediction)))
+    for text in X_test:
+        if NB_pipeline.predict([text])[0]:
+            print(text)
+
+    print()
+
+print(len(X_test))
