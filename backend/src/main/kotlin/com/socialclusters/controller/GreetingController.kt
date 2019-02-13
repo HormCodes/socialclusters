@@ -1,5 +1,6 @@
-package com.socialclusters
+package com.socialclusters.controller
 
+import com.socialclusters.Greeting
 import java.util.concurrent.atomic.AtomicLong
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

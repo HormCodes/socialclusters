@@ -1,4 +1,4 @@
-package com.socialclusters
+package com.socialclusters.controller
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
