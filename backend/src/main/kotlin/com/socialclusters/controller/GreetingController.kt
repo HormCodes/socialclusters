@@ -1,6 +1,8 @@
 package com.socialclusters.controller
 
-import com.socialclusters.Greeting
+import com.socialclusters.pojos.Greeting
+import com.socialclusters.repository.TwitterRepository
+import org.springframework.data.mongodb.core.MongoOperations
 import java.util.concurrent.atomic.AtomicLong
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

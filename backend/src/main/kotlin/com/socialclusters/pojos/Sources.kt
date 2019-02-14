@@ -10,8 +10,6 @@ data class RedditSources(val forums: List<String>)
 
 data class NewsSources(val rss: List<String>)
 
-
-
 data class Sources(
   val twitter: TwitterSources,
   val facebook: FacebookSources,
