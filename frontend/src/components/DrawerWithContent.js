@@ -8,14 +8,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
 import {Switch, Route, Link, withRouter} from 'react-router-dom'
-import Dashboard from "./dashboard/Dashboard";
-import Posts from "./posts/Posts";
-import Topics from "./topics/Topics";
-import Sources from "./sources/Sources";
 
 const drawerWidth = 240;
 
@@ -51,8 +46,7 @@ const styles = theme => ({
   },
 });
 
-class ResponsiveDrawer extends React.Component {
-
+class DrawerWithContent extends React.Component {
 
 
   constructor(props) {
@@ -70,26 +64,27 @@ class ResponsiveDrawer extends React.Component {
     const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen} = this.props;
 
 
+    let itemsToHTML = (item) =>
+      // TODO - Unique key
+      <Link to={item.url} key={item.url} style={{textDecoration: 'none'}}>
+        <ListItem button selected={this.activeRoute(item.url)}>
+          <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
+          <ListItemText primary={item.name}/>
+        </ListItem>
+      </Link>;
+
+    let itemToRouteComponent = item => <Route exact={item.url === '/'} path={item.url} component={item.component}/>;
+
     const drawer = (
       <div>
         <div className={classes.toolbar}/>
         <Divider/>
         <List>
-          {appItems.map((item, index) =>  <Link to={item.url} key={index + appItems.length} style={{ textDecoration: 'none' }}>
-            <ListItem button key={index} selected={this.activeRoute(item.url)}>
-              <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
-              <ListItemText primary={item.name}/>
-            </ListItem>
-          </Link>)}
+          {appItems.map(itemsToHTML)}
         </List>
         <Divider/>
         <List>
-          {settingItems.map((item, index) =>  <Link to={item.url} key={index + appItems.length} style={{ textDecoration: 'none' }}>
-            <ListItem button  selected={this.activeRoute(item.url)}>
-              <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
-              <ListItemText primary={item.name}/>
-            </ListItem>
-          </Link>)}
+          {settingItems.map(itemsToHTML)}
         </List>
       </div>
     );
@@ -98,52 +93,39 @@ class ResponsiveDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <CssBaseline/>
+
         <nav className={classes.drawer}>
           {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
           <Hidden smUp implementation="css">
-            <Drawer
-              container={this.props.container}
-              variant="temporary"
-              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              classes={{
-                paper: classes.drawerPaper,
-              }}
+            <Drawer container={this.props.container} variant="temporary" open={mobileOpen} onClose={handleDrawerToggle}
+                    anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                    classes={{
+                      paper: classes.drawerPaper,
+                    }}
             >
               {drawer}
             </Drawer>
           </Hidden>
           <Hidden xsDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
+            <Drawer variant="permanent" open classes={{paper: classes.drawerPaper,}}>
               {drawer}
             </Drawer>
           </Hidden>
         </nav>
+
+
         <main className={classes.content}>
           <div className={classes.toolbar}/>
           <Switch>
-            <Route exact path='/' component={Dashboard}/>
-            <Route path='/posts' component={Posts}/>
-            <Route path='/topics' component={Topics}/>
-            <Route path='/sources' component={Sources}/>
+            {(appItems.concat(settingItems)).map(itemToRouteComponent)}
           </Switch>
-          <Typography paragraph>
-            Lorem ipsum dolor sit amet...
-          </Typography>
         </main>
       </div>
     );
   }
 }
 
-ResponsiveDrawer.propTypes = {
+DrawerWithContent.propTypes = {
   classes: PropTypes.object.isRequired,
   // Injected by the documentation to work in an iframe.
   // You won't need it on your project.
@@ -155,10 +137,11 @@ ResponsiveDrawer.propTypes = {
   handleDrawerToggle: PropTypes.func.isRequired
 };
 
-ResponsiveDrawer.defaultProps = {
+DrawerWithContent.defaultProps = {
   appItems: [],
   settingItems: [{name: 'Settings', icon: 'settings', url: 'settings'}],
   mobileOpen: false
-}
+};
 
-export default withRouter(withStyles(styles, {withTheme: true})(ResponsiveDrawer));
+// TODO - Correct style for pipeline?
+export default withRouter(withStyles(styles, {withTheme: true})(DrawerWithContent));

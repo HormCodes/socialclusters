@@ -1,21 +1,26 @@
 import React, {Component} from 'react';
 import AppToolbar from "./components/AppToolbar";
-import ResponsiveDrawer from "./components/ResponsiveDrawer";
+import DrawerWithContent from "./components/DrawerWithContent";
+import Dashboard from "./components/dashboard/Dashboard";
+import Posts from "./components/posts/Posts";
+import Topics from "./components/topics/Topics";
+import Sources from "./components/sources/Sources";
+import Settings from "./components/settings/Settings";
 
 class App extends Component {
 
   state = {
     appItems: [
-      {name: 'Dashboard', icon: 'home', url: '/'},
-      {name: 'Posts', icon: 'question_answer', url: '/posts'},
-      {name: 'Topics', icon: 'title', url: '/topics'},
-      {name: 'Sources', icon: 'subscriptions', url: '/sources'},
+      {name: 'Dashboard', icon: 'home', url: '/', component: Dashboard},
+      {name: 'Posts', icon: 'question_answer', url: '/posts', component: Posts},
+      {name: 'Topics', icon: 'title', url: '/topics', component: Topics},
+      {name: 'Sources', icon: 'subscriptions', url: '/sources', component: Sources},
     ],
     settingItems: [
-      {name: 'Settings', icon: 'settings', url: '/settings'},
+      {name: 'Settings', icon: 'settings', url: '/settings', component: Settings},
     ],
     mobileOpen: false,
-  }
+  };
 
 
   handleDrawerToggle = () => {
@@ -29,10 +34,12 @@ class App extends Component {
         <header>
           <AppToolbar handleDrawerToggle={this.handleDrawerToggle}/>
         </header>
-        <ResponsiveDrawer appItems={this.state.appItems} settingItems={this.state.settingItems} mobileOpen={this.state.mobileOpen} handleDrawerToggle={this.handleDrawerToggle}/>
-        <section>
-
-        </section>
+        <DrawerWithContent
+          appItems={this.state.appItems}
+          settingItems={this.state.settingItems}
+          mobileOpen={this.state.mobileOpen}
+          handleDrawerToggle={this.handleDrawerToggle}
+        />
       </div>
     );
   }
