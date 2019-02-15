@@ -31,7 +31,7 @@ const styles = theme => ({
 class AppToolbar extends  React.Component {
 
   render() {
-    const {classes} = this.props;
+    const {classes, handleDrawerToggle} = this.props;
     return (
       <div className={classes.root}>
         <AppBar position="fixed" className={classes.appBar}>
@@ -39,7 +39,7 @@ class AppToolbar extends  React.Component {
             <IconButton
               color="inherit"
               aria-label="Open drawer"
-              onClick={this.handleDrawerToggle}
+              onClick={handleDrawerToggle}
               className={classes.menuButton}
             >
               <MenuIcon/>
@@ -57,6 +57,7 @@ class AppToolbar extends  React.Component {
 
 AppToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
+  handleDrawerToggle: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AppToolbar);

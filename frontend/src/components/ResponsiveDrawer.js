@@ -11,6 +11,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
+import {Switch, Route, Link, withRouter} from 'react-router-dom'
+import Dashboard from "./dashboard/Dashboard";
+import Posts from "./posts/Posts";
+import Topics from "./topics/Topics";
+import Sources from "./sources/Sources";
 
 const drawerWidth = 240;
 
@@ -47,39 +52,48 @@ const styles = theme => ({
 });
 
 class ResponsiveDrawer extends React.Component {
-  state = {
-    mobileOpen: false,
-  };
 
-  handleDrawerToggle = () => {
-    this.setState(state => ({mobileOpen: !state.mobileOpen}));
-  };
+
+
+  constructor(props) {
+    super(props);
+    this.activeRoute = this.activeRoute.bind(this);
+  }
+
+  activeRoute(routeName) {
+    let pathname = this.props.location.pathname;
+    return pathname.indexOf(routeName) > -1 && pathname.length === routeName.length;
+  }
+
 
   render() {
-    const {classes, theme, appItems, settingItems} = this.props;
+    const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen} = this.props;
+
 
     const drawer = (
       <div>
         <div className={classes.toolbar}/>
         <Divider/>
         <List>
-          {appItems.map(itemsToHTML)}
+          {appItems.map((item, index) =>  <Link to={item.url} key={index + appItems.length} style={{ textDecoration: 'none' }}>
+            <ListItem button key={index} selected={this.activeRoute(item.url)}>
+              <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
+              <ListItemText primary={item.name}/>
+            </ListItem>
+          </Link>)}
         </List>
         <Divider/>
         <List>
-          {settingItems.map(itemsToHTML)}
+          {settingItems.map((item, index) =>  <Link to={item.url} key={index + appItems.length} style={{ textDecoration: 'none' }}>
+            <ListItem button  selected={this.activeRoute(item.url)}>
+              <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
+              <ListItemText primary={item.name}/>
+            </ListItem>
+          </Link>)}
         </List>
       </div>
     );
 
-    function itemsToHTML(item) {
-      return (
-        <ListItem button key={item.url}>
-          <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
-          <ListItemText primary={item.name}/>
-        </ListItem>
-      );
-    }
 
     return (
       <div className={classes.root}>
@@ -91,8 +105,8 @@ class ResponsiveDrawer extends React.Component {
               container={this.props.container}
               variant="temporary"
               anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-              open={this.state.mobileOpen}
-              onClose={this.handleDrawerToggle}
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
               classes={{
                 paper: classes.drawerPaper,
               }}
@@ -114,6 +128,12 @@ class ResponsiveDrawer extends React.Component {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar}/>
+          <Switch>
+            <Route exact path='/' component={Dashboard}/>
+            <Route path='/posts' component={Posts}/>
+            <Route path='/topics' component={Topics}/>
+            <Route path='/sources' component={Sources}/>
+          </Switch>
           <Typography paragraph>
             Lorem ipsum dolor sit amet...
           </Typography>
@@ -130,12 +150,15 @@ ResponsiveDrawer.propTypes = {
   container: PropTypes.object,
   theme: PropTypes.object.isRequired,
   appItems: PropTypes.array.isRequired,
-  settingItems: PropTypes.array.isRequired
+  settingItems: PropTypes.array.isRequired,
+  mobileOpen: PropTypes.bool.isRequired,
+  handleDrawerToggle: PropTypes.func.isRequired
 };
 
 ResponsiveDrawer.defaultProps = {
   appItems: [],
-  settingItems: [{name: 'Settings', icon: 'settings', url: 'settings'}]
+  settingItems: [{name: 'Settings', icon: 'settings', url: 'settings'}],
+  mobileOpen: false
 }
 
-export default withStyles(styles, {withTheme: true})(ResponsiveDrawer);
+export default withRouter(withStyles(styles, {withTheme: true})(ResponsiveDrawer));
