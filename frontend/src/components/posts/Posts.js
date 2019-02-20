@@ -20,8 +20,8 @@ const styles = theme => ({
 
 const Posts = ({classes, value, posts}) => {
 
-  let newVar = post =>
-    <div><ListItem>
+  let postToListItem = post =>
+    <div><ListItem button>
       {post.topics.map(topic => <Chip label={topic} className={classes.chip}/>)}
       <div >
 
@@ -34,14 +34,13 @@ const Posts = ({classes, value, posts}) => {
 
       return <div>
     <List>
-      {posts.map(newVar)}
+      {posts.map(postToListItem)}
     </List>
   </div>
 };
 
 Posts.propTypes = {
   posts: PropTypes.array,
-  value: PropTypes.number,
 };
 
 Posts.defaultProps = {
@@ -66,7 +65,6 @@ Posts.defaultProps = {
       "bbb", "aaa"
     ]
   }],
-  value: 52,
 };
 
 export default withStyles(styles)(Posts)

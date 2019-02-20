@@ -1,23 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types'
 import withStyles from "@material-ui/core/es/styles/withStyles";
+import {Switch, Route} from "react-router-dom"
+import TopicList from "./TopicList";
+import Topic from "./Topic";
 
-const styles = {
-  wrapper: {
-    color: 'red',
-  },
-}
+const styles = theme => ({})
 
-const Topics = ({classes, value}) =>{
-  return <div className={classes.wrapper}>{value}</div>
+const Topics = ({classes, topics}) => {
+
+  return (
+    <Switch>
+      <Route exact path={'/topics'} component={TopicList}/>
+      <Route path={'/topics/:id'} component={Topic}/>
+    </Switch>
+  )
 };
 
-Topics.propTypes = {
-  value: PropTypes.number
-};
-
-Topics.defaultProps = {
-  value: 72
-};
-
-export default withStyles(styles) (Topics)
+export default withStyles(styles)(Topics)

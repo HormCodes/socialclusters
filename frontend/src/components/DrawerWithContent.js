@@ -56,7 +56,13 @@ class DrawerWithContent extends React.Component {
 
   activeRoute(routeName) {
     let pathname = this.props.location.pathname;
-    return pathname.indexOf(routeName) > -1 && pathname.length === routeName.length;
+
+    if (routeName.length === 1) {
+      return pathname === routeName;
+    }
+    else {
+      return pathname.indexOf(routeName) > -1;
+    }
   }
 
 
