@@ -37,10 +37,17 @@ const styles = (theme) => ({
   },
 })
 
-const Topics = ({classes, topics}) => {
+class Topics extends React.Component {
+  state = {
+    showAdd: false
+  }
 
-  let topicToListItem = topic =>
-      <ExpansionPanel>
+
+  render() {
+    const {classes, topics} = this.props
+
+    let topicToListItem = topic =>
+      <ExpansionPanel defaultExpanded={topic.id === ""}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
           <div className={classes.column}>
             <Typography className={classes.heading}>{topic.name}</Typography>
@@ -51,7 +58,8 @@ const Topics = ({classes, topics}) => {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.details}>
           <Grid container>
-            <Grid item xs={12} sm={6}><TextField label={"Name"} value={topic.name} className={classes.textField} fullWidth/></Grid>
+            <Grid item xs={12} sm={6}><TextField label={"Name"} value={topic.name} className={classes.textField}
+                                                 fullWidth/></Grid>
             <Grid item xs={12} sm={6}><TextField label={"ID"} value={topic.id} className={classes.textField} fullWidth/></Grid>
           </Grid>
         </ExpansionPanelDetails>
@@ -64,16 +72,24 @@ const Topics = ({classes, topics}) => {
         </ExpansionPanelActions>
       </ExpansionPanel>
 
-
-  return (
-    <div>
+    let layout = topics =>
+      <div>
       {topics.map(topicToListItem)}
       <List>
       </List>
-      <Fab color="primary" className={classes.fab}>
+      <Fab color="primary" className={classes.fab} onClick={() => this.setState({showAdd: true})}>
         <Icon>add</Icon>
       </Fab>
-    </div>)
+
+    </div>
+
+
+    if (this.state.showAdd) {
+      return layout(topics.concat([{id: "", name: ""}]))
+    } else {
+      return layout(topics)
+    }
+  }
 };
 
 Topics.propTypes = {
