@@ -20,21 +20,67 @@ class App extends Component {
       {name: 'Settings', icon: 'settings', url: '/settings', component: Settings},
     ],
     mobileOpen: false,
+    topics: [{
+      "id": "traffic",
+      "name": "Doprava"
+    },
+      {
+        "id": "culture",
+        "name": "Kultura"
+      },
+      {
+        "id": "events",
+        "name": "Akce"
+      },
+      {
+        "id": "news",
+        "name": "Zprávy"
+      },
+      {
+        "id": "tourism",
+        "name": "Turismus"
+      },
+      {
+        "id": "life",
+        "name": "Život v Brně"
+      },
+      {
+        "id": "work",
+        "name": "Práce"
+      },
+      {
+        "id": "places",
+        "name": "Místa"
+      },
+      {
+        "id": "sport",
+        "name": "Sport"
+      }]
   };
 
+
+  handleChange = (e) => {
+    this.setState(prevState => ({
+      items: {
+        ...prevState.items,
+        [item]: e.target.value
+      },
+    }));
+  };
 
   handleDrawerToggle = () => {
     this.setState(state => ({mobileOpen: !state.mobileOpen}));
   };
 
   render() {
-
     return (
       <div className="App">
         <header>
           <AppToolbar handleDrawerToggle={this.handleDrawerToggle}/>
         </header>
         <DrawerWithContent
+          handleChange={this.handleChange}
+          topics={this.state.topics}
           appItems={this.state.appItems}
           settingItems={this.state.settingItems}
           mobileOpen={this.state.mobileOpen}

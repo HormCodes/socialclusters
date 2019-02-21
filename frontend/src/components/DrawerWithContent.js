@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {withStyles} from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
 import {Switch, Route, Link, withRouter} from 'react-router-dom'
+import Topics from "./topics/Topics";
 
 const drawerWidth = 240;
 
@@ -67,7 +68,7 @@ class DrawerWithContent extends React.Component {
 
 
   render() {
-    const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen} = this.props;
+    const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen, topics, handleChange} = this.props;
 
 
     let itemsToHTML = (item) =>
@@ -123,6 +124,9 @@ class DrawerWithContent extends React.Component {
         <main className={classes.content}>
           <div className={classes.toolbar}/>
           <Switch>
+            {// TODO
+            }
+            <Route path={'/topics'} component={() => <Topics topics={topics} handleChange={handleChange}/>}/>
             {(appItems.concat(settingItems)).map(itemToRouteComponent)}
           </Switch>
         </main>

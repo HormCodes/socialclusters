@@ -19,3 +19,4 @@ yarn.lock
 /docker/postgres/
 .DS_Store
 /docker/mongodb/
+/backend/src/main/generated/
