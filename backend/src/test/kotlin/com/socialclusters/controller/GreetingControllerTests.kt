@@ -1,5 +1,6 @@
 package com.socialclusters.controller
 
+import io.kotlintest.specs.DescribeSpec
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -16,26 +17,23 @@ import org.springframework.test.web.servlet.MockMvc
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class GreetingControllerTests {
+class GreetingControllerTests(
+  mockMvc: MockMvc
+) : DescribeSpec({
 
-    @Autowired
-    private val mockMvc: MockMvc? = null
+  describe("greeting endpoint") {
 
-    @Test
-    @Throws(Exception::class)
-    fun noParamGreetingShouldReturnDefaultMessage() {
-
-        this.mockMvc!!.perform(get("/greeting")).andDo(print()).andExpect(status().isOk)
-                .andExpect(jsonPath("$.content").value("Hello, World!"))
+    it("should return Hello World without param") {
+      mockMvc.perform(get("/greeting")).andDo(print()).andExpect(status().isOk)
+        .andExpect(jsonPath("$.content").value("Hello, World!"))
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun paramGreetingShouldReturnTailoredMessage() {
-
-        this.mockMvc!!.perform(get("/greeting").param("name", "Spring Community"))
-                .andDo(print()).andExpect(status().isOk)
-                .andExpect(jsonPath("$.content").value("Hello, Spring Community!"))
+    it("should retorn Hello Param with param") {
+      mockMvc.perform(get("/greeting").param("name", "Spring Community"))
+        .andDo(print()).andExpect(status().isOk)
+        .andExpect(jsonPath("$.content").value("Hello, Spring Community!"))
     }
+  }
 
-}
+
+})

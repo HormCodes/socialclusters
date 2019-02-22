@@ -7,4 +7,4 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:3312/user_database
-    username: csmartuser
+    username: postgres
