@@ -104,7 +104,7 @@ jooq {
 flyway {
   url = 'jdbc:postgresql://localhost:3312/user_database'
   user = 'postgres'
-  locations = ["filesystem:$project.projectDir/src/main/resources/db/migration"]
+
 }
 
 generateUserDatabaseJooqSchemaSource.dependsOn flywayClean, flywayMigrate

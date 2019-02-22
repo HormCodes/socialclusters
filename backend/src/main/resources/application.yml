@@ -6,5 +6,5 @@ spring:
       database: content_database
 
   datasource:
-    url: jdbc:postgresql://localhost:3312/user_database
+    jdbc-url: jdbc:postgresql://localhost:3312/user_database
     username: postgres
