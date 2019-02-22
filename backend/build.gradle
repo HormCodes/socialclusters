@@ -4,21 +4,26 @@ buildscript {
   }
   dependencies {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
-    classpath 'org.postgresql:postgresql:9.4.1211.jre7'
-    classpath 'org.jooq:jooq-codegen:3.7.4'
-    classpath 'nu.studer:gradle-jooq-plugin:1.0.5'
+    classpath 'org.postgresql:postgresql:42.2.4'
+    classpath 'nu.studer:gradle-jooq-plugin:+'
   }
 }
 
+
+
 plugins {
-  id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+  id "org.jetbrains.kotlin.jvm" version "1.2.61"
+  id "org.jetbrains.kotlin.plugin.spring" version "1.2.61"
+
+  id "org.springframework.boot" version "2.0.4.RELEASE"
+  id "io.spring.dependency-management" version "1.0.6.RELEASE"
+
+  id "nu.studer.jooq" version "3.0.2"
+
+  id "com.github.ben-manes.versions" version "0.20.0"
+
+  id "org.flywaydb.flyway" version "5.2.4"
 }
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'nu.studer.jooq'
 
 bootJar {
   baseName = 'gs-rest-service'
@@ -36,21 +41,32 @@ dependencies {
   compile "org.springframework.boot:spring-boot-starter-web"
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+  implementation("org.springframework.boot:spring-boot-starter-jdbc")
   testCompile 'com.jayway.jsonpath:json-path'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
   compile "org.jetbrains.kotlin:kotlin-reflect"
-  compile('org.springframework.boot:spring-boot-starter-jooq')
+
+  compile 'org.jooq:jooq:+'
+  compile 'org.jooq:jooq-meta:+'
+  compile 'org.jooq:jooq-codegen:+'
+  compile 'mysql:mysql-connector-java:+'
+
+  implementation("org.postgresql:postgresql:42.2.4")
+  jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
+
+  implementation("org.flywaydb:flyway-core:5.1.4")
+
+
+  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.9")
+  testImplementation("io.kotlintest:kotlintest-extensions-spring:3.1.9")
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude module: "junit"
+  }
 }
 
-compileKotlin {
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
-}
-compileTestKotlin {
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
+
+test {
+  useJUnitPlatform()
 }
 
 jooq {
@@ -64,9 +80,10 @@ jooq {
     generator {
 
       database {
-        name = 'org.jooq.util.postgres.PostgresDatabase'
+        name = 'org.jooq.meta.postgres.PostgresDatabase'
         inputSchema = "public"
-        unsignedTypes=false
+        unsignedTypes = false
+        excludes = "flyway_schema_history"
 
       }
       generate {
@@ -84,3 +101,11 @@ jooq {
 
 
 }
+flyway {
+  url = 'jdbc:postgresql://localhost:3312/user_database'
+  user = 'postgres'
+  locations = ["filesystem:$project.projectDir/src/main/resources/db/migration"]
+}
+
+generateUserDatabaseJooqSchemaSource.dependsOn flywayClean, flywayMigrate
+compileKotlin.dependsOn generateUserDatabaseJooqSchemaSource
