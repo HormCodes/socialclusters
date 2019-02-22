@@ -1,4 +1,4 @@
-package com.socialclusters.controller
+package com.socialclusters.api
 
 import com.socialclusters.pojos.*
 import org.springframework.web.bind.annotation.RequestMapping

@@ -1,6 +1,5 @@
-package com.socialclusters.controller
+package com.socialclusters.api
 
-import com.socialclusters.pojos.Topic
 import com.socialclusters.pojos.Twitter
 import com.socialclusters.repository.TwitterRepository
 import org.bson.types.ObjectId
