@@ -100,9 +100,78 @@ class SourceControllerTest(
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
         }
 
-        it("for non existing id GET should return ") {
+        it("for non existing id GET should return not found") {
           mockMvc.perform(MockMvcRequestBuilders.get("/sources/9"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+        }
+      }
+
+      context("PUT") {
+        it("should return conflict code if content has id different from path variable") {
+          sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+          val source = Source(8, platform, valueType, "username2")
+
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
+
+
+        }
+
+        it("should update existing source") {
+          sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+          val source = Source(9, platform, valueType, "username2")
+
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.id", notNullValue()))
+            .andExpect(jsonPath("$.platform", `is`(platform)))
+            .andExpect(jsonPath("$.valueType", `is`(valueType)))
+            .andExpect(jsonPath("$.value", `is`("username2")))
+
+
+          sourceDao.findById(9).value shouldBe "username2"
+
+
+        }
+
+        it("should create non existing source") {
+
+          val source = Source(9, platform, valueType, "username2")
+
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.id", notNullValue()))
+            .andExpect(jsonPath("$.platform", `is`(platform)))
+            .andExpect(jsonPath("$.valueType", `is`(valueType)))
+            .andExpect(jsonPath("$.value", `is`("username2")))
+
+
+          sourceDao.findAll().size shouldBe 1
+          sourceDao.findById(9).value shouldBe "username2"
+
+
+        }
+      }
+
+      context("DELETE") {
+
+        it("should throw not found for not existing source") {
+          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9"))
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+        }
+
+        it("should delete existing source") {
+          sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9"))
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+
+          sourceDao.findAll().size shouldBe 0
         }
       }
     }

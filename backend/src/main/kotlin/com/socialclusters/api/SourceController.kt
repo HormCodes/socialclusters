@@ -34,19 +34,32 @@ class SourceController(
   }
 
   @GetMapping("/sources/{id}")
-  fun getSource(@PathVariable id: Int): Any {
+  fun getSource(@PathVariable id: Int): Source {
     return sourceRepository.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+  }
+
+  @DeleteMapping("/sources/{id}")
+  fun deleteSource(@PathVariable id: Int) {
+
+    if (!sourceRepository.existsById(id)) {
+      throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    }
+    sourceRepository.deleteById(id)
   }
 
   @PutMapping("/sources/{id}")
   fun putSource(@RequestBody newSource: Source, @PathVariable id: Int): Source {
 
-    if (sourceRepository.existsById(id)) {
-      sourceRepository.update(newSource)
-      return sourceRepository.fetchOneById(id)
+    if (newSource.id != id) {
+      throw ResponseStatusException(HttpStatus.CONFLICT)
     }
-    else {
-      return sourceRepository.insertAndReturn(newSource)
+
+    return when {
+      sourceRepository.existsById(id) -> {
+        sourceRepository.update(newSource)
+        sourceRepository.fetchOneById(id)
+      }
+      else -> sourceRepository.insertAndReturn(newSource)
     }
   }
 }
