@@ -1,9 +1,13 @@
 package com.socialclusters.domain.source
 
 import com.socialclusters.configuration.UserDatabaseConfiguration
+import com.socialclusters.db.generated.user_database.Tables
+import com.socialclusters.db.generated.user_database.Tables.SOURCE
+import com.socialclusters.db.generated.user_database.Tables.TOPIC
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
 import com.socialclusters.pojos.*
+import org.jooq.impl.DSL.using
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -20,6 +24,12 @@ class SourceRepository(
     val news = NewsSources(getRssFeeds(sources))
     val meetupSources = MeetupSources(getMeetupLocations(sources))
     return Sources(twitterSources, facebookSources, meetupSources, reddit, news)
+  }
+
+  fun insertAndReturn(source: Source): Source {
+    val record = using(configuration()).newRecord(SOURCE, source)
+    record.insert()
+    return Source(record.id, record.platform, record.valueType, record.value)
   }
 
   private fun getMeetupLocations(sources: List<Source>) = getPlatformOneTypeSources(sources, MEETUP, LOCATION)

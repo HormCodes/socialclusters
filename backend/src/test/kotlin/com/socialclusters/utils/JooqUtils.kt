@@ -8,3 +8,5 @@ fun Source.withoutId(platform: String, valueType: String, value: String) = this.
   this.valueType = valueType
   this.value = value
 }
+
+fun Source.toJsonString(): String = "{\"id\":${this.id},\"platform\":\"${this.platform}\",\"valueType\":\"${this.valueType}\",\"value\":\"${this.value}\"}"

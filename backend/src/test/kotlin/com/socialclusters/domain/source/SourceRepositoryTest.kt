@@ -4,8 +4,10 @@ import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
 import com.socialclusters.pojos.*
+import com.socialclusters.utils.withoutId
 import io.kotlintest.Description
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.DescribeSpec
 import org.jooq.DSLContext
 import org.springframework.boot.test.context.SpringBootTest
@@ -45,14 +47,14 @@ class SourceRepositoryTest(
         val forum = "forum"
         val rss = "rss"
         val insertedSources = listOf(
-          getSource("twitter", account, account),
-          getSource("twitter", hashtag, hashtag),
-          getSource("twitter", word, word),
-          getSource("facebook", page, page),
-          getSource("facebook", group, group),
-          getSource("meetup", location, location),
-          getSource("reddit", forum, forum),
-          getSource("news", rss, rss)
+          Source().withoutId("twitter", account, account),
+          Source().withoutId("twitter", hashtag, hashtag),
+          Source().withoutId("twitter", word, word),
+          Source().withoutId("facebook", page, page),
+          Source().withoutId("facebook", group, group),
+          Source().withoutId("meetup", location, location),
+          Source().withoutId("reddit", forum, forum),
+          Source().withoutId("news", rss, rss)
           )
         sourceDao.insert(insertedSources)
 
@@ -69,13 +71,21 @@ class SourceRepositoryTest(
 
     }
 
+    describe("insertAndReturn") {
+      it("should insert new source and return it back") {
+        val insertedSource = Source().withoutId("twitter", "account", "username")
+        val returnedSource = sourceRepository.insertAndReturn(insertedSource)
+
+        sourceDao.findAll().size shouldBe 1
+        sourceDao.fetchById(returnedSource.id) shouldNotBe null
+        returnedSource.platform shouldBe insertedSource.platform
+        returnedSource.valueType shouldBe insertedSource.valueType
+        returnedSource.value shouldBe insertedSource.value
+      }
+    }
+
 
   }
 
-  fun getSource(platform: String, type: String, value: String) = Source().apply {
-    this.platform = platform
-    this.valueType = type
-    this.value = value
-  }
 
 }
