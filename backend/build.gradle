@@ -1,11 +1,14 @@
 buildscript {
   repositories {
     mavenCentral()
+
   }
   dependencies {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
     classpath 'org.postgresql:postgresql:42.2.4'
     classpath 'nu.studer:gradle-jooq-plugin:+'
+
+
   }
 }
 
@@ -32,6 +35,7 @@ bootJar {
 
 repositories {
   mavenCentral()
+  jcenter()
 }
 
 sourceCompatibility = 1.8
@@ -55,6 +59,8 @@ dependencies {
   jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
 
   implementation("org.flywaydb:flyway-core:5.1.4")
+
+  implementation 'com.beust:klaxon:5.0.1'
 
 
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.9")

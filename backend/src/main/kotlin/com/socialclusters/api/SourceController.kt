@@ -1,21 +1,20 @@
 package com.socialclusters.api
 
+import com.socialclusters.db.generated.user_database.tables.pojos.Source
+import com.socialclusters.domain.source.SourceRepository
 import com.socialclusters.pojos.*
+import org.springframework.data.repository.query.Param
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SourceController {
+class SourceController(
+  private val sourceRepository: SourceRepository
+) {
 
   @RequestMapping("/sources")
-  fun sources(): Sources {
-
-    val twitter = TwitterSources(listOf(), listOf(), listOf())
-    val facebook = FacebookSources(listOf(), listOf())
-    val meetup = MeetupSources(listOf())
-    val reddit = RedditSources(listOf())
-    val news = NewsSources(listOf())
-
-    return Sources(twitter, facebook, meetup, reddit, news)
+  fun sources(@RequestParam(value = "inStructure", defaultValue = "false") inStructure: Boolean): List<Source> {
+    return sourceRepository.findAll()
   }
 }
