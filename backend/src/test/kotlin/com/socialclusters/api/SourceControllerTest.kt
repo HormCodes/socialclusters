@@ -73,16 +73,42 @@ class SourceControllerTest(
       }
 
       context("POST") {
-        val source = Source().withoutId(platform, valueType, value)
-        val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
-        mockMvc.perform(request)
-          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
-          .andExpect(jsonPath("$.id", notNullValue()))
-          .andExpect(jsonPath("$.platform", `is`(platform)))
-          .andExpect(jsonPath("$.valueType", `is`(valueType)))
-          .andExpect(jsonPath("$.value", `is`(value)))
+        it("should create new source") {
+          val source = Source().withoutId(platform, valueType, value)
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.id", notNullValue()))
+            .andExpect(jsonPath("$.platform", `is`(platform)))
+            .andExpect(jsonPath("$.valueType", `is`(valueType)))
+            .andExpect(jsonPath("$.value", `is`(value)))
 
-        sourceDao.findAll().size shouldBe 1
+          sourceDao.findAll().size shouldBe 1
+        }
+        it("should return for existing source json") {
+
+          val source = Source(8, platform, valueType, value)
+
+          sourceDao.insert(source)
+
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
+        }
+
+        it("should create new source for json without id field") {
+          val source = Source().withoutId(platform, valueType, value)
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content("{\"platform\":\"$platform\",\"valueType\":\"$valueType\",\"value\":\"$value\"}")
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.id", notNullValue()))
+            .andExpect(jsonPath("$.platform", `is`(platform)))
+            .andExpect(jsonPath("$.valueType", `is`(valueType)))
+            .andExpect(jsonPath("$.value", `is`(value)))
+
+          sourceDao.findAll().size shouldBe 1
+        }
+
       }
 
     }

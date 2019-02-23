@@ -30,6 +30,10 @@ class SourceController(
 
   @PostMapping("/sources")
   fun postSource(@RequestBody newSource: Source): Source {
+    if (sourceRepository.existsById(newSource.id)) {
+      throw ResponseStatusException(HttpStatus.CONFLICT)
+    }
+
     return sourceRepository.insertAndReturn(newSource)
   }
 
