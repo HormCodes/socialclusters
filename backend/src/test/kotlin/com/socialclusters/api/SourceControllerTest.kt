@@ -7,6 +7,7 @@ import com.beust.klaxon.Parser
 import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
+import com.socialclusters.pojos.Sources
 import com.socialclusters.utils.withoutId
 import io.kotlintest.Description
 import io.kotlintest.matchers.collections.contain
@@ -59,6 +60,42 @@ class SourceControllerTest(
           .andExpect(jsonPath("$[0].platform", `is`(platform)))
           .andExpect(jsonPath("$[0].valueType", `is`(valueType)))
           .andExpect(jsonPath("$[0].value", `is`(value)))
+      }
+
+      it("for call with inStructure param should return sources json structure") {
+        val platform = "twitter"
+        val valueType = "account"
+        val value = "username"
+        sourceDao.insert(listOf(Source().withoutId(platform, valueType, value)))
+
+        val result = mockMvc.perform(MockMvcRequestBuilders.get("/sources").param("inStructure", "true"))
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+          .andReturn().response.contentAsString
+
+        val accounts = Klaxon().parse<Sources>(result)?.twitter?.accounts.orEmpty()
+
+        accounts.shouldContain("username")
+      }
+    }
+
+
+
+
+    describe("/sources/{id}") {
+
+      it("for existing id GET should return source entry") {
+        val platform = "twitter"
+        val valueType = "account"
+        val value = "username"
+        sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/sources/9"))
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+      }
+
+      it("for non existing id GET should return ") {
+        mockMvc.perform(MockMvcRequestBuilders.get("/sources/9"))
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
       }
     }
 

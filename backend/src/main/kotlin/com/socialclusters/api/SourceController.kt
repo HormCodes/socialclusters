@@ -2,11 +2,10 @@ package com.socialclusters.api
 
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
 import com.socialclusters.domain.source.SourceRepository
-import com.socialclusters.pojos.*
-import org.springframework.data.repository.query.Param
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class SourceController(
@@ -14,7 +13,15 @@ class SourceController(
 ) {
 
   @RequestMapping("/sources")
-  fun sources(@RequestParam(value = "inStructure", defaultValue = "false") inStructure: Boolean): List<Source> {
-    return sourceRepository.findAll()
+  fun getSources(@RequestParam(value = "inStructure", defaultValue = "false") inStructure: Boolean): Any {
+    return when {
+      inStructure -> sourceRepository.getAllSourcesStructure()
+      else -> sourceRepository.findAll()
+    }
+  }
+
+  @GetMapping("/sources/{id}")
+  fun getSource(@PathVariable id: Int): Any {
+    return sourceRepository.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 }
