@@ -1,4 +1,4 @@
-package com.socialclusters.repository
+package com.socialclusters.domain
 
 import com.socialclusters.pojos.Twitter
 import org.springframework.data.mongodb.repository.MongoRepository

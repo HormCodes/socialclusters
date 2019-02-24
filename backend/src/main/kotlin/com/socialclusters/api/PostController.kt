@@ -1,7 +1,7 @@
 package com.socialclusters.api
 
+import com.socialclusters.domain.TwitterRepository
 import com.socialclusters.pojos.Twitter
-import com.socialclusters.repository.TwitterRepository
 import org.bson.types.ObjectId
 import org.springframework.web.bind.annotation.*
 import java.util.*

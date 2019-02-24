@@ -1,9 +1,7 @@
-package com.socialclusters.domain.source
+package com.socialclusters.domain
 
 import com.socialclusters.configuration.UserDatabaseConfiguration
-import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.Tables.SOURCE
-import com.socialclusters.db.generated.user_database.Tables.TOPIC
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
 import com.socialclusters.pojos.*
