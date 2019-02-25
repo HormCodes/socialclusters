@@ -1,11 +1,10 @@
-import requests
 import json
 
-from pojo import TweetAuthor, Tweet
-
+import requests
+from pymongo import MongoClient
 from requests_oauthlib import OAuth1
 
-from pymongo import MongoClient
+from pojo import TweetAuthor, Tweet
 
 CONFIG_JSON_FILE_NAME = "../config.json"
 
@@ -147,7 +146,8 @@ twitter_collection = mongo_db['twitter']
 for tweet in tweet_responses:
     tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
                                tweet["user"]["followers_count"])
-    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id"], tweet["lang"], tweet["retweet_count"],
+    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id_str"], tweet["lang"],
+                         tweet["retweet_count"],
                          tweet["favorite_count"], tweet_author)
     texts.append(tweet_object)
     if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:

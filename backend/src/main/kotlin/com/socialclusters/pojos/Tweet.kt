@@ -3,17 +3,17 @@ package com.socialclusters.pojos
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 
-class Twitter(
+class Tweet(
   @Id
-  val _id: ObjectId,
+  val _id: ObjectId?,
   val text: String,
   val timestamp: String,
-  val id: Long,
+  val tweetId: String,
   val language: String,
   val retweets: Int,
   val favourites: Int,
   val author: Author,
-  val topics: List<String>?
+  var topics: List<String>? // TODO - Better immutable way of document update?
 )
 
 data class Author(

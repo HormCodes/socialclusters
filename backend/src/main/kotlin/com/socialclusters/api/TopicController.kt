@@ -18,7 +18,7 @@ class TopicController(
   }
 
   @PostMapping("/topics")
-  fun postSource(@RequestBody newTopic: Topic): Topic {
+  fun postTopic(@RequestBody newTopic: Topic): Topic {
     if (topicRepository.existsById(newTopic.id)) {
       throw ResponseStatusException(HttpStatus.CONFLICT)
     }
@@ -27,7 +27,7 @@ class TopicController(
   }
 
   @GetMapping("/topics/{id}")
-  fun getSource(@PathVariable id: Int): Topic {
+  fun getTopic(@PathVariable id: Int): Topic {
     return topicRepository.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 

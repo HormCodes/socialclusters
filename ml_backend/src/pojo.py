@@ -6,10 +6,10 @@ class TweetAuthor:
 
 
 class Tweet:
-  def __init__(self, text, timestamp, id, language, retweets, favourites, author):
+    def __init__(self, text, timestamp, tweet_id, language, retweets, favourites, author):
     self.text = text
     self.timestamp = timestamp
-    self.id = id
+    self.tweet_id = tweet_id
     self.language = language
     self.retweets = retweets
     self.favourites = favourites
@@ -19,7 +19,7 @@ class Tweet:
     return {
       "text": self.text,
       "timestamp": self.timestamp,
-      "id": self.id,
+        "tweetId": self.tweet_id,
       "language": self.language,
       "retweets": self.retweets,
       "favourites": self.favourites,
@@ -38,4 +38,5 @@ def get_author_object_from_dict(author_dict):
 
 
 def get_tweet_object_from_dict(tweet_dict):
-    return Tweet(tweet_dict["text"], tweet_dict["timestamp"], tweet_dict["id"], tweet_dict["language"], tweet_dict["retweets"], tweet_dict["favourites"], get_author_object_from_dict(tweet_dict["author"]))
+    return Tweet(tweet_dict["text"], tweet_dict["timestamp"], tweet_dict["id_str"], tweet_dict["language"],
+                 tweet_dict["retweets"], tweet_dict["favourites"], get_author_object_from_dict(tweet_dict["author"]))
