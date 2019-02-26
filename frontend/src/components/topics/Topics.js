@@ -11,20 +11,6 @@ const styles = (theme) => ({
     bottom: theme.spacing.unit * 2,
     right: theme.spacing.unit * 2,
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-
-  column: {
-    flexBasis: '33.33%',
-  },
-  textField: {
-    paddingRight: 8
-  },
 });
 
 class Topics extends React.Component {

@@ -11,15 +11,6 @@ import axios from "axios";
 class App extends Component {
 
   state = {
-    appItems: [
-      {name: 'Dashboard', icon: 'home', url: '/', component: Dashboard},
-      {name: 'Posts', icon: 'question_answer', url: '/posts', component: Posts},
-      {name: 'Topics', icon: 'title', url: '/topics', component: Topics},
-      {name: 'Sources', icon: 'subscriptions', url: '/sources', component: Sources},
-    ],
-    settingItems: [
-      {name: 'Settings', icon: 'settings', url: '/settings', component: Settings},
-    ],
     mobileOpen: false,
     topics: [],
     sources: []
@@ -31,6 +22,13 @@ class App extends Component {
       .then(response => {
         this.setState({
           topics: response.data
+        })
+      })
+      .catch(error => console.log(error))
+    axios.get("http://localhost:8080/sources/")
+      .then(response => {
+        this.setState({
+          sources: response.data
         })
       })
       .catch(error => console.log(error))
@@ -78,11 +76,101 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
+  handleSaveSource = (source) => {
+    axios.put("http://localhost:8080/sources/" + source.id, source)
+      .then(response => {
+        axios.get("http://localhost:8080/sources/")
+          .then(response => {
+            this.setState({
+              sources: response.data
+            })
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
+  handleAddSource = (source) => {
+    axios.post("http://localhost:8080/sources/", source)
+      .then(response => {
+        axios.get("http://localhost:8080/sources/")
+          .then(response => {
+            this.setState({
+              sources: response.data
+            })
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
+  handleDeleteSource = (source) => {
+    axios.delete("http://localhost:8080/sources/" + source.id)
+      .then(response => {
+        axios.get("http://localhost:8080/sources/")
+          .then(response => {
+            this.setState({
+              sources: response.data
+            })
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
   handleDrawerToggle = () => {
     this.setState(state => ({mobileOpen: !state.mobileOpen}));
   };
 
   render() {
+    const appItems = [
+      {
+        name: 'Dashboard',
+        icon: 'home',
+        url: '/',
+        component: Dashboard
+      },
+      {
+        name: 'Posts',
+        icon: 'question_answer',
+        url: '/posts',
+        component: Posts
+      },
+      {
+        name: 'Topics',
+        icon: 'title',
+        url: '/topics',
+        component: () =>
+          <Topics
+            topics={this.state.topics}
+            handleAddTopic={this.handleAddTopic}
+            handleSaveTopic={this.handleSaveTopic}
+            handleDeleteTopic={this.handleDeleteTopic}
+          />
+      },
+      {
+        name: 'Sources',
+        icon: 'subscriptions',
+        url: '/sources',
+        component: () =>
+          <Sources
+            sources={this.state.sources}
+            handleAddSource={this.handleAddSource}
+            handleSaveSource={this.handleSaveSource}
+            handleDeleteSource={this.handleDeleteSource}
+          />
+      },
+    ]
+
+    const settingItems = [
+      {
+        name: 'Settings',
+        icon: 'settings',
+        url: '/settings',
+        component: Settings
+      },
+    ]
+
     return (
       <div className="App">
         <header>
@@ -93,8 +181,8 @@ class App extends Component {
           handleAddTopic={this.handleAddTopic}
           handleDeleteTopic={this.handleDeleteTopic}
           topics={this.state.topics}
-          appItems={this.state.appItems}
-          settingItems={this.state.settingItems}
+          appItems={appItems}
+          settingItems={settingItems}
           mobileOpen={this.state.mobileOpen}
           handleDrawerToggle={this.handleDrawerToggle}
         />
