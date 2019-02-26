@@ -30,7 +30,7 @@ const styles = (theme) => ({
   },
 })
 
-const Topic = ({textId, name, handleSave, classes, handleNameChange, handleIdChange}) => {
+const Topic = ({id, textId, name, handleSave, classes, handleNameChange, handleIdChange}) => {
 
   return (
     <ExpansionPanel defaultExpanded={textId === ""}>
@@ -80,6 +80,7 @@ Topic.defaultProps = {
 export default compose(
   withStyles(styles),
   withState('name', 'updateName', props=>props.name),
+  withState('textId', 'updateTextId', props => props.textId),
   withState('id', 'updateId', props=>props.id),
   withHandlers({
     handleNameChange: props => event => {
@@ -90,8 +91,11 @@ export default compose(
     },
     handleSave: props => event => {
       event.preventDefault();
-      props.onChange(props.name)
-      props.onChange(props.id)
+      props.handleSave({
+        id: props.id,
+        textId: props.textId,
+        name: props.name
+      })
     },
   }),
 )(Topic)

@@ -34,12 +34,12 @@ class Topics extends React.Component {
 
 
   render() {
-    const {classes, topics, handleChange} = this.props
+    const {classes, topics, handleSaveTopic} = this.props
 
     let layout = topics =>
       <div>
-        {topics.map((topic) => <Topic key={topic.id} textId={topic.textId} name={topic.name}
-                                      handleSave={handleChange}/>)}
+        {topics.map((topic) => <Topic key={topic.id} id={topic.id} textId={topic.textId} name={topic.name}
+                                      handleSave={handleSaveTopic}/>)}
       <Fab color="primary" className={classes.fab} onClick={() => this.setState({showAdd: true})}>
         <Icon>add</Icon>
       </Fab>
@@ -57,12 +57,13 @@ class Topics extends React.Component {
 
 Topics.propTypes = {
   topics: PropTypes.array,
-  handleChange: PropTypes.func,
+  handleSaveTopic: PropTypes.func,
 };
 
 Topics.defaultProps = {
   topics: [],
-  handleChange: () => {}
+  handleSaveTopic: () => {
+  }
 };
 
 export default withStyles(styles)(Topics)

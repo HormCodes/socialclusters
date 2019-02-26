@@ -26,11 +26,26 @@ class App extends Component {
   };
 
   componentDidMount() {
+    // TODO - DEV URL
     axios.get("http://localhost:8080/topics/")
       .then(response => {
         this.setState({
           topics: response.data
         })
+      })
+      .catch(error => console.log(error))
+  }
+
+  handleSaveTopic = (topic) => {
+    axios.put("http://localhost:8080/topics/" + topic.id, topic)
+      .then(response => {
+        axios.get("http://localhost:8080/topics/")
+          .then(response => {
+            this.setState({
+              topics: response.data
+            })
+          })
+          .catch(error => console.log(error))
       })
       .catch(error => console.log(error))
   }
@@ -46,7 +61,7 @@ class App extends Component {
           <AppToolbar handleDrawerToggle={this.handleDrawerToggle}/>
         </header>
         <DrawerWithContent
-          handleChange={this.handleChange}
+          handleSaveTopic={this.handleSaveTopic}
           topics={this.state.topics}
           appItems={this.state.appItems}
           settingItems={this.state.settingItems}
