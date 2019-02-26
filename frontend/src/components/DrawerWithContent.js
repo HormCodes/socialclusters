@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {withStyles} from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
-import {Switch, Route, Link, withRouter} from 'react-router-dom'
+import {Link, Route, Switch, withRouter} from 'react-router-dom'
 import Topics from "./topics/Topics";
 
 const drawerWidth = 240;
@@ -72,7 +72,6 @@ class DrawerWithContent extends React.Component {
 
 
     let itemsToHTML = (item) =>
-      // TODO - Unique key
       <Link to={item.url} key={item.url} style={{textDecoration: 'none'}}>
         <ListItem button selected={this.activeRoute(item.url)}>
           <ListItemIcon><Icon>{item.icon}</Icon></ListItemIcon>
@@ -80,7 +79,8 @@ class DrawerWithContent extends React.Component {
         </ListItem>
       </Link>;
 
-    let itemToRouteComponent = item => <Route exact={item.url === '/'} path={item.url} component={item.component}/>;
+    let itemToRouteComponent = item => <Route key={item.url} exact={item.url === '/'} path={item.url}
+                                              component={item.component}/>;
 
     const drawer = (
       <div>

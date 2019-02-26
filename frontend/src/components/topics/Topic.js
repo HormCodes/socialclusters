@@ -1,5 +1,4 @@
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary";
-import ExpandMoreIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import Typography from "@material-ui/core/Typography/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails";
 import Grid from "@material-ui/core/Grid/Grid";
@@ -12,6 +11,7 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types"
 import {compose, withHandlers, withState} from "recompose"
+import Icon from "@material-ui/core/Icon/Icon";
 
 const styles = (theme) => ({
   heading: {
@@ -30,16 +30,16 @@ const styles = (theme) => ({
   },
 })
 
-const Topic = ({id, name, handleSave, classes, handleNameChange, handleIdChange}) => {
+const Topic = ({textId, name, handleSave, classes, handleNameChange, handleIdChange}) => {
 
   return (
-    <ExpansionPanel defaultExpanded={id === ""}>
-      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+    <ExpansionPanel defaultExpanded={textId === ""}>
+      <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
         <div className={classes.column}>
           <Typography className={classes.heading}>{name}</Typography>
         </div>
         <div className={classes.column}>
-          <Typography className={classes.secondaryHeading}>{id}</Typography>
+          <Typography className={classes.secondaryHeading}>{textId}</Typography>
         </div>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className={classes.details}>
@@ -48,7 +48,7 @@ const Topic = ({id, name, handleSave, classes, handleNameChange, handleIdChange}
             <TextField label={"Name"} value={name} onChange={handleNameChange} className={classes.textField} fullWidth/>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label={"ID"} value={id}  onChange={handleIdChange} className={classes.textField} fullWidth/>
+            <TextField label={"ID"} value={textId} onChange={handleIdChange} className={classes.textField} fullWidth/>
           </Grid>
         </Grid>
       </ExpansionPanelDetails>
@@ -64,13 +64,15 @@ const Topic = ({id, name, handleSave, classes, handleNameChange, handleIdChange}
 }
 
 Topic.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
+  textId: PropTypes.string,
   name: PropTypes.string,
   handleSave: PropTypes.func
 }
 
 Topic.defaultProps = {
-  id: "",
+  id: 0,
+  textId: "",
   name: "",
   handleSave: () => {}
 }

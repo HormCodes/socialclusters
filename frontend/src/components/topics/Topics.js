@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from "@material-ui/core/es/styles/withStyles";
-import List from "@material-ui/core/List/List";
 import Fab from "@material-ui/core/Fab/Fab";
 import Icon from "@material-ui/core/Icon/Icon";
 import PropTypes from "prop-types";
@@ -37,12 +36,10 @@ class Topics extends React.Component {
   render() {
     const {classes, topics, handleChange} = this.props
 
-
     let layout = topics =>
       <div>
-      {topics.map(topic => <Topic id={topic.id} name={topic.name} handleSave={handleChange}/>)}
-      <List>
-      </List>
+        {topics.map((topic) => <Topic key={topic.id} textId={topic.textId} name={topic.name}
+                                      handleSave={handleChange}/>)}
       <Fab color="primary" className={classes.fab} onClick={() => this.setState({showAdd: true})}>
         <Icon>add</Icon>
       </Fab>
