@@ -30,10 +30,22 @@ const styles = (theme) => ({
   },
 })
 
-const Topic = ({id, textId, name, handleSave, classes, handleNameChange, handleIdChange}) => {
+const Topic = ({id, textId, name, handleSubmit, handleDelete, classes, handleNameChange, handleTextIdChange, submitButtonText}) => {
+
+  let details =
+    <Grid container>
+      <Grid item xs={12} sm={6}>
+        <TextField label={"Name"} value={name} onChange={handleNameChange} className={classes.textField} fullWidth/>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField label={"ID"} value={textId} onChange={handleTextIdChange} className={classes.textField} fullWidth/>
+      </Grid>
+    </Grid>;
+
 
   return (
     <ExpansionPanel defaultExpanded={textId === ""}>
+
       <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
         <div className={classes.column}>
           <Typography className={classes.heading}>{name}</Typography>
@@ -42,23 +54,17 @@ const Topic = ({id, textId, name, handleSave, classes, handleNameChange, handleI
           <Typography className={classes.secondaryHeading}>{textId}</Typography>
         </div>
       </ExpansionPanelSummary>
+
       <ExpansionPanelDetails className={classes.details}>
-        <Grid container>
-          <Grid item xs={12} sm={6}>
-            <TextField label={"Name"} value={name} onChange={handleNameChange} className={classes.textField} fullWidth/>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField label={"ID"} value={textId} onChange={handleIdChange} className={classes.textField} fullWidth/>
-          </Grid>
-        </Grid>
+        {details}
       </ExpansionPanelDetails>
+
       <Divider/>
       <ExpansionPanelActions>
-        <Button size="small">Cancel</Button>
-        <Button size="small" color="primary" onClick={handleSave}>
-          Save
-        </Button>
+        <Button onClick={handleDelete} size="small">Delete</Button>
+        <Button onClick={handleSubmit} size="small" color="primary">{submitButtonText}</Button>
       </ExpansionPanelActions>
+
     </ExpansionPanel>
   )
 }
@@ -67,31 +73,45 @@ Topic.propTypes = {
   id: PropTypes.number,
   textId: PropTypes.string,
   name: PropTypes.string,
-  handleSave: PropTypes.func
+  handleSubmit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  submitButtonText: PropTypes.string
 }
 
 Topic.defaultProps = {
   id: 0,
   textId: "",
   name: "",
-  handleSave: () => {}
+  handleSubmit: () => {
+  },
+  handleDelete: () => {
+  },
+  submitButtonText: "Save"
 }
 
 export default compose(
   withStyles(styles),
-  withState('name', 'updateName', props=>props.name),
+  withState('name', 'updateName', props => props.name),
   withState('textId', 'updateTextId', props => props.textId),
-  withState('id', 'updateId', props=>props.id),
+  withState('id', 'updateId', props => props.id),
   withHandlers({
     handleNameChange: props => event => {
       props.updateName(event.target.value)
     },
-    handleIdChange: props => event => {
-      props.updateId(event.target.value)
+    handleTextIdChange: props => event => {
+      props.updateTextId(event.target.value)
     },
-    handleSave: props => event => {
+    handleSubmit: props => event => {
       event.preventDefault();
-      props.handleSave({
+      props.handleSubmit({
+        id: props.id,
+        textId: props.textId,
+        name: props.name
+      })
+    },
+    handleDelete: props => event => {
+      event.preventDefault();
+      props.handleDelete({
         id: props.id,
         textId: props.textId,
         name: props.name

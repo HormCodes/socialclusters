@@ -68,7 +68,7 @@ class DrawerWithContent extends React.Component {
 
 
   render() {
-    const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen, topics, handleSaveTopic} = this.props;
+    const {classes, theme, appItems, settingItems, handleDrawerToggle, mobileOpen, topics, handleSaveTopic, handleAddTopic, handleDeleteTopic} = this.props;
 
 
     let itemsToHTML = (item) =>
@@ -126,7 +126,9 @@ class DrawerWithContent extends React.Component {
           <Switch>
             {// TODO
             }
-            <Route path={'/topics'} component={() => <Topics topics={topics} handleSaveTopic={handleSaveTopic}/>}/>
+            <Route path={'/topics'} component={() => <Topics topics={topics} handleSaveTopic={handleSaveTopic}
+                                                             handleAddTopic={handleAddTopic}
+                                                             handleDeleteTopic={handleDeleteTopic}/>}/>
             {(appItems.concat(settingItems)).map(itemToRouteComponent)}
           </Switch>
         </main>

@@ -25,45 +25,70 @@ const styles = (theme) => ({
   textField: {
     paddingRight: 8
   },
-})
+});
 
 class Topics extends React.Component {
   state = {
     showAdd: false
-  }
+  };
 
 
   render() {
-    const {classes, topics, handleSaveTopic} = this.props
+    const {classes, topics, handleSaveTopic, handleAddTopic, handleDeleteTopic} = this.props
 
-    let layout = topics =>
-      <div>
-        {topics.map((topic) => <Topic key={topic.id} id={topic.id} textId={topic.textId} name={topic.name}
-                                      handleSave={handleSaveTopic}/>)}
+    let topicMap = (topic) =>
+      <Topic
+        key={topic.id}
+        id={topic.id}
+        textId={topic.textId}
+        name={topic.name}
+        handleSubmit={handleSaveTopic}
+        handleDelete={handleDeleteTopic}
+      />;
+
+    let getTopicItems = (showAdd) => {
+      if (showAdd) {
+        return <div>
+          {topics.map(topicMap)}
+          <Topic
+            handleSubmit={handleAddTopic}
+            handleDelete={() => this.setState({showAdd: false})}
+            submitButtonText={"Add"}
+          />
+        </div>
+      }
+      else {
+        return <div>{topics.map(topicMap)}</div>
+      }
+    };
+
+
+    return <div>
+      {getTopicItems(this.state.showAdd)}
       <Fab color="primary" className={classes.fab} onClick={() => this.setState({showAdd: true})}>
         <Icon>add</Icon>
       </Fab>
-
     </div>
 
 
-    if (this.state.showAdd) {
-      return layout(topics.concat([{id: "", name: ""}]))
-    } else {
-      return layout(topics)
-    }
   }
-};
+}
 
 Topics.propTypes = {
   topics: PropTypes.array,
+  handleAddTopic: PropTypes.func,
   handleSaveTopic: PropTypes.func,
+  handleDeleteTopic: PropTypes.func,
 };
 
 Topics.defaultProps = {
   topics: [],
+  handleAddTopic: () => {
+  },
   handleSaveTopic: () => {
-  }
+  },
+  handleDeleteTopic: () => {
+  },
 };
 
 export default withStyles(styles)(Topics)

@@ -50,6 +50,34 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
+  handleAddTopic = (topic) => {
+    axios.post("http://localhost:8080/topics/", topic)
+      .then(response => {
+        axios.get("http://localhost:8080/topics/")
+          .then(response => {
+            this.setState({
+              topics: response.data
+            })
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
+  handleDeleteTopic = (topic) => {
+    axios.delete("http://localhost:8080/topics/" + topic.id)
+      .then(response => {
+        axios.get("http://localhost:8080/topics/")
+          .then(response => {
+            this.setState({
+              topics: response.data
+            })
+          })
+          .catch(error => console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
   handleDrawerToggle = () => {
     this.setState(state => ({mobileOpen: !state.mobileOpen}));
   };
@@ -62,6 +90,8 @@ class App extends Component {
         </header>
         <DrawerWithContent
           handleSaveTopic={this.handleSaveTopic}
+          handleAddTopic={this.handleAddTopic}
+          handleDeleteTopic={this.handleDeleteTopic}
           topics={this.state.topics}
           appItems={this.state.appItems}
           settingItems={this.state.settingItems}
