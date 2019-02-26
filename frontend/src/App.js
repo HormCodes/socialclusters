@@ -10,22 +10,26 @@ import axios from "axios";
 
 class App extends Component {
 
+  API_URL = "http://localhost:8080";
+
   state = {
     mobileOpen: false,
     topics: [],
     sources: []
   };
 
-  componentDidMount() {
-    // TODO - DEV URL
-    axios.get("http://localhost:8080/topics/")
+  fetchTopics() {
+    axios.get(this.API_URL + "/topics/")
       .then(response => {
         this.setState({
           topics: response.data
         })
       })
       .catch(error => console.log(error))
-    axios.get("http://localhost:8080/sources/")
+  }
+
+  fetchSources() {
+    axios.get(this.API_URL + "/sources/")
       .then(response => {
         this.setState({
           sources: response.data
@@ -34,89 +38,47 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
-  handleSaveTopic = (topic) => {
-    axios.put("http://localhost:8080/topics/" + topic.id, topic)
-      .then(response => {
-        axios.get("http://localhost:8080/topics/")
-          .then(response => {
-            this.setState({
-              topics: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
-      .catch(error => console.log(error))
+  componentDidMount() {
+    // TODO - DEV URL
+    this.fetchTopics();
+    this.fetchSources();
   }
+
+  handleSaveTopic = (topic) => {
+    axios.put(this.API_URL + "/topics/" + topic.id, topic)
+      .then(this.fetchTopics)
+      .catch(error => console.log(error))
+  };
 
   handleAddTopic = (topic) => {
-    axios.post("http://localhost:8080/topics/", topic)
-      .then(response => {
-        axios.get("http://localhost:8080/topics/")
-          .then(response => {
-            this.setState({
-              topics: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
+    axios.post(this.API_URL + "/topics/", topic)
+      .then(this.fetchTopics)
       .catch(error => console.log(error))
-  }
+  };
 
   handleDeleteTopic = (topic) => {
-    axios.delete("http://localhost:8080/topics/" + topic.id)
-      .then(response => {
-        axios.get("http://localhost:8080/topics/")
-          .then(response => {
-            this.setState({
-              topics: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
+    axios.delete(this.API_URL + "/topics/" + topic.id)
+      .then(this.fetchTopics)
       .catch(error => console.log(error))
-  }
+  };
 
   handleSaveSource = (source) => {
-    axios.put("http://localhost:8080/sources/" + source.id, source)
-      .then(response => {
-        axios.get("http://localhost:8080/sources/")
-          .then(response => {
-            this.setState({
-              sources: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
+    axios.put(this.API_URL + "/sources/" + source.id, source)
+      .then(this.fetchSources)
       .catch(error => console.log(error))
-  }
+  };
 
   handleAddSource = (source) => {
-    axios.post("http://localhost:8080/sources/", source)
-      .then(response => {
-        axios.get("http://localhost:8080/sources/")
-          .then(response => {
-            this.setState({
-              sources: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
+    axios.post(this.API_URL + "/sources/", source)
+      .then(this.fetchSources)
       .catch(error => console.log(error))
-  }
+  };
 
   handleDeleteSource = (source) => {
-    axios.delete("http://localhost:8080/sources/" + source.id)
-      .then(response => {
-        axios.get("http://localhost:8080/sources/")
-          .then(response => {
-            this.setState({
-              sources: response.data
-            })
-          })
-          .catch(error => console.log(error))
-      })
+    axios.delete(this.API_URL + "/sources/" + source.id)
+      .then(this.fetchSources)
       .catch(error => console.log(error))
-  }
+  };
 
   handleDrawerToggle = () => {
     this.setState(state => ({mobileOpen: !state.mobileOpen}));
@@ -160,7 +122,7 @@ class App extends Component {
             handleDeleteSource={this.handleDeleteSource}
           />
       },
-    ]
+    ];
 
     const settingItems = [
       {
@@ -169,7 +131,7 @@ class App extends Component {
         url: '/settings',
         component: Settings
       },
-    ]
+    ];
 
     return (
       <div className="App">

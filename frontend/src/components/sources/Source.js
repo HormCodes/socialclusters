@@ -101,7 +101,8 @@ const Source = (
   ];
 
   const getSelectedPlatform = () => {
-    return platforms[platforms.map(platform => platform.value).indexOf(platform)] || {valueTypes: []}
+    let selectedPlatformIndex = platforms.map(platform => platform.value).indexOf(platform);
+    return platforms[selectedPlatformIndex] || {valueTypes: []}
   };
 
   const getSelectedValueType = () => {
