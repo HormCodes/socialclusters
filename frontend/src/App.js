@@ -6,6 +6,7 @@ import Posts from "./components/posts/Posts";
 import Topics from "./components/topics/Topics";
 import Sources from "./components/sources/Sources";
 import Settings from "./components/settings/Settings";
+import axios from "axios";
 
 class App extends Component {
 
@@ -20,53 +21,19 @@ class App extends Component {
       {name: 'Settings', icon: 'settings', url: '/settings', component: Settings},
     ],
     mobileOpen: false,
-    topics: [{
-      "id": "traffic",
-      "name": "Doprava"
-    },
-      {
-        "id": "culture",
-        "name": "Kultura"
-      },
-      {
-        "id": "events",
-        "name": "Akce"
-      },
-      {
-        "id": "news",
-        "name": "Zprávy"
-      },
-      {
-        "id": "tourism",
-        "name": "Turismus"
-      },
-      {
-        "id": "life",
-        "name": "Život v Brně"
-      },
-      {
-        "id": "work",
-        "name": "Práce"
-      },
-      {
-        "id": "places",
-        "name": "Místa"
-      },
-      {
-        "id": "sport",
-        "name": "Sport"
-      }]
+    topics: [],
+    sources: []
   };
 
-
-  handleChange = (e) => {
-    this.setState(prevState => ({
-      items: {
-        ...prevState.items,
-        [item]: e.target.value
-      },
-    }));
-  };
+  componentDidMount() {
+    axios.get("http://localhost:8080/topics/")
+      .then(response => {
+        this.setState({
+          topics: response.data
+        })
+      })
+      .catch(error => console.log(error))
+  }
 
   handleDrawerToggle = () => {
     this.setState(state => ({mobileOpen: !state.mobileOpen}));
