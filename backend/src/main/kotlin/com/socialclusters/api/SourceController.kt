@@ -26,7 +26,11 @@ class SourceController(
       throw ResponseStatusException(HttpStatus.CONFLICT)
     }
 
-    return sourceRepository.insertAndReturn(newSource)
+    try {
+      return sourceRepository.insertAndReturn(newSource)
+    } catch (exception: Exception) {
+      throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+    }
   }
 
   @GetMapping("/sources/{id}")
@@ -50,12 +54,10 @@ class SourceController(
       throw ResponseStatusException(HttpStatus.CONFLICT)
     }
 
-    return when {
-      sourceRepository.existsById(id) -> {
-        sourceRepository.update(newSource)
-        sourceRepository.fetchOneById(id)
-      }
-      else -> sourceRepository.insertAndReturn(newSource)
+    try {
+      return sourceRepository.insertOrUpdateAndReturn(newSource)
+    } catch (exception: Exception) {
+      throw ResponseStatusException(HttpStatus.BAD_REQUEST)
     }
   }
 }

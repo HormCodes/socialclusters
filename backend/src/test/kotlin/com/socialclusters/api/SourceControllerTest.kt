@@ -109,6 +109,24 @@ class SourceControllerTest(
           sourceDao.findAll().size shouldBe 1
         }
 
+        it("should return bad request for not existing platform") {
+          val source = Source().withoutId("platform", valueType, value)
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+          sourceDao.findAll().size shouldBe 0
+        }
+
+        it("should return bad request for not existing valueType for platform") {
+          val source = Source().withoutId(platform, "valueType", value)
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+          sourceDao.findAll().size shouldBe 0
+        }
+
       }
 
     }
@@ -160,6 +178,36 @@ class SourceControllerTest(
 
 
           sourceDao.findById(9).value shouldBe "username2"
+
+
+        }
+
+        it("should return bad request for unknown platform") {
+          sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+          val source = Source(9, "unknown", valueType, "username2")
+
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+
+          sourceDao.findById(9).platform shouldBe platform
+
+
+        }
+
+        it("should return bad request for unknown valueType for platform") {
+          sourceDao.insert(listOf(Source(9, platform, valueType, value)))
+
+          val source = Source(9, "unknown", "valueType", "username2")
+
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          mockMvc.perform(request)
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+
+          sourceDao.findById(9).valueType shouldBe valueType
 
 
         }

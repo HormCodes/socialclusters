@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class SourceRepository(
   configuration: UserDatabaseConfiguration
-) : SourceDao(configuration.jooqConfiguration()){
+) : SourceDao(configuration.jooqConfiguration()) {
 
   fun getAllSourcesStructure(): Sources {
     val sources = findAll()
@@ -25,9 +25,45 @@ class SourceRepository(
   }
 
   fun insertAndReturn(source: Source): Source {
+
+    validateSource(source)
+
     val record = using(configuration()).newRecord(SOURCE, source)
     record.insert()
     return Source(record.id, record.platform, record.valueType, record.value)
+  }
+
+  fun insertOrUpdateAndReturn(source: Source): Source {
+    validateSource(source)
+
+    return if (existsById(source.id)) {
+      // TODO - Refactor
+      update(source)
+      findById(source.id)
+    } else {
+      val record = using(configuration()).newRecord(SOURCE, source)
+      record.insert()
+      Source(record.id, record.platform, record.valueType, record.value)
+    }
+
+
+  }
+
+
+  private fun validateSource(source: Source) {
+    when {
+      platformIsUnknown(source.platform) -> throw IllegalArgumentException("Unknown platform")
+      valueTypeIsNotForPlatform(source.valueType, source.platform) -> throw IllegalArgumentException("Unknown value type for ${source.platform}")
+    }
+  }
+
+  private fun valueTypeIsNotForPlatform(valueType: String?, platform: String?): Boolean {
+    return valueType.isNullOrEmpty() || !listOf(ACCOUNT, HASHTAG, WORD, PAGE, GROUP, FORUM, RSS, LOCATION).contains(valueType)
+  }
+
+  private fun platformIsUnknown(platform: String?): Boolean {
+    val platforms = listOf(TWITTER, FACEBOOK, MEETUP, REDDIT, NEWS)
+    return platform.isNullOrEmpty() || !platforms.contains(platform)
   }
 
   private fun getMeetupLocations(sources: List<Source>) = getPlatformOneTypeSources(sources, MEETUP, LOCATION)
