@@ -20,9 +20,9 @@ const styles = theme => ({
 
 const Posts = ({classes, value, posts}) => {
 
-  let postToListItem = post =>
-    <div><ListItem button>
-      {post.topics.map(topic => <Chip label={topic} className={classes.chip}/>)}
+  let postToListItem = (post, index) =>
+    <div key={index}><ListItem button>
+      {(post.topics || []).map((topic, index) => <Chip key={index} label={topic} className={classes.chip}/>)}
       <div >
 
       </div>
@@ -44,27 +44,7 @@ Posts.propTypes = {
 };
 
 Posts.defaultProps = {
-  posts: [{
-    "_id": {
-      "$oid": "5c3fa21b26582c07b6db3109"
-    },
-    "text": "Lorem Ipsum...",
-    "timestamp": "Wed Jan 16 20:42:48 +0000 2019",
-    "id": {
-      "$numberLong": "1085638521438814218"
-    },
-    "language": "en",
-    'retweets': 0,
-    "favourites": 0,
-    "author": {
-      "username": "Horm",
-      "location": "USA",
-      "followers": 14345
-    },
-    "topics": [
-      "bbb", "aaa"
-    ]
-  }],
+  posts: [],
 };
 
 export default withStyles(styles)(Posts)

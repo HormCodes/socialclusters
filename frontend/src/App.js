@@ -15,8 +15,19 @@ class App extends Component {
   state = {
     mobileOpen: false,
     topics: [],
-    sources: []
+    sources: [],
+    posts: [],
   };
+
+  fetchPosts() {
+    axios.get(this.API_URL + "/contents/twitter")
+      .then(response => {
+        this.setState({
+          posts: response.data
+        })
+      })
+      .catch(error => console.log(error))
+  }
 
   fetchTopics() {
     axios.get(this.API_URL + "/topics/")
@@ -42,41 +53,42 @@ class App extends Component {
     // TODO - DEV URL
     this.fetchTopics();
     this.fetchSources();
+    this.fetchPosts();
   }
 
   handleSaveTopic = (topic) => {
     axios.put(this.API_URL + "/topics/" + topic.id, topic)
-      .then(this.fetchTopics)
+      .then(() => this.fetchTopics())
       .catch(error => console.log(error))
   };
 
   handleAddTopic = (topic) => {
     axios.post(this.API_URL + "/topics/", topic)
-      .then(this.fetchTopics)
+      .then(() => this.fetchTopics())
       .catch(error => console.log(error))
   };
 
   handleDeleteTopic = (topic) => {
     axios.delete(this.API_URL + "/topics/" + topic.id)
-      .then(this.fetchTopics)
+      .then(() => this.fetchTopics())
       .catch(error => console.log(error))
   };
 
   handleSaveSource = (source) => {
     axios.put(this.API_URL + "/sources/" + source.id, source)
-      .then(this.fetchSources)
+      .then(() => this.fetchSources())
       .catch(error => console.log(error))
   };
 
   handleAddSource = (source) => {
     axios.post(this.API_URL + "/sources/", source)
-      .then(this.fetchSources)
+      .then(() => this.fetchSources())
       .catch(error => console.log(error))
   };
 
   handleDeleteSource = (source) => {
     axios.delete(this.API_URL + "/sources/" + source.id)
-      .then(this.fetchSources)
+      .then(() => this.fetchSources())
       .catch(error => console.log(error))
   };
 
@@ -96,7 +108,8 @@ class App extends Component {
         name: 'Posts',
         icon: 'question_answer',
         url: '/posts',
-        component: Posts
+        component: () =>
+          <Posts posts={this.state.posts}/>
       },
       {
         name: 'Topics',

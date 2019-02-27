@@ -95,7 +95,7 @@ const Source = (
       name: "News",
       value: "news",
       valueTypes: [
-        {name: "rss", value: "rss", valueLabel: "URL", valuePrefix: "", valuePostfix: ""},
+        {name: "RSS", value: "rss", valueLabel: "URL", valuePrefix: "", valuePostfix: ""},
       ]
     },
   ];
