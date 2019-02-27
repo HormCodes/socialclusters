@@ -1,15 +1,14 @@
 import json
-import pandas as pd
 
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
-from pojo import Tweet, get_tweet_object_from_dict
+from pojo import get_tweet_object_from_dict
 
 STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
 
@@ -28,15 +27,17 @@ def remove_stopwords_from_text(tweet, stopwords):
     tweet_words = remove_not_neccessary_chars(tweet.text).lower().split()
 
     if tweet.language == "und":
-        return tweet_words
+        return "".join(tweet_words)
 
     localized_stopwords = (stopwords[tweet.language])
 
     words = ""
 
+    # morph = majka.Majka("../resources")
+
     for word in tweet_words:
         if word not in localized_stopwords:
-            words += (" " + word)
+            words = words + (" " + word)
 
     return words
 
@@ -47,10 +48,10 @@ def get_data_frame_from_text_objects(text_objects, topic_ids):
         data_frame_input[topic] = []
 
     for tweet in text_objects:
-        data_frame_input['id'].append(tweet['_id']['$oid'])
+        data_frame_input['id'].append(tweet['_id'])
         data_frame_input['text'].append(
             ("@" + tweet["author"]["username"]) + " " + remove_stopwords_from_text(get_tweet_object_from_dict(tweet),
-                                                                           stopwords))
+                                                                                   stopwords))
         for topic in topic_ids:
             if topic in tweet["topics"]:
                 data_frame_input[topic].append(True)
@@ -73,9 +74,6 @@ def get_data_frame_stats(data_frame):
 with open("../topics.json") as file:
     topics = json.load(file)
 
-with open("../twitter.json") as file:
-    tweets = json.load(file)
-
 with open(STOPWORDS_JSON_FILE_NAME) as file:
     stopwords = json.load(file)
 
@@ -83,6 +81,23 @@ topic_ids = []
 
 for topic in topics["topics"]:
     topic_ids.append(topic["id"])
+
+from pymongo import MongoClient
+
+mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_db = mongo_client['content_database']
+twitter_collection = mongo_db['tweet']
+
+tweets = []
+
+for tweet_object in twitter_collection.find({}):
+    if tweet_object is not None:
+        try:
+            test = tweet_object["topics"]
+        except KeyError:
+            pass
+        else:
+            tweets.append(tweet_object)
 
 tweets_data_frame = get_data_frame_from_text_objects(tweets, topic_ids)
 

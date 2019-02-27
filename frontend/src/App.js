@@ -19,16 +19,6 @@ class App extends Component {
     posts: [],
   };
 
-  fetchPosts() {
-    axios.get(this.API_URL + "/contents/twitter")
-      .then(response => {
-        this.setState({
-          posts: response.data
-        })
-      })
-      .catch(error => console.log(error))
-  }
-
   fetchTopics() {
     axios.get(this.API_URL + "/topics/")
       .then(response => {
@@ -53,7 +43,6 @@ class App extends Component {
     // TODO - DEV URL
     this.fetchTopics();
     this.fetchSources();
-    this.fetchPosts();
   }
 
   handleSaveTopic = (topic) => {
@@ -109,7 +98,7 @@ class App extends Component {
         icon: 'question_answer',
         url: '/posts',
         component: () =>
-          <Posts posts={this.state.posts}/>
+          <Posts posts={this.state.posts} topics={this.state.topics}/>
       },
       {
         name: 'Topics',

@@ -119,15 +119,11 @@ def get_twitter_hashtag_tweets(hashtags):
     return tweets
 
 
-
-
-
 with open(CONFIG_JSON_FILE_NAME) as file:
     config = json.load(file)
 
 with open(SOURCES_JSON_FILE_NAME) as file:
     sources = json.load(file)
-
 
 twitter_keys = get_twitter_keys(config)
 
@@ -140,8 +136,7 @@ texts = []
 
 mongo_client = MongoClient("mongodb://localhost:27017/")
 mongo_db = mongo_client['content_database']
-twitter_collection = mongo_db['twitter']
-
+twitter_collection = mongo_db['tweet']
 
 for tweet in tweet_responses:
     tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
@@ -153,5 +148,3 @@ for tweet in tweet_responses:
     if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
         print(tweet_object.get_dict_object())
         twitter_collection.insert_one(tweet_object.get_dict_object())
-
-
