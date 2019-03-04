@@ -2,6 +2,8 @@ package com.socialclusters.api
 
 import com.socialclusters.domain.TweetRepository
 import com.socialclusters.pojos.Tweet
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -12,20 +14,20 @@ class ContentController(
 ) {
 
   @GetMapping("/contents/twitter")
-  fun getTwitterContent(@RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean, @RequestParam(value = "topics", defaultValue = "") topics: String): List<Tweet> {
+  fun getTwitterContent(@RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean, @RequestParam(value = "topics", defaultValue = "") topics: String, pageable: Pageable): Page<Tweet> {
     // TODO - Without topic and topics exception
 
     if (withoutTopic) {
-      return tweetRepository.findWithoutTopics()
+      return tweetRepository.findWithoutTopics(pageable)
     }
 
     val topicList = topics.split(",")
 
     if (topics.isNotEmpty()) {
-      return tweetRepository.findByTopics(topicList)
+      return tweetRepository.findByTopics(topicList, pageable)
     }
 
-    return tweetRepository.findAll()
+    return tweetRepository.findAll(pageable)
   }
 
   @GetMapping("/contents/twitter/{id}")

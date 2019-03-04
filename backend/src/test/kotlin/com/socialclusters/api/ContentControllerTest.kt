@@ -40,8 +40,8 @@ class ContentControllerTest(
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.`is`("lorem ipsum")))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].tweetId", Matchers.`is`("123")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].text", Matchers.`is`("lorem ipsum")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].tweetId", Matchers.`is`("123")))
         }
 
         it("should return stored content without topic from twitter") {
@@ -51,10 +51,10 @@ class ContentControllerTest(
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("withoutTopic", "true"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.`is`(1)))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].text", Matchers.`is`("lorem ipsum")))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].tweetId", Matchers.`is`("123")))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].topics", Matchers.nullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(1)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].text", Matchers.`is`("lorem ipsum")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].tweetId", Matchers.`is`("123")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].topics", Matchers.nullValue()))
         }
 
         it("should return stored content with topics specified as param from twitter") {
@@ -66,7 +66,7 @@ class ContentControllerTest(
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("topics", "traffic,culture"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.`is`(3)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(3)))
         }
       }
 
