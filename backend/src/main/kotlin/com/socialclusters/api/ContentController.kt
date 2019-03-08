@@ -14,7 +14,11 @@ class ContentController(
 ) {
 
   @GetMapping("/contents/twitter")
-  fun getTwitterContent(@RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean, @RequestParam(value = "topics", defaultValue = "") topics: String, pageable: Pageable): Page<Tweet> {
+  fun getTwitterContent(
+    @RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean,
+    @RequestParam(value = "topics", defaultValue = "") topics:
+    String, pageable: Pageable
+  ): Page<Tweet> {
     // TODO - Without topic and topics exception
 
     if (withoutTopic) {

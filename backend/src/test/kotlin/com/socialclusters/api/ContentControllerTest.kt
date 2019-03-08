@@ -34,7 +34,7 @@ class ContentControllerTest(
   init {
     describe("/contents/twitter") {
       context("GET") {
-        it("should return all stored content from twitter") {
+        it("should return all stored content from twitter as a page") {
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
 
 
@@ -44,7 +44,7 @@ class ContentControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].tweetId", Matchers.`is`("123")))
         }
 
-        it("should return stored content without topic from twitter") {
+        it("should return stored content without topic from twitter as a page") {
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
 
@@ -57,7 +57,7 @@ class ContentControllerTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].topics", Matchers.nullValue()))
         }
 
-        it("should return stored content with topics specified as param from twitter") {
+        it("should return stored content with topics specified as param from twitter as a page") {
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
@@ -68,6 +68,22 @@ class ContentControllerTest(
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(3)))
         }
+
+
+
+        it("should return stored content as a page of specified number elements") {
+          tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
+          tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
+          tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture")))
+
+
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("size", "3"))
+            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(3)))
+        }
+
+
       }
 
 
