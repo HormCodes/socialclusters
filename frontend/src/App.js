@@ -97,8 +97,7 @@ class App extends Component {
         name: 'Posts',
         icon: 'question_answer',
         url: '/posts',
-        component: () =>
-          <Posts posts={this.state.posts} topics={this.state.topics}/>
+        component: () => <Posts topics={this.state.topics}/>
       },
       {
         name: 'Topics',

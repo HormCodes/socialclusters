@@ -1,26 +1,13 @@
 import React from 'react';
-import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import axios from "axios";
 import {lighten} from "@material-ui/core/styles/colorManipulator";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import {ListItemText} from "@material-ui/core";
+import PostsToolbar from "./PostsToolbar";
+import PostsTableHead from "./PostsTableHead";
+import PostsTableBody from "./PostsTableBody";
 
 
 const rows = [
@@ -184,137 +171,33 @@ class Posts extends React.Component {
   render() {
     const {classes, topics} = this.props;
 
-    const getTopicName = id => (topics[topics.map(topic => topic.textId).indexOf(id)] || {name: id}).name;
-    const getTopics = (topics) => (topics || []).map(topic => getTopicName(topic)).join(', ');
-    const getText = (text) => (text || '').substr(0, 20) + '...';
 
-    const isSelected = id => this.state.selected.indexOf(id) !== -1;
+    return (
+
+      <Paper style={{maxHeight: '100vh', overflow: 'auto'}}>
+        <PostsToolbar numSelected={this.state.selected.length} isMenuOpened={this.state.anchorEl}/>
 
 
-    return (<Paper style={{maxHeight: '100vh', overflow: 'auto'}}>
-      <Toolbar
-        className={classNames(classes.root, {
-          [classes.highlight]: this.state.selected.length > 0,
-        })}
-      >
-        <div className={classes.title}>
-          {this.state.selected.length > 0 ? (
-            <Typography color="inherit" variant="subtitle1">
-              {this.state.selected.length} selected
-            </Typography>
-          ) : (
-            <Typography variant="h6" id="tableTitle">
-              Posts
-            </Typography>
-          )}
+        <div className={classes.tableWrapper}>
+          <Table className={classes.table} aria-labelledby="tableTitle">
+            <PostsTableHead numSelected={this.state.selected.length} rowCount={this.state.twitter.length} rows={rows}/>
+            <PostsTableBody twitter={this.state.twitter} selected={this.state.selected} topics={topics}/>
+          </Table>
         </div>
-        <div className={classes.spacer}/>
-        <div className={classes.actions}>
-          {this.state.selected.length > 0 ? (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete" onClick={() => this.handleDeletePosts()}>
-                <DeleteIcon/>
-              </IconButton>
-            </Tooltip>
-          ) : (<div>
 
-            <Tooltip title="Filter list">
-              <IconButton aria-label="Filter list" onClick={event => this.showFilterMenu(event)}>
-                <FilterListIcon/>
-              </IconButton>
-
-            </Tooltip>
-              <Menu
-                anchorEl={this.state.anchorEl}
-                open={Boolean(this.state.anchorEl)}
-                onClose={this.handleClose}
-              >
-                <MenuItem onClick={() => this.handleCloseFilterMenu()}>
-                  <Checkbox checked={this.state.filterWithTopic} onChange={this.handleFilterTopicChange}/>
-                  <ListItemText>Without Topic</ListItemText>
-                </MenuItem>
-              </Menu>
-            </div>
-
-          )}
-        </div>
-      </Toolbar>
-
-
-      <div className={classes.tableWrapper}>
-        <Table className={classes.table} aria-labelledby="tableTitle">
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  indeterminate={this.state.selected.length > 0 && this.state.selected.length < this.state.twitter.length}
-                  checked={this.state.selected.length === this.state.twitter.length}
-                  onChange={this.handleSelectAllClick}
-                />
-              </TableCell>
-              {rows.map(
-                row => (
-                  <TableCell
-                    key={row.id}
-                    align={row.numeric ? 'right' : 'left'}
-                    padding={row.disablePadding ? 'none' : 'default'}
-                    sortDirection={this.state.orderBy === row.id ? this.state.order : false}
-                  >
-                    <Tooltip
-                      title="Sort"
-                      placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-                      enterDelay={300}
-                    >
-                      <TableSortLabel
-                        active={this.state.orderBy === row.id}
-                        direction={this.state.order}
-                      >
-                        {row.label}
-                      </TableSortLabel>
-                    </Tooltip>
-                  </TableCell>
-                ),
-                this,
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.twitter.map((post, index) => <TableRow
-              hover
-              role="checkbox"
-              aria-checked={false}
-              tabIndex={-1}
-              selected={false}
-              onClick={event => this.handleSelectClick(event, post._id)}
-            >
-              <TableCell padding="checkbox">
-                <Checkbox checked={isSelected(post._id)}/>
-              </TableCell>
-              <TableCell align="left">{post.timestamp}</TableCell>
-              <TableCell align="left">{"Twitter"}</TableCell>
-
-              <TableCell align="left">{post.author.username}</TableCell>
-              <TableCell component="th" scope="row" padding="none">
-                {getText(post.text)}
-              </TableCell>
-              <TableCell align="left">{getTopics(post.topics)}</TableCell>
-            </TableRow>)}
-          </TableBody>
-        </Table>
-      </div>
-
-      <TablePagination
-        rowsPerPageOptions={this.rowsPerPageOptions}
-        component="div"
-        count={this.state.dataLength}
-        rowsPerPage={this.state.rowsPerPage}
-        page={this.state.page}
-        onChangePage={this.handlePageChange}
-        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-      />
-    </Paper>)
+        <TablePagination
+          rowsPerPageOptions={this.rowsPerPageOptions}
+          component="div"
+          count={this.state.dataLength}
+          rowsPerPage={this.state.rowsPerPage}
+          page={this.state.page}
+          onChangePage={this.handlePageChange}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        />
+      </Paper>)
   }
 
 };
+
 
 export default withStyles(styles)(Posts)

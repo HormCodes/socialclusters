@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types'
 import withStyles from "@material-ui/core/es/styles/withStyles";
 
 const styles = {
@@ -9,15 +8,9 @@ const styles = {
 }
 
 const Dashboard = ({classes, value}) =>{
-  return <div className={classes.wrapper}>{value}</div>
+  //return <PostsToolbar numSelected={0} filterWithTopic={false} isMenuOpened={false}/>
+  return <div className={classes.wrapper}>{32}</div>
 };
 
-Dashboard.propTypes = {
-  value: PropTypes.number
-};
-
-Dashboard.defaultProps = {
-  value: 42
-};
 
 export default withStyles(styles) (Dashboard)
