@@ -1,11 +1,10 @@
 package com.socialclusters.pojos
 
-import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 
 class Tweet(
   @Id
-  val _id: ObjectId?,
+  val _id: String?,
   val text: String,
   val timestamp: String,
   val tweetId: String,

@@ -8,7 +8,6 @@ import io.kotlintest.matchers.collections.contain
 import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
-import org.bson.types.ObjectId
 import org.hamcrest.Matchers
 import org.junit.runner.RunWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -94,7 +93,7 @@ class ContentControllerTest(
       context("GET") {
 
         it("should return one existing tweet for specified id") {
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3109"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/5c3fa21b26582c07b6db3109"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
@@ -103,7 +102,7 @@ class ContentControllerTest(
         }
 
         it("should return not found for non existing tweet for specified id") {
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3109"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/123"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
@@ -113,9 +112,9 @@ class ContentControllerTest(
 
       context("DELETE") {
         it("should delete existing post") {
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3109"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3110"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3111"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3110", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3111", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events")))
 
           mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/5c3fa21b26582c07b6db3109"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
@@ -124,9 +123,9 @@ class ContentControllerTest(
 
         }
         it("should return not found for non existing post") {
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3109"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3110"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3111"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3110", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3111", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events")))
 
           mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/123"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
@@ -145,7 +144,7 @@ class ContentControllerTest(
         it("should add new topics which were empty before") {
 
           val id = "5c3fa21b26582c07b6db3109"
-          tweetRepository.insert(Tweet(ObjectId(id), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
+          tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
 
           mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
@@ -158,7 +157,7 @@ class ContentControllerTest(
         it("should change to new topics and remove old") {
 
           val id = "5c3fa21b26582c07b6db3109"
-          tweetRepository.insert(Tweet(ObjectId(id), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "events")))
+          tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "events")))
 
           mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
@@ -173,7 +172,7 @@ class ContentControllerTest(
 
 
         it("should return not found for non existing tweet for specified id") {
-          tweetRepository.insert(Tweet(ObjectId("5c3fa21b26582c07b6db3109"), "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
+          tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
 
           mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/123/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
