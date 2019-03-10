@@ -12,42 +12,39 @@ let PostsTableHead = props => {
   const {numSelected, rowCount, handleSelectAllClick, columns, order, orderBy} = props;
 
 
-  return <TableHead>
-    <TableRow>
-      <TableCell padding="checkbox">
-        <Checkbox
-          indeterminate={numSelected > 0 && numSelected < rowCount}
-          checked={numSelected === rowCount}
-          onChange={handleSelectAllClick}
-        />
-      </TableCell>
-      {columns.map(
-        row => (
-          <TableCell
-            key={row.id}
-            align={row.numeric ? 'right' : 'left'}
-            padding={row.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === row.id ? order : false}
-          >
-            <Tooltip
-              title="Sort"
-              placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-              enterDelay={300}
-            >
-              <TableSortLabel
-                active={orderBy === row.id}
-                direction={order}
-              >
-                {row.label}
-              </TableSortLabel>
-            </Tooltip>
-          </TableCell>
-        ),
-        this,
-      )}
-    </TableRow>
-  </TableHead>;
-}
+  let columnToHtml = row => (
+    <TableCell
+      key={row.id}
+      align={row.numeric ? 'right' : 'left'}
+      padding={row.disablePadding ? 'none' : 'default'}
+      sortDirection={orderBy === row.id ? order : false}
+    >
+      <Tooltip title="Sort" placement={row.numeric ? 'bottom-end' : 'bottom-start'} enterDelay={300}>
+        <TableSortLabel active={orderBy === row.id} direction={order}>
+          {row.label}
+        </TableSortLabel>
+      </Tooltip>
+    </TableCell>
+  );
+
+  return (
+    <TableHead>
+      <TableRow>
+
+        <TableCell padding="checkbox">
+          <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={numSelected === rowCount}
+            onChange={handleSelectAllClick}
+          />
+        </TableCell>
+
+        {columns.map(columnToHtml)}
+
+      </TableRow>
+    </TableHead>
+  );
+};
 
 PostsTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
@@ -59,7 +56,6 @@ PostsTableHead.propTypes = {
 };
 
 PostsTableHead.defaultProps = {
-
   numSelected: 0,
   rowCount: 5,
   columns: [],
@@ -67,6 +63,6 @@ PostsTableHead.defaultProps = {
   orderBy: 'timestamp',
   handleSelectAllClick: () => {
   },
-}
+};
 
 export default (PostsTableHead)
