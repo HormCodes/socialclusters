@@ -43,6 +43,7 @@ const toolbarStyles = theme => ({
 let PostsToolbar = props => {
 
   const {
+    title,
     numSelected,
     classes,
     anchorEl,
@@ -90,7 +91,7 @@ let PostsToolbar = props => {
 
   let postsTitle =
     <Typography variant="h6" id="tableTitle">
-      Posts
+      {title}
     </Typography>;
 
 
@@ -112,6 +113,7 @@ PostsToolbar.propTypes = {
   filterWithTopic: PropTypes.bool.isRequired,
   handleFilterTopicSwitch: PropTypes.func.isRequired,
   handleDeletePosts: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 
@@ -123,6 +125,7 @@ PostsToolbar.defaultProps = {
   },
   handleDeletePosts: () => {
   },
+  title: "Twitter" // TODO - Add as attr
 };
 
 

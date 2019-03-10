@@ -23,6 +23,7 @@ let PostsTableBody = props => {
   // TODO - Multi Data Source
   return <TableBody>
     {twitter.map((post, index) => <TableRow
+      key={index}
       hover
       role="checkbox"
       aria-checked={false}
@@ -34,7 +35,6 @@ let PostsTableBody = props => {
         <Checkbox checked={isSelected(post._id)}/>
       </TableCell>
       <TableCell align="left">{post.timestamp}</TableCell>
-      <TableCell align="left">{"Twitter"}</TableCell>
 
       <TableCell align="left">{post.author.username}</TableCell>
       <TableCell component="th" scope="row" padding="none">
