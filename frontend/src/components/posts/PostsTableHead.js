@@ -34,7 +34,7 @@ let PostsTableHead = props => {
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={numSelected === rowCount}
+            checked={numSelected === rowCount && rowCount !== 0}
             onChange={handleSelectAllClick}
           />
         </TableCell>
