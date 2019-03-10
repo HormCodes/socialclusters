@@ -4,61 +4,22 @@ import Table from '@material-ui/core/Table';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import axios from "axios";
-import {lighten} from "@material-ui/core/styles/colorManipulator";
 import PostsToolbar from "./PostsToolbar";
 import PostsTableHead from "./PostsTableHead";
 import PostsTableBody from "./PostsTableBody";
+import {getPostsAsPage} from "../../data/Posts";
 
-
-const rows = [
-  {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-  {id: 'platform', numeric: false, disablePadding: false, label: 'Platform'},
-  {id: 'author', numeric: false, disablePadding: false, label: 'Author'},
-  {id: 'text', numeric: false, disablePadding: true, label: 'Text'},
-  {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
-];
-
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-
-    paddingRight: theme.spacing.unit,
-  },
-  chip: {
-    margin: theme.spacing.unit,
-  },
-  inline: {
-    display: 'inline',
-  },
+const styles = () => ({
   tableWrapper: {
     overflowX: 'auto',
   },
   table: {},
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
-  spacer: {
-    flex: '1 1 100%',
-  },
-  actions: {
-    color: theme.palette.text.secondary,
-  },
-  title: {
-    flex: '0 0 auto',
-  },
+
 });
 
 class Posts extends React.Component {
 
-  API_URL = "http://localhost:8080"; // TODO - Constants
+
   rowsPerPageOptions = [5, 10, 20];
 
   state = {
@@ -71,12 +32,12 @@ class Posts extends React.Component {
     dataLength: 0,
     page: 0,
     anchorEl: null,
-  }
+  };
 
 
-  handleFilterTopicSwitch = event => {
+  handleFilterTopicSwitch = () => {
     this.setState(prevState => {
-      this.fetchPosts(this.state.rowsPerPage, this.state.page, !prevState.filterWithTopic)
+      this.fetchPosts(this.state.rowsPerPage, this.state.page, !prevState.filterWithTopic); // TODO - Refactor
       return {
         filterWithTopic: !prevState.filterWithTopic
       }
@@ -108,23 +69,22 @@ class Posts extends React.Component {
 
   handleSelectAllClick = event => {
     if (event.target.checked) {
-      this.setState(state => ({selected: state.twitter.map(n => n._id)}));
+      this.setState(state => ({selected: state.twitter.map(n => n._id)})); // TODO - Multi Data Source
       return;
     }
     this.setState({selected: []});
   };
 
 
-
   handlePageChange = (event, page) => {
     this.setState({page})
-    this.fetchPosts(this.state.rowsPerPage, page)
+    this.fetchPosts(this.state.rowsPerPage, page) // TODO - Refactor
 
   };
 
   handleChangeRowsPerPage = event => {
     this.setState({rowsPerPage: event.target.value});
-    this.fetchPosts(event.target.value, this.state.page)
+    this.fetchPosts(event.target.value, this.state.page) // TODO - Refactor
 
   };
 
@@ -133,7 +93,7 @@ class Posts extends React.Component {
 
     Promise.all(promises)
       .then(() => {
-        this.setState({selected: []})
+        this.setState({selected: []});
         this.fetchPosts()
       })
       .catch(error => console.error(error))
@@ -146,21 +106,18 @@ class Posts extends React.Component {
 
 
   fetchPosts(size, page, filterWithTopic = this.state.filterWithTopic) {
-    axios.get(`${this.API_URL}/contents/twitter/`, {
-      params: {
-        withoutTopic: filterWithTopic,
-        size: size,
-        page: page
-      }
-    })
-      .then(response => {
-        this.setState({
-          page: response.data.pageable.pageNumber,
-          dataLength: response.data.totalElements,
-          rowsPerPage: response.data.size, // TODO
-          twitter: response.data.content,
-        })
+    let applyResponseToState = response => {
+      this.setState({
+        page: response.data.number,
+        dataLength: response.data.totalElements,
+        rowsPerPage: response.data.size, // TODO
+        twitter: response.data.content,
       })
+    };
+
+
+    getPostsAsPage(size, page, filterWithTopic)
+      .then(applyResponseToState)
       .catch(error => console.log(error))
   }
 
@@ -168,6 +125,13 @@ class Posts extends React.Component {
   render() {
     const {classes, topics} = this.props;
 
+    const rows = [
+      {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
+      {id: 'platform', numeric: false, disablePadding: false, label: 'Platform'},
+      {id: 'author', numeric: false, disablePadding: false, label: 'Author'},
+      {id: 'text', numeric: false, disablePadding: true, label: 'Text'},
+      {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+    ];
 
     return (
 
@@ -181,12 +145,22 @@ class Posts extends React.Component {
 
 
         <div className={classes.tableWrapper}>
+
           <Table className={classes.table} aria-labelledby="tableTitle">
-            <PostsTableHead numSelected={this.state.selected.length} rowCount={this.state.twitter.length} columns={rows}
-                            handleSelectAllClick={this.handleSelectAllClick}/>
-            <PostsTableBody twitter={this.state.twitter} selected={this.state.selected} topics={topics}
-                            handleSelect={this.handleSelectClick}/>
+            <PostsTableHead
+              numSelected={this.state.selected.length}
+              rowCount={this.state.twitter.length}
+              columns={rows}
+              handleSelectAllClick={this.handleSelectAllClick}
+            />
+            <PostsTableBody
+              twitter={this.state.twitter}
+              selected={this.state.selected}
+              topics={topics}
+              handleSelect={this.handleSelectClick}
+            />
           </Table>
+
         </div>
 
         <TablePagination
@@ -198,7 +172,8 @@ class Posts extends React.Component {
           onChangePage={this.handlePageChange}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
-      </Paper>)
+      </Paper>
+    )
   }
 
 };
