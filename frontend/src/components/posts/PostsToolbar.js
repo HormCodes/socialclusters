@@ -41,58 +41,70 @@ const toolbarStyles = theme => ({
 });
 
 let PostsToolbar = props => {
-  const {numSelected, classes, anchorEl, filterWithTopic, handleDeletePosts, handleCloseMenu, handleOpenMenu, handleFilterTopicSwitch} = props;
+
+  const {
+    numSelected,
+    classes,
+    anchorEl,
+    filterWithTopic,
+    handleDeletePosts,
+    handleCloseMenu,
+    handleOpenMenu,
+    handleFilterTopicSwitch,
+  } = props;
+
+  let filterButton =
+    <div>
+      <Tooltip title="Filter list">
+        <IconButton aria-label="Filter list" onClick={handleOpenMenu}>
+          <FilterListIcon/>
+        </IconButton>
+      </Tooltip>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={handleFilterTopicSwitch}>
+          <Checkbox checked={filterWithTopic}/>
+          <ListItemText>Without Topic</ListItemText>
+        </MenuItem>
+      </Menu>
+    </div>;
+
+
+  let deleteButton =
+    <Tooltip title="Delete">
+      <IconButton aria-label="Delete" onClick={handleDeletePosts}>
+        <DeleteIcon/>
+      </IconButton>
+    </Tooltip>;
+
+
+  let numSelectedTitle =
+    <Typography color="inherit" variant="subtitle1">
+      {numSelected} selected
+    </Typography>;
+
+
+  let postsTitle =
+    <Typography variant="h6" id="tableTitle">
+      Posts
+    </Typography>;
+
 
   return (
-    <Toolbar className={classNames(classes.root, {
-      [classes.highlight]: numSelected > 0,
-    })}
-    >
+    <Toolbar className={classNames(classes.root, {[classes.highlight]: numSelected > 0,})}>
       <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="h6" id="tableTitle">
-            Posts
-          </Typography>
-        )}
+        {numSelected > 0 ? (numSelectedTitle) : (postsTitle)}
       </div>
       <div className={classes.spacer}/>
       <div className={classes.actions}>
-        {numSelected > 0 ?
-          (
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete" onClick={handleDeletePosts}>
-                <DeleteIcon/>
-              </IconButton>
-            </Tooltip>
-          )
-          :
-          (<div>
-
-              <Tooltip title="Filter list">
-                <IconButton aria-label="Filter list" onClick={handleOpenMenu}>
-                  <FilterListIcon/>
-                </IconButton>
-
-              </Tooltip>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseMenu}
-              >
-                <MenuItem onClick={handleFilterTopicSwitch}>
-                  <Checkbox checked={filterWithTopic}/>
-                  <ListItemText>Without Topic</ListItemText>
-                </MenuItem>
-              </Menu>
-            </div>
-
-          )}
+        {numSelected > 0 ? (deleteButton) : (filterButton)}
       </div>
-    </Toolbar>)
+    </Toolbar>
+  )
 }
 
 PostsToolbar.propTypes = {
@@ -100,9 +112,7 @@ PostsToolbar.propTypes = {
   filterWithTopic: PropTypes.bool.isRequired,
   handleFilterTopicSwitch: PropTypes.func.isRequired,
   handleDeletePosts: PropTypes.func.isRequired,
-
-
-}
+};
 
 
 PostsToolbar.defaultProps = {
@@ -113,9 +123,7 @@ PostsToolbar.defaultProps = {
   },
   handleDeletePosts: () => {
   },
-
-
-}
+};
 
 
 export default compose(
