@@ -5,3 +5,5 @@ nose
 sklearn
 pandas
 ufal.morphodita
+feedparser
+newspaper3k
