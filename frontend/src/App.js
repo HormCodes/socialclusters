@@ -6,11 +6,10 @@ import Posts from "./components/posts/Posts";
 import Topics from "./components/topics/Topics";
 import Sources from "./components/sources/Sources";
 import Settings from "./components/settings/Settings";
-import axios from "axios";
+import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
+import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 
 class App extends Component {
-
-  API_URL = "http://localhost:8080";
 
   state = {
     mobileOpen: false,
@@ -19,71 +18,66 @@ class App extends Component {
     posts: [],
   };
 
-  fetchTopics() {
-    axios.get(this.API_URL + "/topics/")
-      .then(response => {
-        this.setState({
-          topics: response.data
-        })
-      })
-      .catch(error => console.log(error))
-  }
-
-  fetchSources() {
-    axios.get(this.API_URL + "/sources/")
-      .then(response => {
-        this.setState({
-          sources: response.data
-        })
-      })
-      .catch(error => console.log(error))
-  }
-
   componentDidMount() {
-    // TODO - DEV URL
     this.fetchTopics();
     this.fetchSources();
   }
 
-  handleSaveTopic = (topic) => {
-    axios.put(this.API_URL + "/topics/" + topic.id, topic)
+  fetchTopics = () => {
+    let applyResponseToState = response => {
+      this.setState({
+        topics: response.data
+      })
+    };
+
+    getTopics()
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
+  };
+
+  fetchSources = () => {
+    let applyResponseToState = response => {
+      this.setState({
+        sources: response.data
+      })
+    };
+
+    getSources()
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
+  };
+
+  handleSaveTopic = (topic) =>
+    saveTopic(topic)
       .then(() => this.fetchTopics())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleAddTopic = (topic) => {
-    axios.post(this.API_URL + "/topics/", topic)
+  handleAddTopic = (topic) =>
+    addTopic(topic)
       .then(() => this.fetchTopics())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleDeleteTopic = (topic) => {
-    axios.delete(this.API_URL + "/topics/" + topic.id)
+  handleDeleteTopic = topic =>
+    deleteTopic(topic.id)
       .then(() => this.fetchTopics())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleSaveSource = (source) => {
-    axios.put(this.API_URL + "/sources/" + source.id, source)
+  handleSaveSource = source =>
+    saveSource(source)
       .then(() => this.fetchSources())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleAddSource = (source) => {
-    axios.post(this.API_URL + "/sources/", source)
+  handleAddSource = source =>
+    addSource(source)
       .then(() => this.fetchSources())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleDeleteSource = (source) => {
-    axios.delete(this.API_URL + "/sources/" + source.id)
+  handleDeleteSource = source =>
+    deleteSource(source.id)
       .then(() => this.fetchSources())
-      .catch(error => console.log(error))
-  };
+      .catch(error => console.log(error));
 
-  handleDrawerToggle = () => {
-    this.setState(state => ({mobileOpen: !state.mobileOpen}));
-  };
+  handleDrawerToggle = () => this.setState(state => ({mobileOpen: !state.mobileOpen}));
 
   render() {
     const appItems = [

@@ -1,7 +1,5 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:8080"; // TODO - Dev Env
-
+import {API_URL} from "./Constants";
 
 export function getPostsAsPage(pageSize, pageNumber, filterWithTopic) {
   let config = {
