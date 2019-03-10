@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import * as PropTypes from "prop-types";
 import Toolbar from "@material-ui/core/Toolbar";
+import {compose, withHandlers, withState} from "recompose";
 
 const toolbarStyles = theme => ({
   root: {
@@ -40,7 +41,7 @@ const toolbarStyles = theme => ({
 });
 
 let PostsToolbar = props => {
-  const {numSelected, classes, isMenuOpened, filterWithTopic, handleClose, handleFilterTopicChange, handleDeletePosts, handleCloseFilterMenu, showFilterMenu} = props;
+  const {numSelected, classes, anchorEl, filterWithTopic, handleDeletePosts, handleCloseMenu, handleOpenMenu, handleFilterTopicSwitch} = props;
 
   return (
     <Toolbar className={classNames(classes.root, {
@@ -63,7 +64,7 @@ let PostsToolbar = props => {
         {numSelected > 0 ?
           (
             <Tooltip title="Delete">
-              <IconButton aria-label="Delete" onClick={() => handleDeletePosts()}>
+              <IconButton aria-label="Delete" onClick={handleDeletePosts}>
                 <DeleteIcon/>
               </IconButton>
             </Tooltip>
@@ -72,18 +73,18 @@ let PostsToolbar = props => {
           (<div>
 
               <Tooltip title="Filter list">
-                <IconButton aria-label="Filter list" onClick={event => showFilterMenu(event)}>
+                <IconButton aria-label="Filter list" onClick={handleOpenMenu}>
                   <FilterListIcon/>
                 </IconButton>
 
               </Tooltip>
               <Menu
-                anchorEl={isMenuOpened}
-                open={Boolean(isMenuOpened)}
-                onClose={handleClose}
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseMenu}
               >
-                <MenuItem onClick={() => handleCloseFilterMenu()}>
-                  <Checkbox checked={filterWithTopic} onChange={handleFilterTopicChange}/>
+                <MenuItem onClick={handleFilterTopicSwitch}>
+                  <Checkbox checked={filterWithTopic}/>
                   <ListItemText>Without Topic</ListItemText>
                 </MenuItem>
               </Menu>
@@ -95,10 +96,37 @@ let PostsToolbar = props => {
 }
 
 PostsToolbar.propTypes = {
-  numSelected: PropTypes.number,
-  isMenuOpened: PropTypes.bool,
-  filterWithTopic: PropTypes.bool,
+  numSelected: PropTypes.number.isRequired,
+  filterWithTopic: PropTypes.bool.isRequired,
+  handleFilterTopicSwitch: PropTypes.func.isRequired,
+  handleDeletePosts: PropTypes.func.isRequired,
+
 
 }
 
-export default withStyles(toolbarStyles)(PostsToolbar);
+
+PostsToolbar.defaultProps = {
+  numSelected: 0,
+  isMenuOpened: false,
+  filterWithTopic: false,
+  handleFilterTopicSwitch: () => {
+  },
+  handleDeletePosts: () => {
+  },
+
+
+}
+
+
+export default compose(
+  withStyles(toolbarStyles),
+  withState('anchorEl', 'updateAnchorEl', null),
+  withHandlers({
+    handleOpenMenu: props => event => {
+      props.updateAnchorEl(event.currentTarget)
+    },
+    handleCloseMenu: props => event => {
+      props.updateAnchorEl(null)
+    }
+  })
+)(PostsToolbar);

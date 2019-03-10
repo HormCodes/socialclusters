@@ -73,12 +73,16 @@ class Posts extends React.Component {
     anchorEl: null,
   }
 
-  handleFilterTopicChange = event => {
-    this.setState({
-      filterWithTopic: event.target.checked
+
+  handleFilterTopicSwitch = event => {
+    this.setState(prevState => {
+      this.fetchPosts(this.state.rowsPerPage, this.state.page, !prevState.filterWithTopic)
+      return {
+        filterWithTopic: !prevState.filterWithTopic
+      }
     });
 
-    this.fetchPosts(this.state.rowsPerPage, this.state.page, event.target.checked)
+
   };
 
   handleSelectClick = (event, id) => {
@@ -110,13 +114,6 @@ class Posts extends React.Component {
     this.setState({selected: []});
   };
 
-  showFilterMenu(event) {
-    this.setState({anchorEl: event.currentTarget});
-  }
-
-  handleCloseFilterMenu() {
-    this.setState({anchorEl: null});
-  }
 
 
   handlePageChange = (event, page) => {
@@ -175,13 +172,20 @@ class Posts extends React.Component {
     return (
 
       <Paper style={{maxHeight: '100vh', overflow: 'auto'}}>
-        <PostsToolbar numSelected={this.state.selected.length} isMenuOpened={this.state.anchorEl}/>
+        <PostsToolbar
+          numSelected={this.state.selected.length}
+          handleDeletePosts={this.handleDeletePosts.bind(this)}
+          handleFilterTopicSwitch={this.handleFilterTopicSwitch}
+          filterWithTopic={this.state.filterWithTopic}
+        />
 
 
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
-            <PostsTableHead numSelected={this.state.selected.length} rowCount={this.state.twitter.length} rows={rows}/>
-            <PostsTableBody twitter={this.state.twitter} selected={this.state.selected} topics={topics}/>
+            <PostsTableHead numSelected={this.state.selected.length} rowCount={this.state.twitter.length} columns={rows}
+                            handleSelectAllClick={this.handleSelectAllClick}/>
+            <PostsTableBody twitter={this.state.twitter} selected={this.state.selected} topics={topics}
+                            handleSelect={this.handleSelectClick}/>
           </Table>
         </div>
 

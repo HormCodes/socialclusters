@@ -5,10 +5,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableHead from "@material-ui/core/TableHead";
+import * as PropTypes from "prop-types";
 
 
 let PostsTableHead = props => {
-  const {numSelected, rowCount, handleSelectAllClick, rows, order, orderBy} = props;
+  const {numSelected, rowCount, handleSelectAllClick, columns, order, orderBy} = props;
 
 
   return <TableHead>
@@ -20,7 +21,7 @@ let PostsTableHead = props => {
           onChange={handleSelectAllClick}
         />
       </TableCell>
-      {rows.map(
+      {columns.map(
         row => (
           <TableCell
             key={row.id}
@@ -46,6 +47,26 @@ let PostsTableHead = props => {
       )}
     </TableRow>
   </TableHead>;
+}
+
+PostsTableHead.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+  rowCount: PropTypes.number.isRequired,
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  order: PropTypes.string.isRequired,
+  orderBy: PropTypes.string.isRequired,
+  handleSelectAllClick: PropTypes.func.isRequired,
+};
+
+PostsTableHead.defaultProps = {
+
+  numSelected: 0,
+  rowCount: 5,
+  columns: [],
+  order: 'asc', // TODO - Asc or Desc?
+  orderBy: 'timestamp',
+  handleSelectAllClick: () => {
+  },
 }
 
 export default (PostsTableHead)

@@ -2,10 +2,11 @@ import React from "react";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import Checkbox from "@material-ui/core/Checkbox";
+import * as PropTypes from "prop-types";
 import TableRow from "@material-ui/core/TableRow";
 
 let PostsTableBody = props => {
-  const {twitter, selected, topics,} = props
+  const {twitter, selected, topics, handleSelect} = props
 
 
   const getTopicName = id => ((topics || [])[(topics || []).map(topic => topic.textId).indexOf(id)] || {name: id}).name;
@@ -21,7 +22,7 @@ let PostsTableBody = props => {
       aria-checked={false}
       tabIndex={-1}
       selected={false}
-      onClick={event => this.handleSelectClick(event, post._id)}
+      onClick={event => handleSelect(event, post._id)}
     >
       <TableCell padding="checkbox">
         <Checkbox checked={isSelected(post._id)}/>
@@ -37,5 +38,21 @@ let PostsTableBody = props => {
     </TableRow>)}
   </TableBody>;
 }
+
+PostsTableBody.propTypes = {
+  twitter: PropTypes.array.isRequired,
+  selected: PropTypes.array.isRequired,
+  topics: PropTypes.array.isRequired,
+  handleSelect: PropTypes.func.isRequired
+}
+
+PostsTableBody.defaultProps = {
+  twitter: [],
+  selected: [],
+  topics: [],
+  handleSelect: () => {
+  },
+}
+
 
 export default PostsTableBody
