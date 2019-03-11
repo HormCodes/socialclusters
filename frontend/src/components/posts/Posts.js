@@ -9,56 +9,43 @@ import {
   getMeetupPostsAsPage,
   getNewsPostsAsPage,
   getRedditPostsAsPage,
-  getTwitterPostsAsPage
+  getTwitterPostsAsPage,
+  saveTwitterPostTopics
 } from "../../data/Posts";
 import PlatformPostTable from "./PlatformPostTable";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
-import {Typography} from "@material-ui/core";
-
-let PostDetail = ({opened, detailsContent, handleSavePost, handleClose, content}) =>
-  <Dialog
-    fullScreen={false}
-    open={opened}
-    onClose={handleClose}
-    aria-labelledby="responsive-dialog-title"
-  >
-    <DialogTitle id="responsive-dialog-title">{"Use Google's location service?"}</DialogTitle>
-    <DialogContent>
-      {content}
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={handleClose} color="primary">
-        Cancel
-      </Button>
-      <Button onClick={handleSavePost} color="primary" autoFocus>
-        Save
-      </Button>
-    </DialogActions>
-  </Dialog>
+import DialogContentText from "@material-ui/core/DialogContentText";
+import PostDetail from "./PostDetail";
 
 
 class Posts extends React.Component {
 
   state = {
     postDialogContent: 'Something went wrong...',
-    postOpened: false
+    openedPost: {},
+    postOpened: false,
+    platformSaveTopicsHandler: () => Promise.resolve()
   }
 
 
-  handleClickOpen = (content) => {
-    console.log(content)
-    this.setState({postOpened: true, postDialogContent: content});
+  handleClickOpen = (post, content) => {
+    console.log(post.topics)
+    this.setState({postOpened: true, postDialogContent: content, openedPost: post});
   };
 
-  handleClose = () => {
+  handleClose = (post) => {
+    console.log(post)
     this.setState({
       postOpened: false// TODO - Remove null
     });
   };
+
+  handleSave = (postId, topics) => {
+    this.state.platformSaveTopicsHandler(postId, topics)
+      .then(() => {
+        this.setState({postOpened: false})
+      })
+      .catch(error => console.error(error))
+  }
 
 
   render() {
@@ -82,17 +69,14 @@ class Posts extends React.Component {
         ],
         detailsContentFormat: (post) =>
           <div>
-            <Typography>
-              <b>Platform:</b> Twitter
-
-            </Typography>
-            <Typography>
-              <b>Author:</b> @{post.author.username}
-
-            </Typography>
+            <DialogContentText><b>Platform:</b> Twitter</DialogContentText>
+            <DialogContentText><b>Author:</b> @{post.author.username}</DialogContentText>
+            <br/>
+            <DialogContentText>{post.text}</DialogContentText>
           </div>,
         getPostsAsPage: getTwitterPostsAsPage,
         deletePost: deleteTwitterPost,
+        savePostTopics: saveTwitterPostTopics,
       },
       {
         name: "Facebook",
@@ -122,7 +106,6 @@ class Posts extends React.Component {
         detailsContentFormat: (post) =>
           <div>
             <b>Platform:</b> Twitter
-            <b>Author:</b> @{post.author.username}
           </div>,
 
         // TODO - Implement backend
@@ -167,30 +150,58 @@ class Posts extends React.Component {
       },
     ]
 
-    return (
+    if (this.state.postOpened) {
+      return (
 
-      <div>
-        <PostDetail handleClose={this.handleClose}
-                    post={{}}
-                    opened={this.state.postOpened}
-                    handleSavePost={this.handleClose}
-                    content={this.state.postDialogContent}
-        >
-        </PostDetail>
-        {platforms.map((platform, index) =>
-          <PlatformPostTable
-            key={index}
-            platformName={platform.name}
-            columns={platform.columns}
-            topics={topics}
-            handleOpenPost={(post) =>
-              this.handleClickOpen(platform.detailsContentFormat(post))
-            }
-            deletePost={platform.deletePost}
-            getPostsAsPage={platform.getPostsAsPage}/>
-        )}
-      </div>
-    )
+        <div>
+          <PostDetail handleClose={this.handleClose}
+                      post={this.state.openedPost}
+                      topics={this.state.openedPost.topics}
+                      opened={true} // Check is above
+                      handleSaveTopics={this.handleSave}
+                      content={this.state.postDialogContent}
+                      topicOptions={topics}
+          >
+          </PostDetail>
+          {platforms.map((platform, index) =>
+            <PlatformPostTable
+              key={index}
+              platformName={platform.name}
+              columns={platform.columns}
+              topics={topics}
+              handleOpenPost={(post) => {
+                this.handleClickOpen(post, platform.detailsContentFormat(post))
+                this.setState({platformSaveTopicsHandler: platform.savePostTopics})
+              }
+              }
+              deletePost={platform.deletePost}
+              getPostsAsPage={platform.getPostsAsPage}/>
+          )}
+        </div>
+      )
+    } else {
+      return (
+
+        <div>
+          {platforms.map((platform, index) =>
+            <PlatformPostTable
+              key={index}
+              platformName={platform.name}
+              columns={platform.columns}
+              topics={topics}
+              handleOpenPost={(post) => {
+                this.handleClickOpen(post, platform.detailsContentFormat(post))
+                this.setState({platformSaveTopicsHandler: platform.savePostTopics})
+              }
+              }
+              deletePost={platform.deletePost}
+              getPostsAsPage={platform.getPostsAsPage}/>
+          )}
+        </div>
+      )
+    }
+
+
   }
 
 };

@@ -17,6 +17,10 @@ export function deleteTwitterPost(postId) {
   return axios.delete(`${API_URL}/contents/twitter/${postId}`)
 }
 
+export function saveTwitterPostTopics(postId, topics) {
+  return axios.patch(`${API_URL}/contents/twitter/${postId}/topics`, topics)
+}
+
 
 export function getFacebookPostsAsPage(pageSize, pageNumber, filterWithTopic) {
   let config = {
