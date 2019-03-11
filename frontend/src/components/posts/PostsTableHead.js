@@ -39,6 +39,10 @@ let PostsTableHead = props => {
 
         {columns.map(columnToHtml)}
 
+
+        <TableCell>
+        </TableCell>
+
       </TableRow>
     </TableHead>
   );

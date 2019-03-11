@@ -4,9 +4,11 @@ import TableCell from "@material-ui/core/TableCell";
 import Checkbox from "@material-ui/core/Checkbox";
 import * as PropTypes from "prop-types";
 import TableRow from "@material-ui/core/TableRow";
+import {IconButton} from "@material-ui/core";
+import CreateIcon from '@material-ui/icons/Create';
 
 let PostsTableBody = props => {
-  const {twitter, selected, topics, handleSelect, columns} = props
+  const {twitter, selected, topics, handleSelect, columns, handleOpenPost} = props
 
 
   const getTopicName = id => {
@@ -30,18 +32,23 @@ let PostsTableBody = props => {
     {twitter.map((post, index) => <TableRow
       key={index}
       hover
-      role="checkbox"
       aria-checked={false}
       tabIndex={-1}
       selected={false}
-      onClick={event => handleSelect(event, post._id)}
+      onClick={() => handleOpenPost(post)}
     >
       <TableCell padding="checkbox">
-        <Checkbox checked={isSelected(post._id)}/>
+        <Checkbox checked={isSelected(post._id)} onChange={event => handleSelect(event, post._id)}/>
       </TableCell>
 
       {columns.map((column, index) => <TableCell
         key={index}>{(column.valueFormatter(getNestedObject(post, column.valuePath)) || '').toString()}</TableCell>)}
+
+
+      <TableCell>
+        <IconButton><CreateIcon/></IconButton>
+      </TableCell>
+
     </TableRow>)}
   </TableBody>;
 }

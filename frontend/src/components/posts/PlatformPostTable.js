@@ -125,7 +125,7 @@ class PlatformPostTable extends React.Component {
 
 
   render() {
-    const {classes, topics, columns, platformName} = this.props;
+    const {classes, topics, columns, platformName, handleOpenPost} = this.props;
 
 
     return (
@@ -153,6 +153,7 @@ class PlatformPostTable extends React.Component {
               twitter={this.state.twitter}
               selected={this.state.selected}
               topics={topics}
+              handleOpenPost={handleOpenPost}
               columns={columns}
               handleSelect={this.handleSelectClick}
             />
