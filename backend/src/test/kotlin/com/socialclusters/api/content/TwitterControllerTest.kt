@@ -1,4 +1,4 @@
-package com.socialclusters.api
+package com.socialclusters.api.content
 
 import com.socialclusters.domain.TweetRepository
 import com.socialclusters.pojos.Author
@@ -22,10 +22,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class ContentControllerTest(
+class TwitterControllerTest(
   private val mockMvc: MockMvc,
   private val tweetRepository: TweetRepository
 ) : DescribeSpec() {
+
+
   override fun beforeTest(description: Description) {
     tweetRepository.deleteAll()
   }
@@ -185,4 +187,5 @@ class ContentControllerTest(
     }
   }
 }
+
 
