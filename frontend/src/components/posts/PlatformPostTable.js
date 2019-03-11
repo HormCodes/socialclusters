@@ -153,6 +153,7 @@ class PlatformPostTable extends React.Component {
               twitter={this.state.twitter}
               selected={this.state.selected}
               topics={topics}
+              columns={columns}
               handleSelect={this.handleSelectClick}
             />
           </Table>

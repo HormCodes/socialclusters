@@ -20,14 +20,21 @@ class Posts extends React.Component {
   render() {
     const {topics} = this.props;
 
+    const getTopicName = id => {
+      let safeTopics = topics || [];
+      return (safeTopics[safeTopics.map(topic => topic.textId).indexOf(id)] || {name: id}).name;
+    };
+
+    const getTopics = (topics) => (topics || []).map(topic => getTopicName(topic)).join(', ');
+
     const platforms = [
       {
         name: "Twitter",
         columns: [
-          {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-          {id: 'author', numeric: false, disablePadding: false, label: 'Author'},
-          {id: 'text', numeric: false, disablePadding: true, label: 'Text'},
-          {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'author', valuePath: ['author', 'username'], label: 'Author', valueFormatter: (value) => value},
+          {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
         ],
         getPostsAsPage: getTwitterPostsAsPage,
         deletePost: deleteTwitterPost,
@@ -35,10 +42,10 @@ class Posts extends React.Component {
       {
         name: "Facebook",
         columns: [
-          {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-          {id: 'author', numeric: false, disablePadding: false, label: 'Author'},
-          {id: 'text', numeric: false, disablePadding: true, label: 'Text'},
-          {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
+          {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
         ],
 
         // TODO - Implement backend
@@ -48,11 +55,10 @@ class Posts extends React.Component {
       {
         name: "News",
         columns: [
-          {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-          {id: 'group', numeric: false, disablePadding: false, label: 'Group'},
-          {id: 'title', numeric: false, disablePadding: true, label: 'Title'},
-          {id: 'Date', numeric: false, disablePadding: true, label: 'Date'},
-          {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'publisher', valuePath: ['publisher', 'name'], label: 'Publisher', valueFormatter: (value) => value},
+          {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
         ],
 
         // TODO - Implement backend
@@ -62,10 +68,10 @@ class Posts extends React.Component {
       {
         name: "Reddit",
         columns: [
-          {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-          {id: 'author', numeric: false, disablePadding: false, label: 'author'},
-          {id: 'text', numeric: false, disablePadding: true, label: 'text'},
-          {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'author', valuePath: ['author'], label: 'author', valueFormatter: (value) => value},
+          {id: 'text', valuePath: ['text'], label: 'text', valueFormatter: (value) => value},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
           // TODO - Title?
         ],
 
@@ -76,11 +82,11 @@ class Posts extends React.Component {
       {
         name: "Meetup",
         columns: [
-          {id: 'timestamp', numeric: false, disablePadding: false, label: 'Timestamp'},
-          {id: 'group', numeric: false, disablePadding: false, label: 'Group'},
-          {id: 'title', numeric: false, disablePadding: true, label: 'Title'},
-          {id: 'Date', numeric: false, disablePadding: true, label: 'Date'},
-          {id: 'topic', numeric: false, disablePadding: false, label: 'Topic'},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'group', valuePath: ['group'], label: 'Group', valueFormatter: (value) => value},
+          {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
+          {id: 'Date', valuePath: ['Date'], label: 'Date', valueFormatter: (value) => value},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
         ],
 
         // TODO - Implement backend

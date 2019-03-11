@@ -15,8 +15,6 @@ let PostsTableHead = props => {
   let columnToHtml = row => (
     <TableCell
       key={row.id}
-      align={row.numeric ? 'right' : 'left'}
-      padding={row.disablePadding ? 'none' : 'default'}
       sortDirection={orderBy === row.id ? order : false}
     >
       <Tooltip title="Sort" placement={row.numeric ? 'bottom-end' : 'bottom-start'} enterDelay={300}>

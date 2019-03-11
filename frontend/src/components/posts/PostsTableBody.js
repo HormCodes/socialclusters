@@ -6,7 +6,7 @@ import * as PropTypes from "prop-types";
 import TableRow from "@material-ui/core/TableRow";
 
 let PostsTableBody = props => {
-  const {twitter, selected, topics, handleSelect} = props
+  const {twitter, selected, topics, handleSelect, columns} = props
 
 
   const getTopicName = id => {
@@ -19,6 +19,11 @@ let PostsTableBody = props => {
   const getText = (text) => (text || '').substr(0, 20) + '...';
 
   const isSelected = id => selected.indexOf(id) !== -1;
+
+  const getNestedObject = (nestedObj, pathArr) => {
+    return pathArr.reduce((obj, key) =>
+      (obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+  }
 
   // TODO - Multi Data Source
   return <TableBody>
@@ -34,13 +39,9 @@ let PostsTableBody = props => {
       <TableCell padding="checkbox">
         <Checkbox checked={isSelected(post._id)}/>
       </TableCell>
-      <TableCell align="left">{post.timestamp}</TableCell>
 
-      <TableCell align="left">{post.author.username}</TableCell>
-      <TableCell component="th" scope="row" padding="none">
-        {getText(post.text)}
-      </TableCell>
-      <TableCell align="left">{getTopics(post.topics)}</TableCell>
+      {columns.map((column, index) => <TableCell
+        key={index}>{(column.valueFormatter(getNestedObject(post, column.valuePath)) || '').toString()}</TableCell>)}
     </TableRow>)}
   </TableBody>;
 }
@@ -49,6 +50,7 @@ PostsTableBody.propTypes = {
   twitter: PropTypes.array.isRequired,
   selected: PropTypes.array.isRequired,
   topics: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
   handleSelect: PropTypes.func.isRequired
 }
 
@@ -56,6 +58,7 @@ PostsTableBody.defaultProps = {
   twitter: [],
   selected: [],
   topics: [],
+  columns: [],
   handleSelect: () => {
   },
 }
