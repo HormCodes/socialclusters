@@ -1,6 +1,8 @@
 package com.socialclusters.api
 
+import com.socialclusters.domain.NewsRepository
 import com.socialclusters.domain.TweetRepository
+import com.socialclusters.pojos.News
 import com.socialclusters.pojos.Tweet
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -10,7 +12,8 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class ContentController(
-  private val tweetRepository: TweetRepository
+  private val tweetRepository: TweetRepository,
+  private val newsRepository: NewsRepository
 ) {
 
   @GetMapping("/contents/twitter")
@@ -57,5 +60,27 @@ class ContentController(
     tweetRepository.save(tweet)
 
     return tweet
+  }
+
+  // TODO - Add tests
+  @GetMapping("/contents/news")
+  fun getNewsContent(
+    @RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean,
+    @RequestParam(value = "topics", defaultValue = "") topics:
+    String, pageable: Pageable
+  ): Page<News> {
+    // TODO - Without topic and topics exception
+
+    if (withoutTopic) {
+      return newsRepository.findWithoutTopics(pageable)
+    }
+
+    val topicList = topics.split(",")
+
+    if (topics.isNotEmpty()) {
+      return newsRepository.findByTopics(topicList, pageable)
+    }
+
+    return newsRepository.findAll(pageable)
   }
 }
