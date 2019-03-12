@@ -71,7 +71,7 @@ class Posts extends React.Component {
           {id: 'favourites', valuePath: ['favourites'], label: 'Likes', valueFormatter: getNumber},
           {id: 'retweets', valuePath: ['retweets'], label: 'Retweets', valueFormatter: getNumber},
           {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: getText},
-          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
         detailsContentFormat: (post) =>
           <div>
@@ -95,7 +95,7 @@ class Posts extends React.Component {
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
           {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
-          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
         detailsContentFormat: (post) =>
           <div>
@@ -112,11 +112,19 @@ class Posts extends React.Component {
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'publisher', valuePath: ['publisher', 'name'], label: 'Publisher', valueFormatter: (value) => value},
           {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
-          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
         detailsContentFormat: (post) =>
           <div>
-            <b>Platform:</b> Twitter
+            <DialogContentText><b>Platform:</b> News</DialogContentText>
+            <DialogContentText><b>Publisher: </b><a
+              href={post.publisher.url}>{post.publisher.name}</a></DialogContentText>
+            <DialogContentText><b>Date And Time:</b> {getDate(post.timestamp)}</DialogContentText>
+            <br/>
+            <DialogContentText>{post.summary}</DialogContentText>
+            <br/>
+            <DialogContentText>See article <a
+              href={post.url}>here</a></DialogContentText>
           </div>,
 
         // TODO - Implement backend
@@ -129,7 +137,7 @@ class Posts extends React.Component {
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'author', valuePath: ['author'], label: 'author', valueFormatter: (value) => value},
           {id: 'text', valuePath: ['text'], label: 'text', valueFormatter: (value) => value},
-          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
           // TODO - Title?
         ],
         detailsContentFormat: (post) =>
@@ -148,7 +156,7 @@ class Posts extends React.Component {
           {id: 'group', valuePath: ['group'], label: 'Group', valueFormatter: (value) => value},
           {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
           {id: 'Date', valuePath: ['Date'], label: 'Date', valueFormatter: (value) => value},
-          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
+          {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
         detailsContentFormat: (post) =>
           <div>
@@ -167,7 +175,7 @@ class Posts extends React.Component {
         <div>
           <PostDetail handleClose={this.handleClose}
                       post={this.state.openedPost}
-                      topics={this.state.openedPost.topics}
+                      topics={(this.state.openedPost.topics || [])}
                       opened={true} // Check is above
                       handleSaveTopics={this.handleSave}
                       content={this.state.postDialogContent}
