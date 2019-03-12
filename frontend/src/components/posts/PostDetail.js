@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import * as PropTypes from "prop-types";
 
-let PostDetail = ({opened, detailsContent, handleSave, handleClose, content, post, topics, topicOptions, handleChange}) =>
+let PostDetail = ({opened, detailsContent, handleSave, handleClose, content, post, topics, topicOptions, handleAdd, handleDelete}) =>
   <Dialog
     fullScreen={false}
     open={opened}
@@ -24,8 +24,9 @@ let PostDetail = ({opened, detailsContent, handleSave, handleClose, content, pos
       <ChipInput
         fullWidth
         dataSource={topics}
-        defaultValue={topics}
-        onChange={(chips) => handleChange(chips)}
+        value={topics}
+        onAdd={(chip) => handleAdd(chip)}
+        onDelete={(chip, index) => handleDelete(chip, index)}
       />
     </DialogContent>
     <DialogActions>
@@ -45,12 +46,27 @@ PostDetail.propTypes = {
   content: PropTypes.element.isRequired,
 }
 
+function isTopicUnknown(topicOptions, chip) {
+  return topicOptions.map(topic => topic.name).indexOf(chip) === -1;
+}
+
 export default compose(
   withState('topics', 'updateTopics', props => props.topics),
   withHandlers({
-    handleChange: props => (chips) => {
-      console.log(chips)
-      props.updateTopics(chips)
+    handleAdd: props => (chip) => {
+
+      if (isTopicUnknown(props.topicOptions, chip)) {
+        console.log("Unknown topic"); // TODO - Replace by Snackbar https://material-ui.com/demos/snackbars/
+        return;
+      }
+
+      let newTopics = props.topics.concat([chip])
+      props.updateTopics(newTopics)
+    },
+    handleDelete: props => (chip, index) => {
+
+      let newTopics = props.topics.filter(topic => topic === chip);
+      props.updateTopics(newTopics)
     },
     handleSave: props => event => {
       event.preventDefault()
