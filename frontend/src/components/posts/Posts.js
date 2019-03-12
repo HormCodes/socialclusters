@@ -28,14 +28,12 @@ class Posts extends React.Component {
 
 
   handleClickOpen = (post, content) => {
-    console.log(post.topics)
     this.setState({postOpened: true, postDialogContent: content, openedPost: post});
   };
 
   handleClose = (post) => {
-    console.log(post)
     this.setState({
-      postOpened: false// TODO - Remove null
+      postOpened: false
     });
   };
 
@@ -58,21 +56,34 @@ class Posts extends React.Component {
 
     const getTopics = (topics) => (topics || []).map(topic => getTopicName(topic)).join(', ');
 
+    const getText = (text) => text.substr(0, 50) + '...';
+
+    const getNumber = (number) => number.toString()
+
+    const getDate = (dateString) => new Date(dateString).toLocaleString(); // TODO - Better Format
+
     const platforms = [
       {
         name: "Twitter",
         columns: [
-          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'author', valuePath: ['author', 'username'], label: 'Author', valueFormatter: (value) => value},
-          {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
+          {id: 'favourites', valuePath: ['favourites'], label: 'Likes', valueFormatter: getNumber},
+          {id: 'retweets', valuePath: ['retweets'], label: 'Retweets', valueFormatter: getNumber},
+          {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: getText},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
         ],
         detailsContentFormat: (post) =>
           <div>
             <DialogContentText><b>Platform:</b> Twitter</DialogContentText>
-            <DialogContentText><b>Author:</b> @{post.author.username}</DialogContentText>
+            <DialogContentText><b>Author: </b><a
+              href={`https://twitter.com/${post.author.username}`}>@{post.author.username}</a></DialogContentText>
+            <DialogContentText><b>Date And Time:</b> {getDate(post.timestamp)}</DialogContentText>
+            <DialogContentText><b>Likes:</b> {post.favourites}</DialogContentText>
+            <DialogContentText><b>Retweets:</b> {post.retweets}</DialogContentText>
             <br/>
-            <DialogContentText>{post.text}</DialogContentText>
+            <DialogContentText>{getText(post.text)} See full text <a
+              href={`https://twitter.com/${post.author.username}/status/${post.tweetId}`}>here</a>.</DialogContentText>
           </div>,
         getPostsAsPage: getTwitterPostsAsPage,
         deletePost: deleteTwitterPost,
@@ -81,7 +92,7 @@ class Posts extends React.Component {
       {
         name: "Facebook",
         columns: [
-          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
           {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
@@ -98,7 +109,7 @@ class Posts extends React.Component {
       {
         name: "News",
         columns: [
-          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'publisher', valuePath: ['publisher', 'name'], label: 'Publisher', valueFormatter: (value) => value},
           {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
@@ -115,7 +126,7 @@ class Posts extends React.Component {
       {
         name: "Reddit",
         columns: [
-          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'author', valuePath: ['author'], label: 'author', valueFormatter: (value) => value},
           {id: 'text', valuePath: ['text'], label: 'text', valueFormatter: (value) => value},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: (value) => getTopics(value)},
@@ -133,7 +144,7 @@ class Posts extends React.Component {
       {
         name: "Meetup",
         columns: [
-          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: (value) => value},
+          {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
           {id: 'group', valuePath: ['group'], label: 'Group', valueFormatter: (value) => value},
           {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
           {id: 'Date', valuePath: ['Date'], label: 'Date', valueFormatter: (value) => value},
@@ -204,7 +215,7 @@ class Posts extends React.Component {
 
   }
 
-};
+}
 
 
 export default (Posts)
