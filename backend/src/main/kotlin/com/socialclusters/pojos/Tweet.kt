@@ -4,16 +4,16 @@ import org.springframework.data.annotation.Id
 
 class Tweet(
   @Id
-  val _id: String?,
+  override var _id: String?,
   val text: String,
-  val timestamp: String,
+  override var timestamp: String,
   val tweetId: String,
   val language: String,
   val retweets: Int,
   val favourites: Int,
   val author: Author,
-  var topics: List<String>? // TODO - Better immutable way of document update?
-)
+  override var topics: List<String>? // TODO - Better immutable way of document update?, id: String
+) : Post()
 
 data class Author(
   val username: String,

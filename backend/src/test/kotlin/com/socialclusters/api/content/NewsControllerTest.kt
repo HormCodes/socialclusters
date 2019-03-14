@@ -1,6 +1,6 @@
 package com.socialclusters.api.content
 
-import com.socialclusters.domain.NewsRepository
+import com.socialclusters.domain.impl.NewsRepository
 import com.socialclusters.pojos.News
 import com.socialclusters.pojos.Publisher
 import io.kotlintest.Description

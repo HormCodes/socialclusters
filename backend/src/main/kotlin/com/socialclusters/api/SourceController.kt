@@ -1,7 +1,7 @@
 package com.socialclusters.api
 
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
-import com.socialclusters.domain.SourceRepository
+import com.socialclusters.domain.impl.SourceRepository
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException

@@ -1,4 +1,4 @@
-package com.socialclusters.domain
+package com.socialclusters.domain.impl
 
 import com.socialclusters.configuration.UserDatabaseConfiguration
 import com.socialclusters.db.generated.user_database.Tables.SOURCE

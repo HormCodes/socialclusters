@@ -1,6 +1,6 @@
 package com.socialclusters.api.content
 
-import com.socialclusters.domain.TweetRepository
+import com.socialclusters.domain.impl.TweetRepository
 import com.socialclusters.pojos.Author
 import com.socialclusters.pojos.Tweet
 import io.kotlintest.Description

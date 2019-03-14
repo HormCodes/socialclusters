@@ -3,6 +3,7 @@ package com.socialclusters.domain
 import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
+import com.socialclusters.domain.impl.SourceRepository
 import com.socialclusters.pojos.*
 import com.socialclusters.utils.withoutId
 import io.kotlintest.Description
