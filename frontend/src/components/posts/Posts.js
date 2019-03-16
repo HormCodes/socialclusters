@@ -23,6 +23,7 @@ class Posts extends React.Component {
     postDialogContent: 'Something went wrong...',
     openedPost: {},
     postOpened: false,
+    defaultSize: 5,
     platformSaveTopicsHandler: () => Promise.resolve()
   }
 
@@ -82,7 +83,7 @@ class Posts extends React.Component {
             <DialogContentText><b>Likes:</b> {post.favourites}</DialogContentText>
             <DialogContentText><b>Retweets:</b> {post.retweets}</DialogContentText>
             <br/>
-            <DialogContentText>{getText(post.text)} See full text <a
+            <DialogContentText>{post.text} See full text <a
               href={`https://twitter.com/${post.author.username}/status/${post.tweetId}`}>here</a>.</DialogContentText>
           </div>,
         getPostsAsPage: getTwitterPostsAsPage,

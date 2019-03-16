@@ -47,7 +47,7 @@ PostDetail.propTypes = {
 }
 
 function isTopicUnknown(topicOptions, chip) {
-  return topicOptions.map(topic => topic.name).indexOf(chip) === -1;
+  return topicOptions.map(topic => topic.textId).indexOf(chip) === -1;
 }
 
 export default compose(
@@ -55,6 +55,7 @@ export default compose(
   withHandlers({
     handleAdd: props => (chip) => {
 
+      console.log(props.topicOptions)
       if (isTopicUnknown(props.topicOptions, chip)) {
         console.log("Unknown topic"); // TODO - Replace by Snackbar https://material-ui.com/demos/snackbars/
         return;

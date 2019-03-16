@@ -19,7 +19,7 @@ const styles = () => ({
 class PlatformPostTable extends React.Component {
 
 
-  rowsPerPageOptions = [5, 10, 20];
+  rowsPerPageOptions = [350, 10, 20];
 
   deletePost = this.props.deletePost;
   getPostsAsPage = this.props.getPostsAsPage;
