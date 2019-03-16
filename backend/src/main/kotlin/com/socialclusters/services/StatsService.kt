@@ -9,8 +9,11 @@ import com.socialclusters.pojos.DayNumbers
 import com.socialclusters.pojos.Post
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import java.util.*
+
 
 @Service
 class StatsService(
@@ -35,13 +38,7 @@ class StatsService(
     }.flatten()
 
 
-    val days = listOf(
-      Pair<Date, Date>(
-        Date.from(Instant.parse(from)),
-        Date.from(Instant.parse(to))
-      )
-
-    )
+    val days = getDaysBetweenRange(from, to)
 
     return days.map { day ->
 
@@ -52,18 +49,41 @@ class StatsService(
 
   }
 
-  private fun isInDateRange(timestamp: String, from: String, toString: String): Boolean {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+
 
 
   companion object {
-    fun getDateObject(timestamp: String): Date {
-      val possibleDateFormats = listOf("EEE MMM d HH:mm:ss Z yyyy", "yyyy.MM.dd G 'at' HH:mm:ss z", "EEE, MMM d, ''yy", "h:mm a", "hh 'o''clock' a, zzzz", "K:mm a, z", "yyyyy.MMMMM.dd GGG hh:mm aaa", "EEE, d MMM yyyy HH:mm:ss Z", "yyMMddHHmmssZ", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", "YYYY-'W'ww-u", "EEE, dd MMM yyyy HH:mm:ss z", "EEE, dd MMM yyyy HH:mm zzzz", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz", "yyyy-MM-dd'T'HH:mm:sszzzz", "yyyy-MM-dd'T'HH:mm:ss z", "yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HHmmss.SSSz", "yyyy-MM-dd", "yyyyMMdd", "dd/MM/yy", "dd/MM/yyyy")
+    fun getDateObject(timestamp: String): OffsetDateTime {
+      val possibleDateFormats = listOf("EEE MMM d HH:mm:ss Z yyyy",
+        "yyyy.MM.dd G 'at' HH:mm:ss z",
+        "EEE, MMM d, ''yy",
+        "h:mm a",
+        "hh 'o''clock' a, zzzz",
+        "K:mm a, z",
+        "yyyyy.MMMMM.dd GGG hh:mm aaa",
+        "EEE, d MMM yyyy HH:mm:ss Z",
+        "yyMMddHHmmssZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+        "YYYY-'W'ww-u",
+        "EEE, dd MMM yyyy HH:mm:ss z",
+        "EEE, dd MMM yyyy HH:mm zzzz",
+        "yyyy-MM-dd'T'HH:mm:ssZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz",
+        "yyyy-MM-dd'T'HH:mm:sszzzz",
+        "yyyy-MM-dd'T'HH:mm:ss z",
+        "yyyy-MM-dd'T'HH:mm:ssz",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd'T'HHmmss.SSSz",
+        "yyyy-MM-dd",
+        "yyyyMMdd",
+        "dd/MM/yy",
+        "dd/MM/yyyy"
+      )
 
       return possibleDateFormats.mapNotNull { format ->
         try {
-          SimpleDateFormat(format, Locale.ENGLISH).parse(timestamp)
+          SimpleDateFormat(format, Locale.ENGLISH).parse(timestamp).toInstant().atOffset(ZoneOffset.UTC)
 
         } catch (exception: Exception) {
           null
@@ -72,6 +92,35 @@ class StatsService(
       }.first()
 
     }
+
+    fun getDay(timestamp: String): Pair<OffsetDateTime, OffsetDateTime> {
+      val date = getDateObject(timestamp)
+
+
+      val dayStart = date.withHour(0).withMinute(0).withSecond(0)
+      val dayEnd = date.withHour(23).withMinute(59).withSecond(59)
+
+      return Pair(dayStart, dayEnd)
+    }
+
+    fun getDaysBetweenRange(fromTimestamp: String, toTimestamp: String): List<Pair<OffsetDateTime, OffsetDateTime>> {
+      val from = getDateObject(fromTimestamp)
+      val to = getDateObject(toTimestamp)
+
+      val numOfDaysBetween = ChronoUnit.DAYS.between(from, to)
+      return (0..numOfDaysBetween).map {
+        val day = from.plusDays(it)
+        Pair(day.withHour(0).withMinute(0).withSecond(0), day.withHour(23).withMinute(59).withSecond(59))
+      }.toList()
+
+    }
+
+    fun isInDateRange(timestamp: String, from: String, to: String): Boolean {
+      val date = getDateObject(timestamp)
+      return getDateObject(from).toEpochSecond() <= date.toEpochSecond() && date.toEpochSecond() <= getDateObject(to).toEpochSecond()
+    }
+
+
   }
 
 }
