@@ -1,4 +1,5 @@
 import json
+import majka
 
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -23,7 +24,15 @@ def remove_not_neccessary_chars(text):
     return returned_text
 
 
-def remove_stopwords_from_text(tweet, stopwords):
+def get_lemma(word, morph):
+    lemma_result = morph.find(word)
+    if len(lemma_result) is 0:
+        return word
+    else:
+        return lemma_result[0]['lemma']
+
+
+def remove_stopwords_from_text(tweet, stopwords, morph):
     tweet_words = remove_not_neccessary_chars(tweet.text).lower().split()
 
     if tweet.language == "und":
@@ -33,11 +42,9 @@ def remove_stopwords_from_text(tweet, stopwords):
 
     words = ""
 
-    # morph = majka.Majka("../resources")
-
     for word in tweet_words:
         if word not in localized_stopwords:
-            words = words + (" " + word)
+            words = words + (" " + get_lemma(word, morph))
 
     return words
 
@@ -51,7 +58,7 @@ def get_data_frame_from_text_objects(text_objects, topic_ids):
         data_frame_input['id'].append(tweet['_id'])
         data_frame_input['text'].append(
             ("@" + tweet["author"]["username"]) + " " + remove_stopwords_from_text(get_tweet_object_from_dict(tweet),
-                                                                                   stopwords))
+                                                                                   stopwords, morph))
         for topic in topic_ids:
             if topic in tweet["topics"]:
                 data_frame_input[topic].append(True)
@@ -77,6 +84,7 @@ with open("../topics.json") as file:
 with open(STOPWORDS_JSON_FILE_NAME) as file:
     stopwords = json.load(file)
 
+morph = majka.Majka("../majka/majka.w-lt")
 topic_ids = []
 
 for topic in topics["topics"]:
