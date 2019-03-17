@@ -40,7 +40,7 @@ class NewsControllerTest(
             "Sun, 10 Mar 2019 19:20:00 GMT",
             "url", "cs",
             Publisher("Publisher", "url2"),
-            listOf())
+            listOf(), null)
           newsRepository.insert(news)
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/news"))
@@ -58,7 +58,7 @@ class NewsControllerTest(
             "Sun, 10 Mar 2019 19:20:00 GMT",
             "url", "cs",
             Publisher("Publisher", "url2"),
-            null)
+            null, null)
           newsRepository.insert(news)
 
 
@@ -68,7 +68,7 @@ class NewsControllerTest(
             "Sun, 10 Mar 2019 19:20:00 GMT",
             "url", "cs",
             Publisher("Publisher", "url2"),
-            listOf("culture"))
+            listOf("culture"), null)
           newsRepository.insert(newsWithTopics)
 
 
@@ -78,7 +78,7 @@ class NewsControllerTest(
             "Sun, 10 Mar 2019 19:20:00 GMT",
             "url", "cs",
             Publisher("Publisher", "url2"),
-            listOf())
+            listOf(), null)
           newsRepository.insert(newsWithEmptyTopics)
 
           mockMvc.perform(MockMvcRequestBuilders.get("/contents/news").param("withoutTopic", "true"))

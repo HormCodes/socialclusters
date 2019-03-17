@@ -95,10 +95,10 @@ class StatsServiceTest(
         topicRepository.insert(Topic(null, "Culture", "culture"))
         topicRepository.insert(Topic(null, "Traffic", "traffic"))
 
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 13 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 14 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture")))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 15 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic")))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture")))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 13 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 14 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 15 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
         statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(DayNumbers("2019-01-14T00:00Z", 1, listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0))))
       }

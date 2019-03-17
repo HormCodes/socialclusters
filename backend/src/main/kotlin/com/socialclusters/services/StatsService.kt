@@ -53,7 +53,8 @@ class StatsService(
 
   companion object {
     fun getDateObject(timestamp: String): OffsetDateTime {
-      val possibleDateFormats = listOf("EEE MMM d HH:mm:ss Z yyyy",
+      val possibleDateFormats = listOf(
+        "EEE MMM d HH:mm:ss Z yyyy",
         "yyyy.MM.dd G 'at' HH:mm:ss z",
         "EEE, MMM d, ''yy",
         "h:mm a",
