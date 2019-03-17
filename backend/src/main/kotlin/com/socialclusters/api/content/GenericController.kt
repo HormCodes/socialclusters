@@ -53,6 +53,7 @@ abstract class GenericController<E>(
     val post: E = repository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     (post as Post).topics = newTopics
+    (post as Post).suggestedTopics = listOf()
 
     repository.save(post)
 

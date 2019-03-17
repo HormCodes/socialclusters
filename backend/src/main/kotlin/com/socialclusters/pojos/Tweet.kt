@@ -12,7 +12,8 @@ class Tweet(
   val retweets: Int,
   val favourites: Int,
   val author: Author,
-  override var topics: List<String>? // TODO - Better immutable way of document update?, id: String
+  override var topics: List<String>?, // TODO - Better immutable way of document update?
+  override var suggestedTopics: List<String>?
 ) : Post()
 
 data class Author(

@@ -15,6 +15,7 @@ import {
 import PlatformPostTable from "./PlatformPostTable";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import PostDetail from "./PostDetail";
+import {Route, Switch} from "react-router-dom";
 
 
 class Posts extends React.Component {
@@ -168,62 +169,33 @@ class Posts extends React.Component {
         getPostsAsPage: getMeetupPostsAsPage,
         deletePost: deleteMeetupPost,
       },
-    ]
+    ];
 
-    if (this.state.postOpened) {
-      return (
+    return (
+      <Switch>
+        <Route exact path={"/posts"} component={() =>
+          <PlatformPostTable
+            platformName={platforms[0].name}
+            platform={"twitter"}
+            columns={platforms[0].columns}
+            topics={topics}
+            handleOpenPost={(post) => {
+              this.handleClickOpen(post, platforms[0].detailsContentFormat(post))
+              this.setState({platformSaveTopicsHandler: platforms[0].savePostTopics})
+            }
+            }
+            deletePost={platforms[0].deletePost}
+            getPostsAsPage={platforms[0].getPostsAsPage}/>
 
-        <div>
-          <PostDetail handleClose={this.handleClose}
-                      post={this.state.openedPost}
-                      topics={(this.state.openedPost.topics || [])}
-                      opened={true} // Check is above
-                      handleSaveTopics={this.handleSave}
-                      content={this.state.postDialogContent}
-                      topicOptions={topics}
-          >
-          </PostDetail>
-          {platforms.map((platform, index) =>
-            <PlatformPostTable
-              key={index}
-              platformName={platform.name}
-              columns={platform.columns}
-              topics={topics}
-              handleOpenPost={(post) => {
-                this.handleClickOpen(post, platform.detailsContentFormat(post))
-                this.setState({platformSaveTopicsHandler: platform.savePostTopics})
-              }
-              }
-              deletePost={platform.deletePost}
-              getPostsAsPage={platform.getPostsAsPage}/>
-          )}
-        </div>
-      )
-    } else {
-      return (
 
-        <div>
-          {platforms.map((platform, index) =>
-            <PlatformPostTable
-              key={index}
-              platformName={platform.name}
-              columns={platform.columns}
-              topics={topics}
-              handleOpenPost={(post) => {
-                this.handleClickOpen(post, platform.detailsContentFormat(post))
-                this.setState({platformSaveTopicsHandler: platform.savePostTopics})
-              }
-              }
-              deletePost={platform.deletePost}
-              getPostsAsPage={platform.getPostsAsPage}/>
-          )}
-        </div>
-      )
-    }
+        }/>
+        <Route path={"/posts/:platform/:postId"} component={({match}) =>
 
+          <PostDetail topicOptions={topics} match={match}/>}/>
+      </Switch>
+    )
 
   }
-
 }
 
 

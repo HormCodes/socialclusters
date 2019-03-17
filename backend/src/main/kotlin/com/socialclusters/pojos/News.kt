@@ -11,7 +11,8 @@ class News(
   val url: String,
   val language: String,
   val publisher: Publisher,
-  override var topics: List<String>? // TODO - Better immutable way of document update?
+  override var topics: List<String>?, // TODO - Better immutable way of document update?
+  override var suggestedTopics: List<String>?
 ) : Post()
 
 data class Publisher(

@@ -105,7 +105,10 @@ for tweet_object in twitter_collection.find({}):
             tweet_object['topics'] = []
             test_tweets.append(tweet_object)
         else:
-            tweets.append(tweet_object)
+            if tweet_object['topics'] == []:
+                test_tweets.append(tweet_object)
+            else:
+                tweets.append(tweet_object)
 
 tweets_data_frame = get_data_frame_from_text_objects(tweets, topic_ids)
 test_tweets_data_frame = get_data_frame_from_text_objects(test_tweets, topic_ids)
@@ -127,9 +130,12 @@ for topic_id in topic_ids:
     models.append({"topic": topic_id, "model": model})
 
     print(topic_id)
-    for text in test_tweets_data_frame.text:
-        if NB_pipeline.predict([text])[0]:
-            print(text)
+    for tweet in test_tweets_data_frame.values:
+        if NB_pipeline.predict([tweet[1]])[0]:
+            print(tweet[0])
+            print(tweet[1])
+            twitter_collection.update_one({'_id': tweet[0]},
+                                          {'$addToSet': {'suggestedTopics': topic_id}})  # TODO - Add only once?
 
     print()
 

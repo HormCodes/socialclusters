@@ -10,7 +10,6 @@ import * as PropTypes from "prop-types";
 
 const styles = () => ({
   tableWrapper: {
-    overflowX: 'auto',
   },
   table: {},
 
@@ -125,7 +124,7 @@ class PlatformPostTable extends React.Component {
 
 
   render() {
-    const {classes, topics, columns, platformName, handleOpenPost} = this.props;
+    const {classes, topics, columns, platformName, handleOpenPost, platform} = this.props;
 
 
     return (
@@ -150,6 +149,7 @@ class PlatformPostTable extends React.Component {
               handleSelectAllClick={this.handleSelectAllClick}
             />
             <PostsTableBody
+              platform={platform}
               twitter={this.state.twitter}
               selected={this.state.selected}
               topics={topics}

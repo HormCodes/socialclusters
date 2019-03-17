@@ -6,9 +6,10 @@ import * as PropTypes from "prop-types";
 import TableRow from "@material-ui/core/TableRow";
 import {IconButton} from "@material-ui/core";
 import CreateIcon from '@material-ui/icons/Create';
+import {Link} from "react-router-dom";
 
 let PostsTableBody = props => {
-  const {twitter, selected, topics, handleSelect, columns, handleOpenPost} = props
+  const {twitter, selected, topics, handleSelect, columns, handleOpenPost, platform} = props
 
 
   const getTopicName = id => {
@@ -35,7 +36,6 @@ let PostsTableBody = props => {
       aria-checked={false}
       tabIndex={-1}
       selected={false}
-      onClick={() => handleOpenPost(post)}
     >
       <TableCell padding="checkbox">
         <Checkbox checked={isSelected(post._id)} onChange={event => handleSelect(event, post._id)}/>
@@ -46,7 +46,8 @@ let PostsTableBody = props => {
 
 
       <TableCell>
-        <IconButton><CreateIcon/></IconButton>
+        <Link style={{textDecoration: 'none'}} to={"/posts/" + platform + "/" + post._id}>
+          <IconButton><CreateIcon/></IconButton></Link>
       </TableCell>
 
     </TableRow>)}
