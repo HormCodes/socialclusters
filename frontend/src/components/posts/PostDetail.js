@@ -9,6 +9,7 @@ import {Route, Switch, withRouter} from "react-router-dom";
 import {API_URL} from "../../data/Constants";
 import axios from "axios";
 import TwitterDetail from "./details/TwitterDetail";
+import NewsDetail from "./details/NewsDetail";
 
 const styles = theme => ({
   chip: {
@@ -92,7 +93,7 @@ class PostDetail extends React.Component {
 
         <Switch>
           <Route path={"/posts/twitter"} component={() => <TwitterDetail post={this.state.post}/>}/>
-          <Route path={"/posts/news"} component={() => <TwitterDetail post={this.state.post}/>}/>
+          <Route path={"/posts/news"} component={() => <NewsDetail post={this.state.post}/>}/>
         </Switch>
 
         <br/>

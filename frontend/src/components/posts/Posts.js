@@ -13,7 +13,6 @@ import {
   saveTwitterPostTopics
 } from "../../data/Posts";
 import PlatformPostTable from "./PlatformPostTable";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import PostDetail from "./PostDetail";
 import {Route, Switch} from "react-router-dom";
 
@@ -66,6 +65,7 @@ class Posts extends React.Component {
 
     const platforms = [
       {
+        id: "twitter",
         name: "Twitter",
         columns: [
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
@@ -75,23 +75,12 @@ class Posts extends React.Component {
           {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: getText},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
-        detailsContentFormat: (post) =>
-          <div>
-            <DialogContentText><b>Platform:</b> Twitter</DialogContentText>
-            <DialogContentText><b>Author: </b><a
-              href={`https://twitter.com/${post.author.username}`}>@{post.author.username}</a></DialogContentText>
-            <DialogContentText><b>Date And Time:</b> {getDate(post.timestamp)}</DialogContentText>
-            <DialogContentText><b>Likes:</b> {post.favourites}</DialogContentText>
-            <DialogContentText><b>Retweets:</b> {post.retweets}</DialogContentText>
-            <br/>
-            <DialogContentText>{post.text} See full text <a
-              href={`https://twitter.com/${post.author.username}/status/${post.tweetId}`}>here</a>.</DialogContentText>
-          </div>,
         getPostsAsPage: getTwitterPostsAsPage,
         deletePost: deleteTwitterPost,
         savePostTopics: saveTwitterPostTopics,
       },
       {
+        id: "facebook",
         name: "Facebook",
         columns: [
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
@@ -99,16 +88,13 @@ class Posts extends React.Component {
           {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
-        detailsContentFormat: (post) =>
-          <div>
-            <b>Platform:</b> Twitter
-          </div>,
 
         // TODO - Implement backend
         getPostsAsPage: getFacebookPostsAsPage,
         deletePost: deleteFacebookPost,
       },
       {
+        id: "news",
         name: "News",
         columns: [
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
@@ -116,24 +102,13 @@ class Posts extends React.Component {
           {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
           {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopics},
         ],
-        detailsContentFormat: (post) =>
-          <div>
-            <DialogContentText><b>Platform:</b> News</DialogContentText>
-            <DialogContentText><b>Publisher: </b><a
-              href={post.publisher.url}>{post.publisher.name}</a></DialogContentText>
-            <DialogContentText><b>Date And Time:</b> {getDate(post.timestamp)}</DialogContentText>
-            <br/>
-            <DialogContentText>{post.summary}</DialogContentText>
-            <br/>
-            <DialogContentText>See article <a
-              href={post.url}>here</a></DialogContentText>
-          </div>,
 
         // TODO - Implement backend
         getPostsAsPage: getNewsPostsAsPage,
         deletePost: deleteNewsPost,
       },
       {
+        id: "reddit",
         name: "Reddit",
         columns: [
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
@@ -152,6 +127,7 @@ class Posts extends React.Component {
         deletePost: deleteRedditPost,
       },
       {
+        id: "meetup",
         name: "Meetup",
         columns: [
           {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
@@ -174,18 +150,20 @@ class Posts extends React.Component {
     return (
       <Switch>
         <Route exact path={"/posts"} component={() =>
-          <PlatformPostTable
-            platformName={platforms[0].name}
-            platform={"twitter"}
-            columns={platforms[0].columns}
-            topics={topics}
-            handleOpenPost={(post) => {
-              this.handleClickOpen(post, platforms[0].detailsContentFormat(post))
-              this.setState({platformSaveTopicsHandler: platforms[0].savePostTopics})
+          <div>
+            {platforms.map((platform, index) => <PlatformPostTable
+              key={index}
+              platformName={platform.name}
+              platform={platform.id}
+              columns={platform.columns}
+              topics={topics}
+              handleOpenPost={(post) => {
+                this.handleClickOpen(post, platform.detailsContentFormat(post))
+                this.setState({platformSaveTopicsHandler: platform.savePostTopics})
             }
             }
-            deletePost={platforms[0].deletePost}
-            getPostsAsPage={platforms[0].getPostsAsPage}/>
+              deletePost={platform.deletePost}
+              getPostsAsPage={platform.getPostsAsPage}/>)}</div>
 
 
         }/>
