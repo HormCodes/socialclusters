@@ -7,3 +7,4 @@ pandas
 ufal.morphodita
 feedparser
 newspaper3k
+praw
