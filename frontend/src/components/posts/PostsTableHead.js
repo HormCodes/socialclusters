@@ -9,7 +9,7 @@ import * as PropTypes from "prop-types";
 
 
 let PostsTableHead = props => {
-  const {numSelected, rowCount, handleSelectAllClick, columns, order, orderBy} = props;
+  const {numSelected, rowCount, handleSelectAllClick, columns, order, orderBy, handleSortClick} = props;
 
 
   let columnToHtml = row => (
@@ -18,7 +18,9 @@ let PostsTableHead = props => {
       sortDirection={orderBy === row.id ? order : false}
     >
       <Tooltip title="Sort" placement={row.numeric ? 'bottom-end' : 'bottom-start'} enterDelay={300}>
-        <TableSortLabel active={orderBy === row.id} direction={order}>
+        <TableSortLabel active={orderBy === row.id} direction={order} onClick={() => {
+          handleSortClick(row.id)
+        }}>
           {row.label}
         </TableSortLabel>
       </Tooltip>

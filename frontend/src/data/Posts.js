@@ -1,90 +1,97 @@
 import axios from "axios";
-import {API_URL} from "./Constants";
+import {
+  API_URL,
+  PLATFORM_FACEBOOK,
+  PLATFORM_MEETUP,
+  PLATFORM_NEWS,
+  PLATFORM_REDDIT,
+  PLATFORM_TWITTER
+} from "./Constants";
 
-export function getTwitterPostsAsPage(pageSize, pageNumber, filterWithTopic) {
+function getPostsAsPage(platform, filterWithTopic, pageSize, pageNumber, sort) {
   let config = {
     params: {
       withoutTopic: filterWithTopic,
       size: pageSize,
-      page: pageNumber
+      page: pageNumber,
+      sort: sort || ''
     }
   };
 
-  return axios.get(`${API_URL}/contents/twitter/`, config);
+  return axios.get(`${API_URL}/contents/${platform}/`, config);
+}
+
+function deletePost(platform, postId) {
+  return axios.delete(`${API_URL}/contents/${platform}/${postId}`)
+}
+
+function savePostTopics(platform, postId, topics) {
+  return axios.patch(`${API_URL}/contents/${platform}/${postId}/topics`, topics)
+}
+
+
+export function getTwitterPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
+  return getPostsAsPage(PLATFORM_TWITTER, filterWithTopic, pageSize, pageNumber, sort)
 }
 
 export function deleteTwitterPost(postId) {
-  return axios.delete(`${API_URL}/contents/twitter/${postId}`)
+  return deletePost(PLATFORM_TWITTER, postId)
 }
 
 export function saveTwitterPostTopics(postId, topics) {
-  return axios.patch(`${API_URL}/contents/twitter/${postId}/topics`, topics)
+  return savePostTopics(PLATFORM_TWITTER, postId, topics)
 }
 
 
-export function getFacebookPostsAsPage(pageSize, pageNumber, filterWithTopic) {
-  let config = {
-    params: {
-      withoutTopic: filterWithTopic,
-      size: pageSize,
-      page: pageNumber
-    }
-  };
-
-  return axios.get(`${API_URL}/contents/facebook/`, config);
+export function getFacebookPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
+  return getPostsAsPage(PLATFORM_FACEBOOK, filterWithTopic, pageSize, pageNumber, sort)
 }
 
 export function deleteFacebookPost(postId) {
-  return axios.delete(`${API_URL}/contents/facebook/${postId}`)
+  return deletePost(PLATFORM_FACEBOOK, postId)
+}
+
+export function saveFacebookPostTopics(postId, topics) {
+  return savePostTopics(PLATFORM_FACEBOOK, postId, topics)
 }
 
 
-export function getNewsPostsAsPage(pageSize, pageNumber, filterWithTopic) {
-  let config = {
-    params: {
-      withoutTopic: filterWithTopic,
-      size: pageSize,
-      page: pageNumber
-    }
-  };
-
-  return axios.get(`${API_URL}/contents/news/`, config);
+export function getNewsPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
+  return getPostsAsPage(PLATFORM_NEWS, filterWithTopic, pageSize, pageNumber, sort)
 }
 
 export function deleteNewsPost(postId) {
-  return axios.delete(`${API_URL}/contents/news/${postId}`)
+  return deletePost(PLATFORM_NEWS, postId)
+}
+
+export function saveNewsPostTopics(postId, topics) {
+  return savePostTopics(PLATFORM_NEWS, postId, topics)
 }
 
 
-export function getRedditPostsAsPage(pageSize, pageNumber, filterWithTopic) {
-  let config = {
-    params: {
-      withoutTopic: filterWithTopic,
-      size: pageSize,
-      page: pageNumber
-    }
-  };
-
-  return axios.get(`${API_URL}/contents/reddit/`, config);
+export function getRedditPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
+  return getPostsAsPage(PLATFORM_REDDIT, filterWithTopic, pageSize, pageNumber, sort)
 }
 
 export function deleteRedditPost(postId) {
-  return axios.delete(`${API_URL}/contents/reddit/${postId}`)
+  return deletePost(PLATFORM_REDDIT, postId)
+}
+
+export function saveRedditPostTopics(postId, topics) {
+  return savePostTopics(PLATFORM_REDDIT, postId, topics)
 }
 
 
-export function getMeetupPostsAsPage(pageSize, pageNumber, filterWithTopic) {
-  let config = {
-    params: {
-      withoutTopic: filterWithTopic,
-      size: pageSize,
-      page: pageNumber
-    }
-  };
-
-  return axios.get(`${API_URL}/contents/meetup/`, config);
+export function getMeetupPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
+  return getPostsAsPage(PLATFORM_MEETUP, filterWithTopic, pageSize, pageNumber, sort)
 }
 
 export function deleteMeetupPost(postId) {
-  return axios.delete(`${API_URL}/contents/meetup/${postId}`)
+  return deletePost(PLATFORM_MEETUP, postId)
 }
+
+export function saveMeetupPostTopics(postId, topics) {
+  return savePostTopics(PLATFORM_MEETUP, postId, topics)
+}
+
+

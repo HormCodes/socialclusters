@@ -13,6 +13,7 @@ abstract class GenericController<E>(
 ) {
 
 
+  // TODO - Method namings...
   @GetMapping
   fun getTwitterContent(
     @RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean,
@@ -20,6 +21,8 @@ abstract class GenericController<E>(
     String, pageable: Pageable
   ): Page<E> {
     // TODO - Without topic and topics exception
+
+    println(pageable)
 
     if (withoutTopic) {
       return repository.findWithoutTopics(pageable)

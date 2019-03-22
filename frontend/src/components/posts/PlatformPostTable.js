@@ -47,6 +47,26 @@ class PlatformPostTable extends React.Component {
 
   };
 
+  handleSortClick = (field) => {
+
+    const getOppositeOrder = prevState => prevState.order === 'asc' ? 'desc' : 'asc';
+
+    if (field === this.state.orderBy) {
+      // TODO - Asc Dsc constants
+      this.setState(prevState => {
+        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithTopic, `${prevState.orderBy},${getOppositeOrder(prevState)}`)
+        return {order: getOppositeOrder(prevState)}
+      })
+    } else {
+      this.setState(prevState => {
+        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithTopic, `${field},${prevState.order}`);
+        return {orderBy: field}
+      })
+    }
+
+
+  };
+
   handleSelectClick = (event, id) => {
     const {selected} = this.state;
     const selectedIndex = selected.indexOf(id);
@@ -106,7 +126,7 @@ class PlatformPostTable extends React.Component {
   }
 
 
-  fetchPosts(size, page, filterWithTopic = this.state.filterWithTopic) {
+  fetchPosts(size = this.state.rowsPerPage, page = this.state.page, filterWithTopic = this.state.filterWithTopic, sort = `${this.state.orderBy},${this.state.order}`) {
     let applyResponseToState = response => {
       this.setState({
         page: response.data.number,
@@ -117,7 +137,7 @@ class PlatformPostTable extends React.Component {
     };
 
 
-    this.getPostsAsPage(size, page, filterWithTopic)
+    this.getPostsAsPage(size, page, filterWithTopic, sort)
       .then(applyResponseToState)
       .catch(error => console.log(error))
   }
@@ -143,10 +163,13 @@ class PlatformPostTable extends React.Component {
 
           <Table className={classes.table} aria-labelledby="tableTitle">
             <PostsTableHead
+              order={this.state.order}
+              orderBy={this.state.orderBy}
               numSelected={this.state.selected.length}
               rowCount={this.state.twitter.length}
               columns={columns}
               handleSelectAllClick={this.handleSelectAllClick}
+              handleSortClick={this.handleSortClick}
             />
             <PostsTableBody
               platform={platform}
