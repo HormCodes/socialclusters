@@ -14,7 +14,16 @@ const styles = {
   },
 }
 
-const Dashboard = ({classes, value}) => {
+const Dashboard = ({classes, value, topics, countsByDay}) => {
+  const getTopicNames = () => topics.map(topic => topic.name);
+
+  console.log(countsByDay);
+
+  const getPostsByTopicData = () => {
+    // TODO - Refactor
+    // TODO - Use topics prop
+    return [['Day', ...getTopicNames()], ...countsByDay.map(countByDay => [(new Date(countByDay.timestamp)).toDateString(), ...countByDay.countsByTopic.map(countByTopic => countByTopic.count)])]
+  };
   return (
     <div>
       <Grid container spacing={16}>
@@ -33,8 +42,28 @@ const Dashboard = ({classes, value}) => {
               Posts by Topic
             </Typography>
             <Chart
-              width={'500px'}
-              height={'300px'}
+              chartType="Bar"
+              loader={<div>Loading Chart</div>}
+              data={getPostsByTopicData()}
+              options={{
+                // Material design options
+                //chart: {
+                //  title: 'Company Performance',
+                //  subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                //},
+              }}
+              // For tests
+              rootProps={{'data-testid': '2'}}
+            /></CardContent>
+          </Card>
+
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Card><CardContent>
+            <Typography gutterBottom variant="h5" component="h2">
+              Posts by Platform
+            </Typography>
+            <Chart
               chartType="Bar"
               loader={<div>Loading Chart</div>}
               data={[

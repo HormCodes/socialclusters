@@ -8,6 +8,7 @@ import Settings from "./components/settings/Settings";
 import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
+import {getCountsByDay} from "./data/Stats";
 
 const drawerWidth = 240;
 
@@ -50,11 +51,13 @@ class App extends Component {
     topics: [],
     sources: [],
     posts: [],
+    countsByDay: []
   };
 
   componentDidMount() {
     this.fetchTopics();
     this.fetchSources();
+    this.fetchCountsByDay();
   }
 
   fetchTopics = () => {
@@ -80,6 +83,18 @@ class App extends Component {
       .then(applyResponseToState)
       .catch(error => console.log(error))
   };
+
+  fetchCountsByDay() {
+    let applyResponseToState = response => {
+      this.setState({
+        countsByDay: response.data
+      })
+    };
+
+    getCountsByDay("1547412168", "1547757768")
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
+  }
 
   handleSaveTopic = (topic) =>
     saveTopic(topic)
@@ -121,7 +136,11 @@ class App extends Component {
         name: 'Dashboard',
         icon: 'home',
         url: '/',
-        component: Dashboard
+        component: () =>
+          <Dashboard
+            countsByDay={this.state.countsByDay}
+            topics={this.state.topics}
+          />
       },
       {
         name: 'Posts',
