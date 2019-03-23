@@ -7,6 +7,7 @@ import WithoutTopicCard from "./WithoutTopicCard";
 import WithSuggestedTopicCard from "./WithSuggestedTopicCard";
 import {Card, CardContent} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import {getPostsByTopicData} from "../../lib/graph";
 
 const styles = {
   wrapper: {
@@ -15,15 +16,7 @@ const styles = {
 }
 
 const Dashboard = ({classes, value, topics, countsByDay}) => {
-  const getTopicNames = () => topics.map(topic => topic.name);
 
-  console.log(countsByDay);
-
-  const getPostsByTopicData = () => {
-    // TODO - Refactor
-    // TODO - Use topics prop
-    return [['Day', ...getTopicNames()], ...countsByDay.map(countByDay => [(new Date(countByDay.timestamp)).toDateString(), ...countByDay.countsByTopic.map(countByTopic => countByTopic.count)])]
-  };
   return (
     <div>
       <Grid container spacing={16}>
@@ -44,7 +37,7 @@ const Dashboard = ({classes, value, topics, countsByDay}) => {
             <Chart
               chartType="Bar"
               loader={<div>Loading Chart</div>}
-              data={getPostsByTopicData()}
+              data={getPostsByTopicData(countsByDay, topics)}
               options={{
                 // Material design options
                 //chart: {
