@@ -8,11 +8,17 @@ import PostsTableHead from "./PostsTableHead";
 import PostsTableBody from "./PostsTableBody";
 import * as PropTypes from "prop-types";
 
-const styles = () => ({
-  tableWrapper: {
+const styles = (theme) => ({
+  table: {
+    minWidth: 100,
   },
-  table: {},
-
+  tableWrapper: {
+    overflowX: 'auto',
+  },
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+  },
 });
 
 class PlatformPostTable extends React.Component {
@@ -149,7 +155,7 @@ class PlatformPostTable extends React.Component {
 
     return (
 
-      <Paper style={{maxHeight: '100vh', overflow: 'auto', margin: '10px'}}>
+      <Paper className={classes.root}>
         <PostsToolbar
           title={platformName}
           numSelected={this.state.selected.length}

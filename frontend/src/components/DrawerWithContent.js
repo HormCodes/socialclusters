@@ -11,6 +11,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {withStyles} from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
 import {Link, Route, Switch, withRouter} from 'react-router-dom'
+import {Typography} from "@material-ui/core";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from '@material-ui/icons/Menu';
+import AppBar from "@material-ui/core/AppBar";
 
 const drawerWidth = 240;
 
@@ -25,10 +30,10 @@ const styles = theme => ({
     },
   },
   appBar: {
-    position: 'absolute',
-    width: '100%',
-    zIndex: '1400',
-
+    marginLeft: drawerWidth,
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
   },
   menuButton: {
     marginRight: 20,
@@ -99,7 +104,21 @@ class DrawerWithContent extends React.Component {
     return (
       <div className={classes.root}>
         <CssBaseline/>
-
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              onClick={this.handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon/>
+            </IconButton>
+            <Typography variant="h6" color="inherit" noWrap>
+              SocialClusters
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <nav className={classes.drawer}>
           {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
           <Hidden smUp implementation="css">

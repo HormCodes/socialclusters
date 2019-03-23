@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import AppToolbar from "./components/AppToolbar";
 import DrawerWithContent from "./components/DrawerWithContent";
 import Dashboard from "./components/dashboard/Dashboard";
 import Posts from "./components/posts/Posts";
@@ -8,6 +7,41 @@ import Sources from "./components/sources/Sources";
 import Settings from "./components/settings/Settings";
 import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
+import withStyles from "@material-ui/core/styles/withStyles";
+
+const drawerWidth = 240;
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+  },
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
+  },
+  appBar: {
+    marginLeft: drawerWidth,
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
+  },
+  menuButton: {
+    marginRight: 20,
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing.unit * 3,
+  },
+});
 
 class App extends Component {
 
@@ -79,7 +113,9 @@ class App extends Component {
 
   handleDrawerToggle = () => this.setState(state => ({mobileOpen: !state.mobileOpen}));
 
+
   render() {
+
     const appItems = [
       {
         name: 'Dashboard',
@@ -129,23 +165,10 @@ class App extends Component {
     ];
 
     return (
-      <div className="App">
-        <header>
-          <AppToolbar handleDrawerToggle={this.handleDrawerToggle}/>
-        </header>
-        <DrawerWithContent
-          handleSaveTopic={this.handleSaveTopic}
-          handleAddTopic={this.handleAddTopic}
-          handleDeleteTopic={this.handleDeleteTopic}
-          topics={this.state.topics}
-          appItems={appItems}
-          settingItems={settingItems}
-          mobileOpen={this.state.mobileOpen}
-          handleDrawerToggle={this.handleDrawerToggle}
-        />
-      </div>
+      <DrawerWithContent appItems={appItems} settingItems={settingItems} mobileOpen={this.state.mobileOpen}
+                         handleDrawerToggle={this.handleDrawerToggle}/>
     );
   }
 }
 
-export default App;
+export default withStyles(styles)(App)
