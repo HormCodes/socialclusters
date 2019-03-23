@@ -30,7 +30,7 @@ for submission in brno.new(limit=100):
             'subreddit': submission.subreddit_name_prefixed,
             'author': submission.author.name,
             'score': submission.score,
-            'timestamp': submission.created_utc,
+            'timestamp': int(submission.created_utc),
             'comments': submission.num_comments,
             'permalink': submission.permalink
         }

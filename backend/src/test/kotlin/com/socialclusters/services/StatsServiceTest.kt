@@ -2,13 +2,8 @@ package com.socialclusters.services
 
 import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.pojos.Topic
-import com.socialclusters.domain.impl.NewsRepository
-import com.socialclusters.domain.impl.TopicRepository
-import com.socialclusters.domain.impl.TweetRepository
-import com.socialclusters.pojos.Author
-import com.socialclusters.pojos.CountByTopic
-import com.socialclusters.pojos.DayNumbers
-import com.socialclusters.pojos.Tweet
+import com.socialclusters.domain.impl.*
+import com.socialclusters.pojos.*
 import com.socialclusters.services.StatsService.Companion.getDateObject
 import com.socialclusters.services.StatsService.Companion.getDay
 import com.socialclusters.services.StatsService.Companion.getDaysBetweenRange
@@ -25,13 +20,17 @@ class StatsServiceTest(
   val tweetRepository: TweetRepository,
   val newsRepository: NewsRepository,
   val topicRepository: TopicRepository,
+  val redditPostRepository: RedditPostRepository,
+  val facebookPostRepository: FacebookPostRepository,
   val dslContext: DSLContext
 
 
 ) : DescribeSpec() {
   override fun beforeTest(description: Description) {
-    tweetRepository.deleteAll()
-    newsRepository.deleteAll()
+    listOf(tweetRepository, redditPostRepository, facebookPostRepository, newsRepository).forEach {
+      it.deleteAll()
+    }
+
     dslContext.deleteFrom(Tables.TOPIC).execute()
   }
 
@@ -53,6 +52,10 @@ class StatsServiceTest(
         firstDate shouldBe thirdDate
         secondDate shouldBe thirdDate
 
+      }
+
+      it("for unix timestamp should return same date object") {
+        getDateObject("1547584968") shouldBe getDateObject("Tue, 15 Jan 2019 20:42:48 GMT")
       }
     }
 
@@ -103,12 +106,38 @@ class StatsServiceTest(
         statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(DayNumbers("2019-01-14T00:00Z", 1, listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0))))
       }
 
+      it("should return special object with stats also for reddit time format") {
+        val tweet = Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
+        val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "author", "Brno", "...", 0, 0)
+
+        tweetRepository.insert(tweet)
+        redditPostRepository.insert(redditPost)
+
+        topicRepository.insert(Topic(null, "Culture", "culture"))
+        topicRepository.insert(Topic(null, "Traffic", "traffic"))
+
+        val dayCounts = statsService.getDayCounts("Wed Jan 13 20:42:48 +0000 2019", "Wed Jan 17 20:42:48 +0000 2019")
+
+        dayCounts.size shouldBe 5
+        dayCounts[2].count shouldBe 1
+        dayCounts[3].count shouldBe 1
+      }
+
     }
 
     describe("isInDateRange") {
 
-      isInDateRange("Wed Jan 13 20:42:48 +0000 2019", "Wed Jan 12 20:42:48 +0000 2019", "Wed Jan 15 20:42:48 +0000 2019") shouldBe true
-      isInDateRange("Wed Jan 17 20:42:48 +0000 2019", "Wed Jan 12 20:42:48 +0000 2019", "Wed Jan 15 20:42:48 +0000 2019") shouldBe false
+      it("should return true for date in date range") {
+
+        isInDateRange("Wed Jan 13 20:42:48 +0000 2019", "Wed Jan 12 20:42:48 +0000 2019", "Wed Jan 15 20:42:48 +0000 2019") shouldBe true
+
+        isInDateRange("1547584968", "Wed Jan 13 20:42:48 +0000 2019", "Wed Jan 17 20:42:48 +0000 2019") shouldBe true
+      }
+
+      it("should return false for date not in date range") {
+        isInDateRange("Wed Jan 17 20:42:48 +0000 2019", "Wed Jan 12 20:42:48 +0000 2019", "Wed Jan 15 20:42:48 +0000 2019") shouldBe false
+      }
+
     }
 
   }
