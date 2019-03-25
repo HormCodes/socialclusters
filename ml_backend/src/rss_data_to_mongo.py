@@ -26,23 +26,28 @@ def get_rss_links(sources_json):
     return rss_links
 
 
-rss_links = get_rss_links(sources_json)
+def download_rss_data():
+    pass
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
-mongo_db = mongo_client['content_database']
-news_collection = mongo_db['news']
 
-for rss_link in rss_links:
-    feed = feedparser.parse(rss_link)
-    for entry in feed.entries:
-        article_object = {
-            'title': entry['title'],
-            'timestamp': entry['published'],
-            'url': entry['link'],
-            'summary': entry['summary'].replace('\xa0', ' '),
-            'publisher': {'name': feed.feed['title'], 'url': feed.feed['title']},
-            'language': feed.feed['language']
-        }
-        if news_collection.find(article_object).count() is 0:
-            print(article_object)
-            news_collection.insert_one(article_object)
+if __name__ == '__main__':
+    rss_links = get_rss_links(sources_json)
+
+    mongo_client = MongoClient("mongodb://localhost:27017/")
+    mongo_db = mongo_client['content_database']
+    news_collection = mongo_db['news']
+
+    for rss_link in rss_links:
+        feed = feedparser.parse(rss_link)
+        for entry in feed.entries:
+            article_object = {
+                'title': entry['title'],
+                'timestamp': entry['published'],
+                'url': entry['link'],
+                'summary': entry['summary'].replace('\xa0', ' '),
+                'publisher': {'name': feed.feed['title'], 'url': feed.feed['title']},
+                'language': feed.feed['language']
+            }
+            if news_collection.find(article_object).count() is 0:
+                print(article_object)
+                news_collection.insert_one(article_object)

@@ -27,58 +27,62 @@ def get_facebook_pages(sources_json):
     return facebook_pages
 
 
-with open(CONFIG_JSON_FILE_NAME) as file:
-    config = json.load(file)
+def download_facebook_data():
+    pass
 
 
-session = requests.session()
-session.params = {}
-response = session.get("http://localhost:8080/sources/")
-sources_json = json.loads(response.content.decode("utf-8"))
+if __name__ == '__main__':
+    with open(CONFIG_JSON_FILE_NAME) as file:
+        config = json.load(file)
 
-facebook_pages = get_facebook_pages(sources_json)
-
-facebook_access_token = input('Enter user access token:')
-
-facebook_posts = []
-
-for page in facebook_pages:
     session = requests.session()
-    session.params = {'access_token': facebook_access_token,
-                      'fields': 'created_time,shares,id,story,message,comments.limit(0).summary(true),reactions.limit(0).summary(total_count)'}
-    response = session.get("https://graph.facebook.com/v3.2/" + page + "/feed")
-    results = json.loads(response.content)
-    facebook_posts.extend(results['data'])
+    session.params = {}
+    response = session.get("http://localhost:8080/sources/")
+    sources_json = json.loads(response.content.decode("utf-8"))
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
-mongo_db = mongo_client['content_database']
-facebook_collection = mongo_db['facebook_posts']
+    facebook_pages = get_facebook_pages(sources_json)
 
-for post in facebook_posts:
-    try:
-        post["shares"]
-    except KeyError:
-        shares = 0
-    else:
-        shares = post["shares"]['count']
+    facebook_access_token = input('Enter user access token:')
 
-    try:
-        post["message"]
-    except KeyError:
-        message = ""
-    else:
-        message = post["message"]
+    facebook_posts = []
 
-    if facebook_collection.find(
-        {'timestamp': post['created_time'], 'postId': post['id']}).count() is 0 and message is not "":
-        post_object = {
-            'text': message,
-            'timestamp': post['created_time'],
-            'postId': post['id'],
-            'reactions': post['reactions']['summary']['total_count'],
-            'comments': post['comments']['summary']['total_count'],
-            'shares': shares,
-        }
+    for page in facebook_pages:
+        session = requests.session()
+        session.params = {'access_token': facebook_access_token,
+                          'fields': 'created_time,shares,id,story,message,comments.limit(0).summary(true),reactions.limit(0).summary(total_count)'}
+        response = session.get("https://graph.facebook.com/v3.2/" + page + "/feed")
+        results = json.loads(response.content)
+        facebook_posts.extend(results['data'])
 
-        facebook_collection.insert_one(post_object)
-        print(post_object)
+    mongo_client = MongoClient("mongodb://localhost:27017/")
+    mongo_db = mongo_client['content_database']
+    facebook_collection = mongo_db['facebook_posts']
+
+    for post in facebook_posts:
+        try:
+            post["shares"]
+        except KeyError:
+            shares = 0
+        else:
+            shares = post["shares"]['count']
+
+        try:
+            post["message"]
+        except KeyError:
+            message = ""
+        else:
+            message = post["message"]
+
+        if facebook_collection.find(
+            {'timestamp': post['created_time'], 'postId': post['id']}).count() is 0 and message is not "":
+            post_object = {
+                'text': message,
+                'timestamp': post['created_time'],
+                'postId': post['id'],
+                'reactions': post['reactions']['summary']['total_count'],
+                'comments': post['comments']['summary']['total_count'],
+                'shares': shares,
+            }
+
+            facebook_collection.insert_one(post_object)
+            print(post_object)
