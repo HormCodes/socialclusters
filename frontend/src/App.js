@@ -9,6 +9,17 @@ import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {getCountsByDay} from "./data/Stats";
+import {
+  deleteFacebookPost,
+  deleteNewsPost,
+  deleteRedditPost,
+  deleteTwitterPost,
+  getFacebookPostsAsPage,
+  getNewsPostsAsPage,
+  getRedditPostsAsPage,
+  getTwitterPostsAsPage,
+  saveTwitterPostTopics
+} from "./data/Posts";
 
 const drawerWidth = 240;
 
@@ -43,6 +54,104 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
   },
 });
+
+
+const getTopicName = (id, topics) => {
+  let safeTopics = topics || [];
+  return (safeTopics[safeTopics.map(topic => topic.textId).indexOf(id)] || {name: id}).name;
+};
+
+const getTopicsString = (topics) => (topics || []).map(topic => getTopicName(topic, topics)).join(', ');
+
+const getText = (text) => text.substr(0, 50) + '...';
+
+const getNumber = (number) => number.toString()
+
+const getDate = (dateString) => new Date(dateString).toLocaleString(); // TODO - Better Format
+
+const platforms = [
+  {
+    id: "twitter",
+    name: "Twitter",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'author', valuePath: ['author', 'username'], label: 'Author', valueFormatter: (value) => value},
+      {id: 'favourites', valuePath: ['favourites'], label: 'Likes', valueFormatter: getNumber},
+      {id: 'retweets', valuePath: ['retweets'], label: 'Retweets', valueFormatter: getNumber},
+      {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: getText},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+    ],
+    getPostsAsPage: getTwitterPostsAsPage,
+    deletePost: deleteTwitterPost,
+    savePostTopics: saveTwitterPostTopics,
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
+      {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+    ],
+
+    // TODO - Implement backend
+    getPostsAsPage: getFacebookPostsAsPage,
+    deletePost: deleteFacebookPost,
+  },
+  {
+    id: "news",
+    name: "News",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'publisher', valuePath: ['publisher', 'name'], label: 'Publisher', valueFormatter: (value) => value},
+      {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+    ],
+
+    // TODO - Implement backend
+    getPostsAsPage: getNewsPostsAsPage,
+    deletePost: deleteNewsPost,
+  },
+  {
+    id: "reddit",
+    name: "Reddit",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'author', valuePath: ['author'], label: 'author', valueFormatter: (value) => value},
+      {id: 'text', valuePath: ['text'], label: 'text', valueFormatter: (value) => value},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+      // TODO - Title?
+    ],
+    detailsContentFormat: (post) =>
+      <div>
+        <b>Platform:</b> Twitter
+      </div>,
+
+    // TODO - Implement backend
+    getPostsAsPage: getRedditPostsAsPage,
+    deletePost: deleteRedditPost,
+  },
+  /* TODO - Meetup platform {
+    id: "meetup",
+    name: "Meetup",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'group', valuePath: ['group'], label: 'Group', valueFormatter: (value) => value},
+      {id: 'title', valuePath: ['title'], label: 'Title', valueFormatter: (value) => value},
+      {id: 'Date', valuePath: ['Date'], label: 'Date', valueFormatter: (value) => value},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+    ],
+    detailsContentFormat: (post) =>
+      <div>
+        <b>Platform:</b> Twitter
+      </div>,
+
+    // TODO - Implement backend
+    getPostsAsPage: getMeetupPostsAsPage,
+    deletePost: deleteMeetupPost,
+  },*/
+];
 
 class App extends Component {
 
@@ -140,13 +249,14 @@ class App extends Component {
           <Dashboard
             countsByDay={this.state.countsByDay}
             topics={this.state.topics}
+            platforms={platforms}
           />
       },
       {
         name: 'Posts',
         icon: 'question_answer',
         url: '/posts',
-        component: () => <Posts topics={this.state.topics}/>
+        component: () => <Posts topics={this.state.topics} platforms={platforms}/>
       },
       {
         name: 'Topics',

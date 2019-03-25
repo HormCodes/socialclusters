@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import GraphCard from "./GraphCard";
 import Chart from "react-google-charts";
+import {getPostsByPlatformData} from "../../../lib/graph";
 
 const styles = theme => ({});
 
@@ -13,9 +14,7 @@ const PostsByPlatformGraph = ({countsByDay, platforms}) =>
     <Chart
       chartType="Bar"
       loader={<div>Loading Chart</div>}
-      data={[]}
-      //data={getPostsByPlatformData(countsByDay, platforms)}
-      // For tests
+      data={getPostsByPlatformData(countsByDay, platforms)}
       rootProps={{'data-testid': '2'}}
     />
   </GraphCard>;

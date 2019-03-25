@@ -1,4 +1,4 @@
-import {getPostsByTopicData, getPostsData} from "../src/lib/graph";
+import {getPostsByPlatformData, getPostsByTopicData, getPostsData} from "../src/lib/graph";
 
 const oneWeekData = [
   {
@@ -13,6 +13,16 @@ const oneWeekData = [
         "topic": "traffic",
         "count": 0
       }
+    ],
+    "countsByPlatform": [
+      {
+        "platform": "twitter",
+        "count": 0
+      },
+      {
+        "platform": "reddit",
+        "count": 0
+      },
     ]
   },
   {
@@ -27,6 +37,16 @@ const oneWeekData = [
         "topic": "traffic",
         "count": 0
       }
+    ],
+    "countsByPlatform": [
+      {
+        "platform": "twitter",
+        "count": 0
+      },
+      {
+        "platform": "reddit",
+        "count": 0
+      },
     ]
   },
   {
@@ -41,6 +61,16 @@ const oneWeekData = [
         "topic": "traffic",
         "count": 1
       }
+    ],
+    "countsByPlatform": [
+      {
+        "platform": "twitter",
+        "count": 1
+      },
+      {
+        "platform": "reddit",
+        "count": 0
+      },
     ]
   },
   {
@@ -55,6 +85,16 @@ const oneWeekData = [
         "topic": "traffic",
         "count": 0
       }
+    ],
+    "countsByPlatform": [
+      {
+        "platform": "twitter",
+        "count": 0
+      },
+      {
+        "platform": "reddit",
+        "count": 1
+      },
     ]
   },
   {
@@ -69,6 +109,16 @@ const oneWeekData = [
         "topic": "traffic",
         "count": 0
       }
+    ],
+    "countsByPlatform": [
+      {
+        "platform": "twitter",
+        "count": 0
+      },
+      {
+        "platform": "reddit",
+        "count": 0
+      },
     ]
   }
 ];
@@ -99,6 +149,33 @@ describe("getPostsByTopicData", () => {
         ["Thu Jan 17 2019", 0, 0],
       ];
       expect(getPostsByTopicData(oneWeekData, topics)).toEqual(result);
+    });
+  });
+
+});
+
+describe("getPostsByPlatformData", () => {
+
+  describe('for empty data', () => {
+    test('should return empty table', () => {
+      expect(getPostsByPlatformData([], [])).toEqual([['Day']]);
+    });
+  });
+
+  describe('for data in one week', function () {
+
+    const topics = [{name: "Reddit", id: "reddit"}, {name: "Twitter", id: "twitter"},];
+
+    test('should return data without another topic order affect', () => {
+      let result = [
+        ['Day', "Reddit", "Twitter"],
+        ["Sun Jan 13 2019", 0, 0],
+        ["Mon Jan 14 2019", 0, 0],
+        ["Tue Jan 15 2019", 0, 1],
+        ["Wed Jan 16 2019", 1, 0],
+        ["Thu Jan 17 2019", 0, 0],
+      ];
+      expect(getPostsByPlatformData(oneWeekData, topics)).toEqual(result);
     });
   });
 
