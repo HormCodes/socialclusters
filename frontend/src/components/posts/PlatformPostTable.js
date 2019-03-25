@@ -32,7 +32,7 @@ class PlatformPostTable extends React.Component {
   state = {
     filterWithTopic: false,
     orderBy: "timestamp",
-    order: "asc",
+    order: "desc",
     twitter: [],
     selected: [],
     rowsPerPage: this.rowsPerPageOptions[0],

@@ -142,11 +142,11 @@ describe("getPostsByTopicData", () => {
     test('should return data without another topic order affect', () => {
       let result = [
         ['Day', "Traffic", "Culture"],
-        ["Sun Jan 13 2019", 0, 0],
-        ["Mon Jan 14 2019", 0, 0],
-        ["Tue Jan 15 2019", 1, 0],
-        ["Wed Jan 16 2019", 0, 1],
-        ["Thu Jan 17 2019", 0, 0],
+        ["13.1.2019", 0, 0],
+        ["14.1.2019", 0, 0],
+        ["15.1.2019", 1, 0],
+        ["16.1.2019", 0, 1],
+        ["17.1.2019", 0, 0],
       ];
       expect(getPostsByTopicData(oneWeekData, topics)).toEqual(result);
     });
@@ -169,11 +169,11 @@ describe("getPostsByPlatformData", () => {
     test('should return data without another topic order affect', () => {
       let result = [
         ['Day', "Reddit", "Twitter"],
-        ["Sun Jan 13 2019", 0, 0],
-        ["Mon Jan 14 2019", 0, 0],
-        ["Tue Jan 15 2019", 0, 1],
-        ["Wed Jan 16 2019", 1, 0],
-        ["Thu Jan 17 2019", 0, 0],
+        ["13.1.2019", 0, 0],
+        ["14.1.2019", 0, 0],
+        ["15.1.2019", 0, 1],
+        ["16.1.2019", 1, 0],
+        ["17.1.2019", 0, 0],
       ];
       expect(getPostsByPlatformData(oneWeekData, topics)).toEqual(result);
     });
@@ -192,11 +192,11 @@ describe('getPostsData', () => {
 
       let result = [
         ['Day', "Count"],
-        ["Sun Jan 13 2019", 0],
-        ["Mon Jan 14 2019", 0],
-        ["Tue Jan 15 2019", 1],
-        ["Wed Jan 16 2019", 1],
-        ["Thu Jan 17 2019", 0],
+        ["13.1.2019", 0],
+        ["14.1.2019", 0],
+        ["15.1.2019", 1],
+        ["16.1.2019", 1],
+        ["17.1.2019", 0],
       ];
 
       expect(getPostsData(oneWeekData)).toEqual(result)

@@ -9,6 +9,7 @@ import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {getCountsByDay} from "./data/Stats";
+import * as moment from "moment"
 import {
   deleteFacebookPost,
   deleteNewsPost,
@@ -200,7 +201,14 @@ class App extends Component {
       })
     };
 
-    getCountsByDay("1547412168", "1547757768")
+    let now = moment();
+    const to = now.format("X");
+    const from = now.subtract(7, 'days').format("X");
+
+    console.log(from === to)
+
+
+    getCountsByDay(from, to)
       .then(applyResponseToState)
       .catch(error => console.log(error))
   }
