@@ -9,32 +9,41 @@ import CardContent from "@material-ui/core/CardContent";
 
 const styles = theme => ({});
 
-const WithSuggestedTopicCard = ({handleShowButtonClick, numberOfPostsWithSuggested}) =>
+const ActionCard = ({
+                      handleButtonClick,
+                      title,
+                      text,
+                      buttonTitle,
+                    }) =>
   <Card>
     <CardContent>
       <Typography gutterBottom variant="h5" component="h2">
-        With Suggested Topic
+        {title}
       </Typography>
       <Typography component="p">
-        {numberOfPostsWithSuggested} posts have suggested topic.
+        {text}
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small" color="primary" action={handleShowButtonClick}>
-        Show
+      <Button size="small" color="primary" action={handleButtonClick}>
+        {buttonTitle}
       </Button>
     </CardActions>
   </Card>;
 
-WithSuggestedTopicCard.propTypes = {
-  handleShowButtonClick: PropTypes.func.isRequired,
-  numberOfPostsWithSuggested: PropTypes.number.isRequired,
+ActionCard.propTypes = {
+  handleButtonClick: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  buttonTitle: PropTypes.string.isRequired,
 };
 
-WithSuggestedTopicCard.defaultProps = {
-  handleShowButtonClick: () => {
+ActionCard.defaultProps = {
+  handleButtonClick: () => {
   },
-  numberOfPostsWithSuggested: 0
+  title: "",
+  text: "",
+  buttonTitle: "",
 };
 
-export default withStyles(styles)(WithSuggestedTopicCard)
+export default withStyles(styles)(ActionCard)

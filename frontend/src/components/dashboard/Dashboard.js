@@ -2,12 +2,13 @@ import React from 'react';
 import Chart from 'react-google-charts';
 import withStyles from "@material-ui/core/es/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
-import SuggestTopicCard from "./SuggestTopicCard";
-import WithoutTopicCard from "./WithoutTopicCard";
-import WithSuggestedTopicCard from "./WithSuggestedTopicCard";
+import SuggestTopicCard from "./actions/SuggestTopicCard";
+import WithoutTopicCard from "./actions/WithoutTopicCard";
+import WithSuggestedTopicCard from "./actions/WithSuggestedTopicCard";
 import {Card, CardContent} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import {getPostsByTopicData} from "../../lib/graph";
+import PostsByTopicGraph from "./graphs/PostsByTopicGraph";
+import PostsGraph from "./graphs/PostsGraph";
 
 const styles = {
   wrapper: {
@@ -30,25 +31,7 @@ const Dashboard = ({classes, value, topics, countsByDay}) => {
           <SuggestTopicCard/>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <Card><CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              Posts by Topic
-            </Typography>
-            <Chart
-              chartType="Bar"
-              loader={<div>Loading Chart</div>}
-              data={getPostsByTopicData(countsByDay, topics)}
-              options={{
-                // Material design options
-                //chart: {
-                //  title: 'Company Performance',
-                //  subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-                //},
-              }}
-              // For tests
-              rootProps={{'data-testid': '2'}}
-            /></CardContent>
-          </Card>
+          <PostsByTopicGraph countsByDay={countsByDay} topics={topics}/>
 
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -77,6 +60,10 @@ const Dashboard = ({classes, value, topics, countsByDay}) => {
               rootProps={{'data-testid': '2'}}
             /></CardContent>
           </Card>
+
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <PostsGraph countsByDay={countsByDay}/>
 
         </Grid>
 

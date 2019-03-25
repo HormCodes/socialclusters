@@ -9,17 +9,9 @@ import CreateIcon from '@material-ui/icons/Create';
 import {Link} from "react-router-dom";
 
 let PostsTableBody = props => {
-  const {twitter, selected, topics, handleSelect, columns, handleOpenPost, platform} = props
+  const {twitter, selected, handleSelect, columns, platform} = props
 
 
-  const getTopicName = id => {
-    let safeTopics = topics || [];
-    return (safeTopics[safeTopics.map(topic => topic.textId).indexOf(id)] || {name: id}).name;
-  };
-
-  const getTopics = (topics) => (topics || []).map(topic => getTopicName(topic)).join(', ');
-
-  const getText = (text) => (text || '').substr(0, 20) + '...';
 
   const isSelected = id => selected.indexOf(id) !== -1;
 
