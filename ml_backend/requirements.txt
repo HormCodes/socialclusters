@@ -8,3 +8,4 @@ ufal.morphodita
 feedparser
 newspaper3k
 praw
+flask

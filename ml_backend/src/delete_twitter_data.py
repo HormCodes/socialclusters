@@ -1,5 +1,3 @@
-import json
-
 from pymongo import MongoClient
 
 mongo_client = MongoClient("mongodb://localhost:27017/")
@@ -35,4 +33,4 @@ def delete_duplicity():
 
     print(documents.count())
 
-delete_without_topics()
+# delete_without_topics()

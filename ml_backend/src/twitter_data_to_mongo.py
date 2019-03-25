@@ -119,32 +119,38 @@ def get_twitter_hashtag_tweets(hashtags):
     return tweets
 
 
-with open(CONFIG_JSON_FILE_NAME) as file:
-    config = json.load(file)
+def download_twitter_data():
+    pass
 
-with open(SOURCES_JSON_FILE_NAME) as file:
-    sources = json.load(file)
 
-twitter_keys = get_twitter_keys(config)
+if __name__ == '__main__':
 
-tweet_responses = []
-tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources)))
-tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources)))
-tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources)))
+    with open(CONFIG_JSON_FILE_NAME) as file:
+        config = json.load(file)
 
-texts = []
+    with open(SOURCES_JSON_FILE_NAME) as file:
+        sources = json.load(file)
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
-mongo_db = mongo_client['content_database']
-twitter_collection = mongo_db['tweet']
+    twitter_keys = get_twitter_keys(config)
 
-for tweet in tweet_responses:
-    tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
-                               tweet["user"]["followers_count"])
-    tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id_str"], tweet["lang"],
-                         tweet["retweet_count"],
-                         tweet["favorite_count"], tweet_author)
-    texts.append(tweet_object)
-    if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
-        print(tweet_object.get_dict_object())
-        twitter_collection.insert_one(tweet_object.get_dict_object())
+    tweet_responses = []
+    tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources)))
+    tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources)))
+    tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources)))
+
+    texts = []
+
+    mongo_client = MongoClient("mongodb://localhost:27017/")
+    mongo_db = mongo_client['content_database']
+    twitter_collection = mongo_db['tweet']
+
+    for tweet in tweet_responses:
+        tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
+                                   tweet["user"]["followers_count"])
+        tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id_str"], tweet["lang"],
+                             tweet["retweet_count"],
+                             tweet["favorite_count"], tweet_author)
+        texts.append(tweet_object)
+        if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
+            print(tweet_object.get_dict_object())
+            twitter_collection.insert_one(tweet_object.get_dict_object())
