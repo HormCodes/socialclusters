@@ -1,6 +1,7 @@
 package com.socialclusters.services
 
 import com.socialclusters.domain.impl.*
+import com.socialclusters.pojos.CountByPlatform
 import com.socialclusters.pojos.CountByTopic
 import com.socialclusters.pojos.DayNumbers
 import com.socialclusters.pojos.Post
@@ -27,24 +28,25 @@ class StatsService(
   fun getDayCounts(from: String, to: String): List<DayNumbers> {
     // TODO - Check timestamps...
 
-    val topics = topicRepository.findAll().toList().map { it.textId }.filterNotNull()
+    val topics = topicRepository.findAll().toList().mapNotNull { it.textId }
 
-    val repositories = listOf(
-      tweetRepository, newsRepository, redditPostRepository, facebookPostRepository
+    val platforms = listOf(
+      Pair("twitter", tweetRepository), Pair("news", newsRepository), Pair("reddit", redditPostRepository), Pair("facebook", facebookPostRepository)
     )
 
-    val posts = repositories.map { repository ->
-      repository.findAll().map { it as Post } // TODO - MongoDB find by timestamp
-    }.flatten()
+    val posts = platforms.map { platform ->
+      Pair(platform.first, platform.second.findAll().map { it as Post }) // TODO - MongoDB find by timestamp
+    }
 
 
     val days = getDaysBetweenRange(from, to)
 
     return days.map { day ->
 
-      val postFromDay = posts.filter { post -> isInDateRange(post.timestamp, day.first.toString(), day.second.toString()) }
-      val countsByTopic = topics.map { CountByTopic(it, postFromDay.filter { post -> post.topics.orEmpty().contains(it) }.size) }
-      DayNumbers(day.first.toString(), postFromDay.size, countsByTopic)
+      val postFromDay = posts.map { Pair(it.first, it.second.filter { post -> isInDateRange(post.timestamp, day.first.toString(), day.second.toString()) }) }
+      val countsByTopic = topics.map { CountByTopic(it, postFromDay.map { it.second }.flatten().filter { post -> post.topics.orEmpty().contains(it) }.size) }
+      val countsByPlatform = postFromDay.map { CountByPlatform(it.first, it.second.size) }
+      DayNumbers(day.first.toString(), postFromDay.map { it.second }.flatten().size, countsByTopic, countsByPlatform)
     }
 
   }

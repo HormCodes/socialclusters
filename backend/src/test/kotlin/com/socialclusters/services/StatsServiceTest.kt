@@ -103,7 +103,7 @@ class StatsServiceTest(
         tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 15 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
         tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
-        statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(DayNumbers("2019-01-14T00:00Z", 1, listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0))))
+        statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(DayNumbers("2019-01-14T00:00Z", 1, listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0)), listOf(CountByPlatform("twitter", 1), CountByPlatform("news", 0), CountByPlatform("reddit", 0), CountByPlatform("facebook", 0))))
       }
 
       it("should return special object with stats also for reddit time format") {
