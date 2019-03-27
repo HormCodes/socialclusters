@@ -2,7 +2,7 @@ import pickle
 import sys
 import time
 
-from flask import Flask
+from flask import Flask, jsonify
 
 from facebook_data_to_mongo import download_facebook_data
 from reddit_data_to_mongo import download_reddit_data
@@ -13,6 +13,8 @@ from twitter_data_to_mongo import download_twitter_data
 app = Flask(__name__)
 
 models = None
+last_training_timestamp = None
+last_suggestion_timestamp = None
 
 
 def load_models():
@@ -60,6 +62,7 @@ def data_rss():
 @app.route('/model/train', methods=['GET'])
 def train():
     global models
+    global last_training_timestamp
     # using random forest as an example
     # can do the training separately and just update the pickles
     start = time.time()
@@ -77,6 +80,7 @@ def train():
 @app.route('/model/suggest')
 def suggest():
     global models
+    global last_suggestion_timestamp
     try:
         load_models()
         print('model loaded')
@@ -90,7 +94,25 @@ def suggest():
         print('suggesting...')
         suggest_topics(models)
 
+    last_suggestion_timestamp = int(time.time())
+
     return '42'
+
+
+@app.route('/model/status')
+def status():
+    global models
+    global last_suggestion_timestamp
+    global last_training_timestamp
+
+    try:
+        load_models()
+    except Exception as e:
+        return jsonify({'isTrained': False, 'lastTrainingTime': last_training_timestamp,
+                        'lastSuggestionTime': last_suggestion_timestamp})
+
+    return jsonify({'isTrained': True, 'lastTrainingTime': last_training_timestamp,
+                    'lastSuggestionTime': last_suggestion_timestamp})
 
 
 if __name__ == '__main__':
