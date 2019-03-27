@@ -57,7 +57,7 @@ def get_data_frame_from_posts(platform, posts, keys_to_source, topic_ids):
         text = post['text']
         platform = platform
 
-        data_frame_input['id'].append(platform + "/" + str(post['_id']))
+        data_frame_input['id'].append(post['_id'])
 
         # TODO - Learning by more properties?
         data_frame_input['text'].append(platform + " " + author + " " + text)

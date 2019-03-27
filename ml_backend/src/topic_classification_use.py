@@ -91,6 +91,7 @@ def suggest_topics(models):
             print(model['topic'])
             for post in data_frame.values:
                 if model['model'].predict([post[1]])[0]:
+                    print(post[0])
                     print(post[1])
                     posts_collection.update_one({'_id': post[0]}, {'$set': {'suggestedTopics': []}})
                     posts_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': model['topic']}})
