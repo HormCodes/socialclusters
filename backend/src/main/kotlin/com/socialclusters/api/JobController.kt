@@ -32,4 +32,11 @@ class JobController(
     }
     newsRepository.saveAll(newsPosts)
   }
+
+  // TODO - POST?
+  @PostMapping("/job/model/train")
+  fun trainModel() {
+
+  }
+
 }

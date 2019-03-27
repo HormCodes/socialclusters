@@ -44,7 +44,7 @@ if __name__ == '__main__':
                 'title': entry['title'],
                 'timestamp': entry['published'],
                 'url': entry['link'],
-                'summary': entry['summary'].replace('\xa0', ' '),
+                'text': entry['summary'].replace('\xa0', ' '),
                 'publisher': {'name': feed.feed['title'], 'url': feed.feed['title']},
                 'language': feed.feed['language']
             }

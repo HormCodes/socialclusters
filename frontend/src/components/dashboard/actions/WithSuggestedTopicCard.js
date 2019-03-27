@@ -1,7 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
-import ActionCard from "./WithoutTopicCard";
+import ActionCard from "./ActionCard";
 
 const styles = theme => ({});
 

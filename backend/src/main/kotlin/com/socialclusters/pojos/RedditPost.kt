@@ -10,7 +10,7 @@ class RedditPost(
   override var timestamp: String,
   override var topics: List<String>?, // TODO - Better immutable way of document update?
   override var suggestedTopics: List<String>?,
-  val text: String,
+  override var text: String,
   val title: String,
   val author: String,
   val subreddit: String,

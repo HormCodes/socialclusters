@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id
 class Tweet(
   @Id
   override var _id: String?,
-  val text: String,
+  override var text: String,
   override var timestamp: String,
   val tweetId: String,
   val language: String,

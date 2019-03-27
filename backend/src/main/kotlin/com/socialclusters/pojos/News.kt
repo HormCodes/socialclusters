@@ -6,7 +6,7 @@ class News(
   @Id
   override var _id: String?,
   val title: String,
-  val summary: String,
+  override var text: String,
   override var timestamp: String,
   val url: String,
   val language: String,

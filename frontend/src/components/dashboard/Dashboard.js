@@ -34,7 +34,6 @@ const Dashboard = ({classes, value, topics, countsByDay, platforms}) => {
         </Grid>
         <Grid item xs={12} sm={4}>
           <PostsGraph countsByDay={countsByDay}/>
-
         </Grid>
 
       </Grid>

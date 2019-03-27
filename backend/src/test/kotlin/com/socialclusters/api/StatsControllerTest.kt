@@ -65,5 +65,22 @@ class StatsControllerTest(
 
       }
     }
+
+    describe("/stats/withoutTopic") {
+      tweetRepository.insert(tweet)
+      redditPostRepository.insert(redditPost)
+
+      redditPostRepository.insert(RedditPost(null, "1547584968", null, null, "lorem ipsum", "lorem ipsum", "author", "Brno", "...", 0, 0))
+
+      val request = MockMvcRequestBuilders.get("/stats/withoutTopic")
+        .param("from", "Wed Jan 13 20:42:48 +0000 2019")
+        .param("to", "Wed Jan 17 20:42:48 +0000 2019")
+
+      mockMvc
+        .perform(request)
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk)
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.`is`(1)))
+    }
   }
 }
