@@ -28,10 +28,6 @@ def get_facebook_pages(sources_json):
 
 
 def download_facebook_data():
-    pass
-
-
-if __name__ == '__main__':
     with open(CONFIG_JSON_FILE_NAME) as file:
         config = json.load(file)
 
@@ -86,3 +82,7 @@ if __name__ == '__main__':
 
             facebook_collection.insert_one(post_object)
             print(post_object)
+
+
+if __name__ == '__main__':
+    download_facebook_data()

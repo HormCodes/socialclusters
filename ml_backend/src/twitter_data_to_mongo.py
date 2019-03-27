@@ -22,20 +22,38 @@ TWITTER_API_HASHTAG_URL = "https://api.twitter.com/1.1/tweets/search/30day/%s.js
 
 # TODO - Test
 # TODO - Rename
-def get_twitter_accounts(sources):
-    return sources[TWITTER_KEY][ACCOUNTS_KEY]
+def get_twitter_accounts(sources_json):
+    subreddits = []
+
+    for source in sources_json:
+        if source['platform'] == 'twitter' and source['valueType'] == 'account':
+            subreddits.append(source['value'])
+
+    return subreddits
 
 
 # TODO - Test
 # TODO - Rename
-def get_twitter_search_words(sources):
-    return sources[TWITTER_KEY][WORDS_KEY]
+def get_twitter_search_words(sources_json):
+    subreddits = []
+
+    for source in sources_json:
+        if source['platform'] == 'twitter' and source['valueType'] == 'word':
+            subreddits.append(source['value'])
+
+    return subreddits
 
 
 # TODO - Test
 # TODO - Rename
-def get_twitter_hashtags(sources):
-    return sources[TWITTER_KEY]["hashtags"]
+def get_twitter_hashtags(sources_json):
+    subreddits = []
+
+    for source in sources_json:
+        if source['platform'] == 'twitter' and source['valueType'] == 'hashtag':
+            subreddits.append(source['value'])
+
+    return subreddits
 
 
 # TODO - Test
@@ -55,19 +73,19 @@ def get_twitter_consumer(twitter_keys):
     return twitter_keys["consumer"]
 
 
-def get_twitter_auth():
+def get_twitter_auth(twitter_keys):
     return OAuth1(get_twitter_consumer(twitter_keys)["key"],
                   get_twitter_consumer(twitter_keys)["secret"],
                   get_twitter_access_token(twitter_keys)["token"],
                   get_twitter_access_token(twitter_keys)["secret"])
 
 
-def get_twitter_accounts_tweets(accounts):
+def get_twitter_accounts_tweets(accounts, twitter_keys):
     tweets = []
 
     for account in accounts:
         session = requests.session()
-        session.auth = get_twitter_auth()
+        session.auth = get_twitter_auth(twitter_keys)
         session.params = {'screen_name': account, 'tweet_mode': 'extended', 'include_rts': 'false'}
         response = session.get(get_twitter_account_timeline_url())
         results = json.loads(response.content)
@@ -76,14 +94,14 @@ def get_twitter_accounts_tweets(accounts):
     return tweets
 
 
-def get_twitter_search_tweets(words):
+def get_twitter_search_tweets(words, twitter_keys):
     tweets = []
 
     # TODO - Naming
     # TODO - Multiple call
     for word in words:
         session = requests.session()
-        session.auth = get_twitter_auth()
+        session.auth = get_twitter_auth(twitter_keys)
         session.params = {'q': word + " AND -filter:retweets", 'tweet_mode': 'extended'}
         response = session.get(TWITTER_API_SEARCH_URL)
         results = json.loads(response.content)
@@ -91,7 +109,7 @@ def get_twitter_search_tweets(words):
     return tweets
 
 
-def get_twitter_bearer_token():
+def get_twitter_bearer_token(twitter_keys):
     session = requests.session()
     session.auth = (get_twitter_consumer(twitter_keys)["key"], get_twitter_consumer(twitter_keys)["secret"])
     session.params = {'grant_type': 'client_credentials'}
@@ -101,10 +119,10 @@ def get_twitter_bearer_token():
     return content["access_token"]
 
 
-def get_twitter_hashtag_tweets(hashtags):
+def get_twitter_hashtag_tweets(hashtags, twitter_keys):
     tweets = []
 
-    bearer_token = get_twitter_bearer_token()
+    bearer_token = get_twitter_bearer_token(twitter_keys)
 
     for hashtag in hashtags:
         session = requests.session()
@@ -120,23 +138,20 @@ def get_twitter_hashtag_tweets(hashtags):
 
 
 def download_twitter_data():
-    pass
-
-
-if __name__ == '__main__':
-
     with open(CONFIG_JSON_FILE_NAME) as file:
         config = json.load(file)
 
-    with open(SOURCES_JSON_FILE_NAME) as file:
-        sources = json.load(file)
+    session = requests.session()
+    session.params = {}
+    response = session.get("http://localhost:8080/sources/")
+    sources_json = json.loads(response.content.decode("utf-8"))
 
     twitter_keys = get_twitter_keys(config)
 
     tweet_responses = []
-    tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources)))
-    tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources)))
-    tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources)))
+    tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources_json), twitter_keys))
+    tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources_json), twitter_keys))
+    tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources_json), twitter_keys))
 
     texts = []
 
@@ -154,3 +169,9 @@ if __name__ == '__main__':
         if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
             print(tweet_object.get_dict_object())
             twitter_collection.insert_one(tweet_object.get_dict_object())
+
+
+# TODO - Source validation
+
+if __name__ == '__main__':
+    download_twitter_data()
