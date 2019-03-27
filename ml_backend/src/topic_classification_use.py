@@ -2,6 +2,8 @@ import json
 import majka
 
 import pandas as pd
+import requests
+from pymongo import MongoClient
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
@@ -11,85 +13,89 @@ from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
 
 STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
 
-with open("../topics.json") as file:
-    topics = json.load(file)
-
-with open(STOPWORDS_JSON_FILE_NAME) as file:
-    stopwords = json.load(file)
-
-morph = majka.Majka("../majka/majka.w-lt")
-topic_ids = []
-
-for topic in topics["topics"]:
-    topic_ids.append(topic["id"])
-
-from pymongo import MongoClient
+platforms = [
+    {'collection': 'tweet', 'id': 'twitter', 'sourcePath': ["author", "username"]},
+    {'collection': 'news', 'id': 'news', 'sourcePath': ["publisher", "name"]},
+    {'collection': 'facebook_posts', 'id': 'facebook', 'sourcePath': []},
+    {'collection': 'reddit_posts', 'id': 'reddit', 'sourcePath': ["author"]},
+]
 
 mongo_client = MongoClient("mongodb://localhost:27017/")
 mongo_db = mongo_client['content_database']
-twitter_collection = mongo_db['tweet']
 
-tweets = []
-test_tweets = []
+with open(STOPWORDS_JSON_FILE_NAME) as file:
+    stopwords = json.load(file)['cs']  # TODO
 
-for tweet_object in twitter_collection.find({}):
-    if tweet_object is not None:
-        try:
-            test = tweet_object["topics"]
-        except KeyError:
-            tweet_object['topics'] = []
-            test_tweets.append(tweet_object)
-        else:
-            if tweet_object['topics'] == []:
-                test_tweets.append(tweet_object)
-            else:
-                tweets.append(tweet_object)
+morph = majka.Majka("../majka/majka.w-lt")
 
-news_collection = mongo_db['news']
-test_news = []
 
-for news_object in news_collection.find({}):
-    if news_object is not None:
-        try:
-            test = news_object["topics"]
-        except KeyError:
-            news_object['topics'] = []
-            test_news.append(news_object)
-        else:
-            if news_object['topics'] == []:
-                test_news.append(news_object)
+def get_topics():
+    session = requests.session()
+    session.params = {}
+    response = session.get("http://localhost:8080/topics/")
+    topics_json = json.loads(response.content.decode("utf-8"))
+    topic_ids = []
+    for topic in topics_json:
+        topic_ids.append(topic["textId"])
+    return topic_ids
 
-tweets_data_frame = get_data_frame_from_posts("twitter", get_posts_with_cleaned_text(tweets, stopwords, morph),
-                                              ["author", "username"], topic_ids)
-test_tweets_data_frame = get_data_frame_from_posts("twitter",
-                                                   get_posts_with_cleaned_text(test_tweets, stopwords, morph),
-                                                   ["author", "username"], topic_ids)
-test_news_data_frame = get_data_frame_from_posts("news", get_posts_with_cleaned_text(test_news, stopwords, morph),
-                                                 ["publisher", "name"], topic_ids)
 
-test_data_frames = pd.concat([tweets_data_frame, test_news_data_frame])
+def get_training_data_frame(topic_ids):
+    data_frames = []
+    for platform in platforms:
+        posts = []
+        posts_collection = mongo_db[platform['collection']]
+        for post in posts_collection.find({'$and': [{'topics': {'$exists': True}}, {'topics': {'$ne': []}}]}):
+            posts.append(post)
 
-X_train = tweets_data_frame.text
+        data_frame = get_data_frame_from_posts(platform['id'],
+                                               get_posts_with_cleaned_text(posts, stopwords, morph),
+                                               platform['sourcePath'], topic_ids)
 
-NB_pipeline = Pipeline([
-    ('tfidf', TfidfVectorizer()),
-    ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
-    # ('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None), n_jobs=1)),
-    # ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
-])
+        data_frames.append(data_frame)
 
-models = []
-for topic_id in topic_ids:
-    model = NB_pipeline.fit(X_train, tweets_data_frame[topic_id])
-    models.append({"topic": topic_id, "model": model})
+    return pd.concat(data_frames)
 
-    print(topic_id)
-    for post in test_data_frames.values:
-        if NB_pipeline.predict([post[1]])[0]:
-            print(post[0])
-            print(post[1])
-            twitter_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': topic_id}})
 
-    print()
+def get_models():
+    topic_ids = get_topics()
+    training_data_frame = get_training_data_frame(topic_ids)
 
-print(len(test_tweets) + len(test_news))
+    models = []
+    for topic_id in topic_ids:
+        model = Pipeline([
+            ('tfidf', TfidfVectorizer()),
+            ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
+            # ('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None), n_jobs=1)),
+            # ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
+        ])
+        model.fit(training_data_frame.text, training_data_frame[topic_id])
+        models.append({"topic": topic_id, "model": model})
+
+    return models
+
+
+def suggest_topics(models):
+    for platform in platforms:
+        posts = []
+        posts_collection = mongo_db[platform['collection']]
+        for post in posts_collection.find({'$or': [{'topics': {'$exists': False}}, {'topics': {'$eq': []}}]}):
+            posts.append(post)
+
+        data_frame = get_data_frame_from_posts(platform['id'],
+                                               get_posts_with_cleaned_text(posts, stopwords, morph),
+                                               platform['sourcePath'], [])  # TODO - Refactor empty topics
+
+        for model in models:
+
+            print(model['topic'])
+            for post in data_frame.values:
+                if model['model'].predict([post[1]])[0]:
+                    print(post[1])
+                    posts_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': model['topic']}})
+
+            print()
+
+
+if __name__ == '__main__':
+    suggest_topics(get_models())
