@@ -12,6 +12,7 @@ class RedditPost(
   override var suggestedTopics: List<String>?,
   override var text: String,
   val title: String,
+  val body: String,
   val author: String,
   val subreddit: String,
   val permalink: String,

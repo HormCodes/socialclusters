@@ -32,7 +32,8 @@ if __name__ == '__main__':
                                    'permalink': submission.permalink}).count() is 0 and submission.selftext is not "":
             post_object = {
                 'title': submission.title,
-                'text': submission.selftext,
+                'body': submission.selftext,
+                'text': submission.title + ' ' + submission.selftext,
                 'subreddit': submission.subreddit_name_prefixed,
                 'author': submission.author.name,
                 'score': submission.score,
