@@ -28,7 +28,7 @@ class StatsController(
 
   @GetMapping("/stats/modelStatus")
   fun getModelStatus(): ModelStatus {
-    return ModelStatus("training", "1547412168")
+    return ModelStatus(false, "1547412168")
   }
 
 

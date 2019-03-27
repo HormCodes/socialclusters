@@ -40,7 +40,7 @@ class StatsControllerTest(
 
   init {
     val tweet = Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
-    val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "author", "Brno", "...", 0, 0)
+    val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "lorem ipsum2", "author", "Brno", "...", 0, 0)
 
     describe("/stats/day/topic") {
       it("should return day counts for specified day") {
@@ -70,7 +70,7 @@ class StatsControllerTest(
       tweetRepository.insert(tweet)
       redditPostRepository.insert(redditPost)
 
-      redditPostRepository.insert(RedditPost(null, "1547584968", null, null, "lorem ipsum", "lorem ipsum", "author", "Brno", "...", 0, 0))
+      redditPostRepository.insert(RedditPost(null, "1547584968", null, null, "lorem ipsum", "lorem ipsum", "lorem ipsum2", "author", "Brno", "...", 0, 0))
 
       val request = MockMvcRequestBuilders.get("/stats/withoutTopic")
         .param("from", "Wed Jan 13 20:42:48 +0000 2019")

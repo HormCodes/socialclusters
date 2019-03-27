@@ -108,7 +108,7 @@ class StatsServiceTest(
 
       it("should return special object with stats also for reddit time format") {
         val tweet = Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
-        val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "author", "Brno", "...", 0, 0)
+        val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "", "author", "Brno", "...", 0, 0)
 
         tweetRepository.insert(tweet)
         redditPostRepository.insert(redditPost)
