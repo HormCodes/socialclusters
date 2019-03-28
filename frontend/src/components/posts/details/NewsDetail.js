@@ -25,6 +25,7 @@ NewsDetail.defaultProps = {
   post: {
     "_id": "",
     "title": "",
+    "text": "",
     "summary": "",
     "timestamp": "Wed, 06 Mar 2019 15:40:00 GMT",
     "url": "",

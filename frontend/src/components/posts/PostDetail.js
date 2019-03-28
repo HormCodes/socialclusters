@@ -10,6 +10,7 @@ import {API_URL} from "../../data/Constants";
 import axios from "axios";
 import TwitterDetail from "./details/TwitterDetail";
 import NewsDetail from "./details/NewsDetail";
+import RedditDetail from "./details/RedditDetail";
 
 const styles = theme => ({
   chip: {
@@ -94,6 +95,7 @@ class PostDetail extends React.Component {
         <Switch>
           <Route path={"/posts/twitter"} component={() => <TwitterDetail post={this.state.post}/>}/>
           <Route path={"/posts/news"} component={() => <NewsDetail post={this.state.post}/>}/>
+          <Route path={"/posts/reddit"} component={() => <RedditDetail post={this.state.post}/>}/>
         </Switch>
 
         <br/>
