@@ -93,7 +93,7 @@ def suggest_topics(models):
                 if model['model'].predict([post[1]])[0]:
                     print(post[0])
                     print(post[1])
-                    posts_collection.update_one({'_id': post[0]}, {'$set': {'suggestedTopics': []}})
+                    # TODO - Run for all before suggestion posts_collection.update_one({'_id': post[0]}, {'$set': {'suggestedTopics': []}})
                     posts_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': model['topic']}})
 
             print()
