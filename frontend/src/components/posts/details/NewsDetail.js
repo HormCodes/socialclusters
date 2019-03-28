@@ -9,6 +9,7 @@ const NewsDetail = ({post}) =>
     <DialogContentText><b>Publisher: </b><a
       href={post.publisher.url}>{post.publisher.name}</a></DialogContentText>
     <DialogContentText><b>Date And Time:</b> {(post.timestamp)}</DialogContentText>
+    <DialogContentText><b>Title:</b> {(post.title)}</DialogContentText>
     <br/>
     <DialogContentText>{post.summary}</DialogContentText>
     <br/>

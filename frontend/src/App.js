@@ -213,6 +213,10 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
+  fetchModelStatus() {
+
+  }
+
   handleSaveTopic = (topic) =>
     saveTopic(topic)
       .then(() => this.fetchTopics())

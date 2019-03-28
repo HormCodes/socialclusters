@@ -11,7 +11,7 @@ let TwitterDetail = ({post}) =>
     <DialogContentText><b>Likes:</b> {post.favourites}</DialogContentText>
     <DialogContentText><b>Retweets:</b> {post.retweets}</DialogContentText>
     <br/>
-    <DialogContentText>{post.text} See full text <a
+    <DialogContentText>{post.text.substr(0, 50)}... See full text <a
       href={`https://twitter.com/${post.author.username}/status/${post.tweetId}`}>here</a>.</DialogContentText>
   </div>;
 

@@ -58,6 +58,5 @@ def download_reddit_data():
                 print(post_object)
 
 
-
 if __name__ == '__main__':
     download_reddit_data()
