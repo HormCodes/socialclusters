@@ -11,19 +11,19 @@ import PostsByPlatformGraph from "./graphs/PostsByPlatformGraph";
 const styles = {
 }
 
-const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus}) => {
+const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus, withoutTopicCount}) => {
 
   return (
     <div>
       <Grid container spacing={16}>
         <Grid item xs={12} sm={4}>
-          <WithoutTopicCard/>
+          <WithoutTopicCard numberOfWithoutTopic={withoutTopicCount}/>
         </Grid>
         <Grid item xs={12} sm={4}>
           <WithSuggestedTopicCard/>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <SuggestTopicCard/>
+          <SuggestTopicCard lastSuggestionTimestamp={modelStatus.lastSuggestionTimestamp}/>
         </Grid>
         <Grid item xs={12} sm={12}>
           <PostsByTopicGraph countsByDay={countsByDay} topics={topics}/>

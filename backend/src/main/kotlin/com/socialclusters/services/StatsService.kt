@@ -5,6 +5,7 @@ import com.socialclusters.pojos.CountByPlatform
 import com.socialclusters.pojos.CountByTopic
 import com.socialclusters.pojos.DayNumbers
 import com.socialclusters.pojos.Post
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -51,8 +52,12 @@ class StatsService(
 
   }
 
-  fun getWithoutTopicCount(): Int {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  fun getWithoutTopicCount(): Long {
+    val platforms = listOf(
+      Pair("twitter", tweetRepository), Pair("news", newsRepository), Pair("reddit", redditPostRepository), Pair("facebook", facebookPostRepository)
+    )
+
+    return platforms.map { it.second.findWithoutTopics(PageRequest.of(0, 20)).totalElements }.sum()
   }
 
 

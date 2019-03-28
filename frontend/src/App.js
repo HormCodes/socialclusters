@@ -8,7 +8,7 @@ import Settings from "./components/settings/Settings";
 import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {getCountsByDay} from "./data/Stats";
+import {getCountsByDay, getWithoutTopicCount} from "./data/Stats";
 import * as moment from "moment"
 import {
   deleteFacebookPost,
@@ -21,6 +21,7 @@ import {
   getTwitterPostsAsPage,
   saveTwitterPostTopics
 } from "./data/Posts";
+import {getModelStatus} from "./data/Model";
 
 const drawerWidth = 240;
 
@@ -161,13 +162,21 @@ class App extends Component {
     topics: [],
     sources: [],
     posts: [],
-    countsByDay: []
+    countsByDay: [],
+    modelStatus: {
+      isTrained: false,
+      lastSuggestionTimestamp: null,
+      lastTrainingTimestamp: null,
+    },
+    withoutTopicCount: 0
   };
 
   componentDidMount() {
     this.fetchTopics();
     this.fetchSources();
     this.fetchCountsByDay();
+    this.fetchModelStatus();
+    this.fetchWithoutTopicCount();
   }
 
   fetchTopics = () => {
@@ -214,7 +223,25 @@ class App extends Component {
   }
 
   fetchModelStatus() {
+    let applyResponseToState = response => {
+      this.setState({
+        modelStatus: response.data
+      })
+    };
+    getModelStatus()
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
+  }
 
+  fetchWithoutTopicCount() {
+    let applyResponseToState = response => {
+      this.setState({
+        withoutTopicCount: response.data
+      })
+    };
+    getWithoutTopicCount()
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
   }
 
   handleSaveTopic = (topic) =>
@@ -262,6 +289,8 @@ class App extends Component {
             countsByDay={this.state.countsByDay}
             topics={this.state.topics}
             platforms={platforms}
+            modelStatus={this.state.modelStatus}
+            withoutTopicCount={this.state.withoutTopicCount}
           />
       },
       {

@@ -16,7 +16,7 @@ class StatsController(
   ) = statsService.getDayCounts(from, to)
 
   @GetMapping("/stats/withoutTopic")
-  fun getWithoutTopicCount(): Int {
+  fun getWithoutTopicCount(): Long {
     return statsService.getWithoutTopicCount()
   }
 

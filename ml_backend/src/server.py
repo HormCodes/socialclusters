@@ -108,11 +108,11 @@ def status():
     try:
         load_models()
     except Exception as e:
-        return jsonify({'isTrained': False, 'lastTrainingTime': last_training_timestamp,
-                        'lastSuggestionTime': last_suggestion_timestamp})
+        return jsonify({'isTrained': False, 'lastTrainingTimestamp': last_training_timestamp,
+                        'lastSuggestionTimestamp': last_suggestion_timestamp})
 
-    return jsonify({'isTrained': True, 'lastTrainingTime': last_training_timestamp,
-                    'lastSuggestionTime': last_suggestion_timestamp})
+    return jsonify({'isTrained': True, 'lastTrainingTimestamp': last_training_timestamp,
+                    'lastSuggestionTimestamp': last_suggestion_timestamp})
 
 
 if __name__ == '__main__':
