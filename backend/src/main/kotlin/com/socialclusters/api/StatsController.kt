@@ -1,6 +1,5 @@
 package com.socialclusters.api
 
-import com.socialclusters.pojos.ModelStatus
 import com.socialclusters.services.StatsService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -26,10 +25,6 @@ class StatsController(
     return 42
   }
 
-  @GetMapping("/stats/modelStatus")
-  fun getModelStatus(): ModelStatus {
-    return ModelStatus(false, "1547412168")
-  }
 
 
 }
