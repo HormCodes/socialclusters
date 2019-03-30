@@ -22,6 +22,7 @@ import {
   saveTwitterPostTopics
 } from "./data/Posts";
 import {getModelStatus} from "./data/Model";
+import {scrapeData} from "./data/Jobs";
 
 const drawerWidth = 240;
 
@@ -168,7 +169,8 @@ class App extends Component {
       lastSuggestionTimestamp: null,
       lastTrainingTimestamp: null,
     },
-    withoutTopicCount: 0
+    withoutTopicCount: 0,
+    isScrapeTokenDialogOpened: false,
   };
 
   componentDidMount() {
@@ -178,6 +180,12 @@ class App extends Component {
     this.fetchModelStatus();
     this.fetchWithoutTopicCount();
   }
+
+
+  handleScrapeData = () => {
+    console.log("called");
+    scrapeData().then(() => this.setState(prevState => prevState))
+  };
 
   fetchTopics = () => {
     let applyResponseToState = response => {
@@ -291,6 +299,7 @@ class App extends Component {
             platforms={platforms}
             modelStatus={this.state.modelStatus}
             withoutTopicCount={this.state.withoutTopicCount}
+            handleScrapeData={this.handleScrapeData}
           />
       },
       {
@@ -335,8 +344,13 @@ class App extends Component {
     ];
 
     return (
-      <DrawerWithContent appItems={appItems} settingItems={settingItems} mobileOpen={this.state.mobileOpen}
-                         handleDrawerToggle={this.handleDrawerToggle}/>
+      <div>
+
+
+        <DrawerWithContent appItems={appItems} settingItems={settingItems} mobileOpen={this.state.mobileOpen}
+                           handleDrawerToggle={this.handleDrawerToggle}/>
+
+      </div>
     );
   }
 }

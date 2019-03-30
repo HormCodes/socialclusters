@@ -1,36 +1,38 @@
 package com.socialclusters.api
 
-import com.socialclusters.domain.impl.NewsRepository
-import com.socialclusters.domain.impl.TweetRepository
-import com.socialclusters.services.StatsService.Companion.getDateObject
+import com.socialclusters.configuration.ML_BACKEND_API_URL
+import com.socialclusters.services.JobService
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.format.DateTimeFormatter
+import org.springframework.web.client.RestTemplate
 
 @RestController
 class JobController(
-  val tweetRepository: TweetRepository,
-  val newsRepository: NewsRepository
+  val jobService: JobService
 ) {
 
   // TODO - POST?
-  @PostMapping("/job/timestamps")
-  fun unifyTimestamps() {
+  @RequestMapping("/job/timestamps")
+  fun unifyTimestamps(): String {
+    jobService.unifyTimestamps()
+    return "Done"
+  }
 
-    val tweetPosts = tweetRepository.findAll().map { post ->
-      post.timestamp = getDateObject(post.timestamp).format(DateTimeFormatter.ISO_INSTANT)
-      post
+  // TODO - POST?
+  @RequestMapping("/job/data")
+  fun scrapeData(@RequestParam(value = "facebookAccessToken", defaultValue = "") facebookAccessToken: String) {
+    val uri = "$ML_BACKEND_API_URL/data/"
 
+    val restTemplate = RestTemplate()
+    restTemplate.getForObject(uri + "twitter", String::class.java)
+    restTemplate.getForObject(uri + "rss", String::class.java)
+    restTemplate.getForObject(uri + "reddit", String::class.java)
+
+    if (facebookAccessToken != "") {
+      restTemplate.getForObject(uri + "facebook?token=$facebookAccessToken", String::class.java)
     }
-    tweetRepository.saveAll(tweetPosts)
-
-
-    val newsPosts = newsRepository.findAll().map { post ->
-      post.timestamp = getDateObject(post.timestamp).format(DateTimeFormatter.ISO_INSTANT)
-      post
-
-    }
-    newsRepository.saveAll(newsPosts)
   }
 
   // TODO - POST?

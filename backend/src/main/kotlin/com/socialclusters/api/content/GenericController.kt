@@ -2,6 +2,7 @@ package com.socialclusters.api.content
 
 import com.socialclusters.domain.GenericRepository
 import com.socialclusters.pojos.Post
+import com.socialclusters.services.JobService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 abstract class GenericController<E>(
-  private val repository: GenericRepository<E>
+  private val repository: GenericRepository<E>,
+  private val jobService: JobService
 ) {
 
 
@@ -21,6 +23,7 @@ abstract class GenericController<E>(
     String, pageable: Pageable
   ): Page<E> {
     // TODO - Without topic and topics exception
+    jobService.unifyTimestamps() // TODO - On post insert
 
     println(pageable)
 

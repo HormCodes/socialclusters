@@ -15,6 +15,10 @@ const PostsByTopicGraph = ({countsByDay, topics}) =>
       chartType="Bar"
       loader={<div>Loading Chart</div>}
       data={getPostsByTopicData(countsByDay, topics)}
+
+      options={{
+        legend: {position: 'top'}
+      }}
       // For tests
       rootProps={{'data-testid': '2'}}
     />

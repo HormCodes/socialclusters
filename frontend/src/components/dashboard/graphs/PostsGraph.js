@@ -15,6 +15,9 @@ const PostsGraph = ({countsByDay}) =>
       chartType="Line"
       loader={<div>Loading Chart</div>}
       data={getPostsData(countsByDay)}
+      options={{
+        legend: {position: 'none'}
+      }}
       // For tests
       rootProps={{'data-testid': '2'}}
     />

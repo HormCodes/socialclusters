@@ -25,7 +25,7 @@ const ActionCard = ({
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small" color="primary" action={handleButtonClick}>
+      <Button size="small" color="primary" onClick={handleButtonClick}>
         {buttonTitle}
       </Button>
     </CardActions>

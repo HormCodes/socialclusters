@@ -7,11 +7,12 @@ import WithSuggestedTopicCard from "./actions/WithSuggestedTopicCard";
 import PostsByTopicGraph from "./graphs/PostsByTopicGraph";
 import PostsGraph from "./graphs/PostsGraph";
 import PostsByPlatformGraph from "./graphs/PostsByPlatformGraph";
+import ScrapeDataCard from "./actions/ScrapeDataCard";
 
 const styles = {
 }
 
-const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus, withoutTopicCount}) => {
+const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus, withoutTopicCount, handleScrapeData}) => {
 
   return (
     <div>
@@ -24,6 +25,9 @@ const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus,
         </Grid>
         <Grid item xs={12} sm={4}>
           <SuggestTopicCard lastSuggestionTimestamp={modelStatus.lastSuggestionTimestamp}/>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <ScrapeDataCard handleScrapeButtonClick={handleScrapeData}/>
         </Grid>
         <Grid item xs={12} sm={12}>
           <PostsByTopicGraph countsByDay={countsByDay} topics={topics}/>

@@ -12,4 +12,10 @@ interface GenericRepository<E> : MongoRepository<E, String> {
 
   @Query(value = MongoQueries.containingTopics)
   fun findByTopics(topicList: List<String>, pageable: Pageable): Page<E>
+
+  @Query(value = MongoQueries.withSuggestedTopics)
+  fun findWithSuggestedTopics(pageable: Pageable): Page<E>
+
+  //fun findByQuery(query: org.springframework.data.mongodb.core.query.Query, pageable: Pageable)
+
 }
