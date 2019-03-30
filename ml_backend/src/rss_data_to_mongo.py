@@ -4,6 +4,7 @@ import ssl
 import feedparser
 import requests
 # TODO - Correct solution?
+from dateutil.parser import parser
 from pymongo import MongoClient
 
 if hasattr(ssl, '_create_unverified_context'):
@@ -39,7 +40,7 @@ def download_rss_data():
             article_object = {
                 'title': entry['title'],
                 'summary': entry['summary'].replace('\xa0', ' '),
-                'timestamp': entry['published'],
+                'timestamp': parser().parse(entry['published']).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 'url': entry['link'],
                 'text': entry['title'] + ' ' + entry['summary'].replace('\xa0', ' '),
                 'publisher': {'name': feed.feed['title'], 'url': feed.feed['title']},

@@ -2,6 +2,7 @@ import json
 
 import praw
 import requests
+from dateutil.parser import parser
 from pymongo import MongoClient
 
 
@@ -41,8 +42,8 @@ def download_reddit_data():
         brno = reddit.subreddit(subreddit)  # TODO - Variable name
         for submission in brno.new(limit=100):
 
-            if reddit_collection.find({'timestamp': submission.created_utc,
-                                       'permalink': submission.permalink}).count() is 0 and submission.selftext is not "":
+            if reddit_collection.find(
+                {'permalink': submission.permalink}).count() is 0 and submission.selftext is not "":
                 post_object = {
                     'title': submission.title,
                     'body': submission.selftext,
@@ -50,7 +51,7 @@ def download_reddit_data():
                     'subreddit': submission.subreddit_name_prefixed,
                     'author': submission.author.name,
                     'score': submission.score,
-                    'timestamp': int(submission.created_utc),
+                    'timestamp': parser().parse(submission.created_utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     'comments': submission.num_comments,
                     'permalink': submission.permalink
                 }

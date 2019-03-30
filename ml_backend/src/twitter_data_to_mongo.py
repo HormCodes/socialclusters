@@ -1,6 +1,7 @@
 import json
 
 import requests
+from dateutil.parser import parser
 from pymongo import MongoClient
 from requests_oauthlib import OAuth1
 
@@ -162,11 +163,12 @@ def download_twitter_data():
     for tweet in tweet_responses:
         tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
                                    tweet["user"]["followers_count"])
-        tweet_object = Tweet(tweet["full_text"], tweet["created_at"], tweet["id_str"], tweet["lang"],
+        tweet_object = Tweet(tweet["full_text"], parser().parse(tweet["created_at"]).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                             tweet["id_str"], tweet["lang"],
                              tweet["retweet_count"],
                              tweet["favorite_count"], tweet_author)
         texts.append(tweet_object)
-        if twitter_collection.find({'text': tweet_object.text, 'timestamp': tweet_object.timestamp}).count() is 0:
+        if twitter_collection.find({'text': tweet_object.text, 'tweetId': tweet_object.tweet_id}).count() is 0:
             print(tweet_object.get_dict_object())
             twitter_collection.insert_one(tweet_object.get_dict_object())
 

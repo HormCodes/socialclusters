@@ -23,7 +23,6 @@ abstract class GenericController<E>(
     String, pageable: Pageable
   ): Page<E> {
     // TODO - Without topic and topics exception
-    jobService.unifyTimestamps() // TODO - On post insert
 
     println(pageable)
 

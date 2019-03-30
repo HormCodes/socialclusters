@@ -2,6 +2,7 @@
 import json
 
 import requests
+from dateutil.parser import parser
 from pymongo import MongoClient
 
 CONFIG_JSON_FILE_NAME = "../config.json"
@@ -70,7 +71,8 @@ def download_facebook_data():
             message = post["message"]
 
         if facebook_collection.find(
-            {'timestamp': post['created_time'], 'postId': post['id']}).count() is 0 and message is not "":
+            {'timestamp': parser().parse(post['created_time']).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             'text': message}).count() is 0 and message is not "":
             post_object = {
                 'text': message,
                 'timestamp': post['created_time'],
