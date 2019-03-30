@@ -12,7 +12,7 @@ import ScrapeDataCard from "./actions/ScrapeDataCard";
 const styles = {
 }
 
-const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus, withoutTopicCount, handleScrapeData}) => {
+const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus, withoutTopicCount, handleScrapeData, handleSuggestTopics}) => {
 
   return (
     <div>
@@ -24,7 +24,8 @@ const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus,
           <WithSuggestedTopicCard/>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <SuggestTopicCard lastSuggestionTimestamp={modelStatus.lastSuggestionTimestamp}/>
+          <SuggestTopicCard handleSuggestButtonClick={handleSuggestTopics}
+                            lastSuggestionTimestamp={modelStatus.lastSuggestionTimestamp}/>
         </Grid>
         <Grid item xs={12} sm={4}>
           <ScrapeDataCard handleScrapeButtonClick={handleScrapeData}/>

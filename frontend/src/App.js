@@ -21,7 +21,7 @@ import {
   getTwitterPostsAsPage,
   saveTwitterPostTopics
 } from "./data/Posts";
-import {getModelStatus} from "./data/Model";
+import {getModelStatus, suggestTopics} from "./data/Model";
 import {scrapeData} from "./data/Jobs";
 
 const drawerWidth = 240;
@@ -181,6 +181,10 @@ class App extends Component {
     this.fetchWithoutTopicCount();
   }
 
+  handleSuggestTopics = () => {
+    suggestTopics().then(() => this.fetchModelStatus())
+  }
+
 
   handleScrapeData = () => {
     console.log("called");
@@ -300,6 +304,7 @@ class App extends Component {
             modelStatus={this.state.modelStatus}
             withoutTopicCount={this.state.withoutTopicCount}
             handleScrapeData={this.handleScrapeData}
+            handleSuggestTopics={this.handleSuggestTopics}
           />
       },
       {
