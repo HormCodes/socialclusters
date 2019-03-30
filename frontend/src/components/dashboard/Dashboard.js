@@ -8,6 +8,7 @@ import PostsByTopicGraph from "./graphs/PostsByTopicGraph";
 import PostsGraph from "./graphs/PostsGraph";
 import PostsByPlatformGraph from "./graphs/PostsByPlatformGraph";
 import ScrapeDataCard from "./actions/ScrapeDataCard";
+import PostsBySuggestedTopicGraph from "./graphs/PostsBySuggestedTopicGraph";
 
 const styles = {
 }
@@ -33,12 +34,17 @@ const Dashboard = ({classes, value, topics, countsByDay, platforms, modelStatus,
         <Grid item xs={12} sm={12}>
           <PostsByTopicGraph countsByDay={countsByDay} topics={topics}/>
         </Grid>
+
         <Grid item xs={12} sm={6}>
           <PostsByPlatformGraph countsByDay={countsByDay} platforms={platforms}/>
 
         </Grid>
         <Grid item xs={12} sm={6}>
           <PostsGraph countsByDay={countsByDay}/>
+        </Grid>
+
+        <Grid item xs={12} sm={12}>
+          <PostsBySuggestedTopicGraph countsByDay={countsByDay} topics={topics}/>
         </Grid>
 
       </Grid>

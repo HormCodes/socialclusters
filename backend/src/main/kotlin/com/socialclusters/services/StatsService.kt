@@ -46,8 +46,9 @@ class StatsService(
 
       val postFromDay = posts.map { Pair(it.first, it.second.filter { post -> isInDateRange(post.timestamp, day.first.toString(), day.second.toString()) }) }
       val countsByTopic = topics.map { CountByTopic(it, postFromDay.map { it.second }.flatten().filter { post -> post.topics.orEmpty().contains(it) }.size) }
+      val countsBySuggestedTopic = topics.map { CountByTopic(it, postFromDay.map { it.second }.flatten().filter { post -> post.suggestedTopics.orEmpty().contains(it) }.size) }
       val countsByPlatform = postFromDay.map { CountByPlatform(it.first, it.second.size) }
-      DayNumbers(day.first.toString(), postFromDay.map { it.second }.flatten().size, countsByTopic, countsByPlatform)
+      DayNumbers(day.first.toString(), postFromDay.map { it.second }.flatten().size, countsByTopic, countsBySuggestedTopic, countsByPlatform)
     }
 
   }

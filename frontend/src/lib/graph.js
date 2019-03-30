@@ -12,6 +12,10 @@ export function getPostsByTopicData(countsByDay, topics) {
   return [['Day', ...getTopicNames(topics)], ...countsByDay.map(countByDay => [getDateString(countByDay.timestamp), ...getCountsByTopic(countByDay.countsByTopic, topics)])]
 }
 
+export function getPostsBySuggestedTopicData(countsByDay, topics) {
+  return [['Day', ...getTopicNames(topics)], ...countsByDay.map(countByDay => [getDateString(countByDay.timestamp), ...getCountsByTopic(countByDay.countsBySuggestedTopic, topics)])]
+}
+
 export function getPostsData(countsByDay) {
   return [['Day', 'Count'], ...countsByDay.map(countByDay => [getDateString(countByDay.timestamp), countByDay.count])]
 }

@@ -2,7 +2,7 @@ import pickle
 import sys
 import time
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 from facebook_data_to_mongo import download_facebook_data
 from reddit_data_to_mongo import download_reddit_data
@@ -40,7 +40,7 @@ def data_twitter():
 
 @app.route('/data/facebook')
 def data_facebook():
-    download_facebook_data()
+    download_facebook_data(request.args.get('accessToken', ''))
 
     return 'Done'
 

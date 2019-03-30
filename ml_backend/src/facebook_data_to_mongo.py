@@ -28,7 +28,7 @@ def get_facebook_pages(sources_json):
     return facebook_pages
 
 
-def download_facebook_data():
+def download_facebook_data(access_token):
     with open(CONFIG_JSON_FILE_NAME) as file:
         config = json.load(file)
 
@@ -39,7 +39,7 @@ def download_facebook_data():
 
     facebook_pages = get_facebook_pages(sources_json)
 
-    facebook_access_token = input('Enter user access token:')
+    facebook_access_token = access_token
 
     facebook_posts = []
 
