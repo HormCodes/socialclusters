@@ -13,3 +13,7 @@ export function getCountsByDay(from, to) {
 export function getWithoutTopicCount() {
   return axios.get(`${API_URL}/stats/withoutTopic`)
 }
+
+export function getWithSuggestedTopicCount() {
+  return axios.get(`${API_URL}/stats/withSuggestedTopic`)
+}

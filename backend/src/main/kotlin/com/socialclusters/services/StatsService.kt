@@ -60,6 +60,14 @@ class StatsService(
     return platforms.map { it.second.findWithoutTopics(PageRequest.of(0, 20)).totalElements }.sum()
   }
 
+  fun getWithSuggestedTopicCount(): Long {
+    val platforms = listOf(
+      Pair("twitter", tweetRepository), Pair("news", newsRepository), Pair("reddit", redditPostRepository), Pair("facebook", facebookPostRepository)
+    )
+
+    return platforms.map { it.second.findWithSuggestedTopics(PageRequest.of(0, 20)).totalElements }.sum()
+  }
+
 
   companion object {
     fun getDateObject(timestamp: String): OffsetDateTime {

@@ -21,8 +21,8 @@ class StatsController(
   }
 
   @GetMapping("/stats/withSuggestedTopic")
-  fun getWithSuggestedTopicCount(): Int {
-    return 42
+  fun getWithSuggestedTopicCount(): Long {
+    return statsService.getWithSuggestedTopicCount()
   }
 
 

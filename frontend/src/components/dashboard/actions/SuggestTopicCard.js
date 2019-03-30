@@ -16,13 +16,13 @@ const SuggestTopicCard = ({handleSuggestButtonClick, lastSuggestionTimestamp}) =
 
 SuggestTopicCard.propTypes = {
   handleSuggestButtonClick: PropTypes.func.isRequired,
-  lastSuggestionTimestamp: PropTypes.string.isRequired,
+  lastSuggestionTimestamp: PropTypes.number.isRequired,
 };
 
 SuggestTopicCard.defaultProps = {
   handleSuggestButtonClick: () => {
   },
-  lastSuggestionTimestamp: "Yesterday"
+  lastSuggestionTimestamp: 0
 };
 
 export default withStyles(styles)(SuggestTopicCard)

@@ -8,7 +8,7 @@ import Settings from "./components/settings/Settings";
 import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {getCountsByDay, getWithoutTopicCount} from "./data/Stats";
+import {getCountsByDay, getWithoutTopicCount, getWithSuggestedTopicCount} from "./data/Stats";
 import * as moment from "moment"
 import {
   deleteFacebookPost,
@@ -166,10 +166,11 @@ class App extends Component {
     countsByDay: [],
     modelStatus: {
       isTrained: false,
-      lastSuggestionTimestamp: null,
-      lastTrainingTimestamp: null,
+      lastSuggestionTimestamp: 0,
+      lastTrainingTimestamp: 0,
     },
     withoutTopicCount: 0,
+    withSuggestedTopicCount: 0,
     isScrapeTokenDialogOpened: false,
   };
 
@@ -179,11 +180,15 @@ class App extends Component {
     this.fetchCountsByDay();
     this.fetchModelStatus();
     this.fetchWithoutTopicCount();
+    this.fetchWithSuggestedTopicCount()
   }
 
   handleSuggestTopics = () => {
-    suggestTopics().then(() => this.fetchModelStatus())
-  }
+    suggestTopics().then(() => {
+      this.fetchModelStatus();
+      this.fetchWithSuggestedTopicCount();
+    })
+  };
 
 
   handleScrapeData = () => {
@@ -226,8 +231,6 @@ class App extends Component {
     const to = now.format("X");
     const from = now.subtract(7, 'days').format("X");
 
-    console.log(from === to)
-
 
     getCountsByDay(from, to)
       .then(applyResponseToState)
@@ -252,6 +255,17 @@ class App extends Component {
       })
     };
     getWithoutTopicCount()
+      .then(applyResponseToState)
+      .catch(error => console.log(error))
+  }
+
+  fetchWithSuggestedTopicCount() {
+    let applyResponseToState = response => {
+      this.setState({
+        withSuggestedTopicCount: response.data
+      })
+    };
+    getWithSuggestedTopicCount()
       .then(applyResponseToState)
       .catch(error => console.log(error))
   }
@@ -305,6 +319,7 @@ class App extends Component {
             withoutTopicCount={this.state.withoutTopicCount}
             handleScrapeData={this.handleScrapeData}
             handleSuggestTopics={this.handleSuggestTopics}
+            withSuggestedTopicCount={this.state.withSuggestedTopicCount}
           />
       },
       {
