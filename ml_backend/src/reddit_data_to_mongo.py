@@ -1,8 +1,8 @@
 import json
+from datetime import datetime
 
 import praw
 import requests
-from dateutil.parser import parser
 from pymongo import MongoClient
 
 
@@ -51,7 +51,8 @@ def download_reddit_data():
                     'subreddit': submission.subreddit_name_prefixed,
                     'author': submission.author.name,
                     'score': submission.score,
-                    'timestamp': parser().parse(submission.created_utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    'timestamp': datetime.utcfromtimestamp((int(submission.created_utc))).strftime(
+                        "%Y-%m-%dT%H:%M:%SZ"),
                     'comments': submission.num_comments,
                     'permalink': submission.permalink
                 }

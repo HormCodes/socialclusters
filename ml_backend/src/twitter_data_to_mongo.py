@@ -24,37 +24,37 @@ TWITTER_API_HASHTAG_URL = "https://api.twitter.com/1.1/tweets/search/30day/%s.js
 # TODO - Test
 # TODO - Rename
 def get_twitter_accounts(sources_json):
-    subreddits = []
+    accounts = []
 
     for source in sources_json:
         if source['platform'] == 'twitter' and source['valueType'] == 'account':
-            subreddits.append(source['value'])
+            accounts.append(source['value'])
 
-    return subreddits
+    return accounts
 
 
 # TODO - Test
 # TODO - Rename
 def get_twitter_search_words(sources_json):
-    subreddits = []
+    words = []
 
     for source in sources_json:
         if source['platform'] == 'twitter' and source['valueType'] == 'word':
-            subreddits.append(source['value'])
+            words.append(source['value'])
 
-    return subreddits
+    return words
 
 
 # TODO - Test
 # TODO - Rename
 def get_twitter_hashtags(sources_json):
-    subreddits = []
+    hashtags = []
 
     for source in sources_json:
         if source['platform'] == 'twitter' and source['valueType'] == 'hashtag':
-            subreddits.append(source['value'])
+            hashtags.append(source['value'])
 
-    return subreddits
+    return hashtags
 
 
 # TODO - Test
@@ -128,7 +128,7 @@ def get_twitter_hashtag_tweets(hashtags, twitter_keys):
     for hashtag in hashtags:
         session = requests.session()
         session.headers = {"Authorization": "Bearer " + bearer_token}
-        session.params = {"q": hashtag + " AND -filter:retweets", 'tweet_mode': 'extended'}
+        session.params = {"q": '#' + hashtag + " AND -filter:retweets", 'tweet_mode': 'extended'}
 
         #  TODO - response = session.get(TWITTER_API_HASHTAG_URL)
         response = session.get(TWITTER_API_SEARCH_URL)
