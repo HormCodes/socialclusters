@@ -44,23 +44,27 @@ def nested_get(input_dict, nested_key):
     return internal_dict_value
 
 
+def get_text_for_predict_from_post(platform, post, keys_to_source):
+    author = ""
+
+    if len(keys_to_source) is not 0:
+        author = nested_get(post, keys_to_source)
+    text = post['text']
+    platform = platform
+
+    return platform + " " + author + " " + text
+
+
 def get_data_frame_from_posts(platform, posts, keys_to_source, topic_ids):
     data_frame_input = {'id': [], 'text': []}
     for topic_id in topic_ids:
         data_frame_input[topic_id] = []
 
     for post in posts:
-        author = ""
-
-        if len(keys_to_source) is not 0:
-            author = nested_get(post, keys_to_source)
-        text = post['text']
-        platform = platform
-
         data_frame_input['id'].append(post['_id'])
 
         # TODO - Learning by more properties?
-        data_frame_input['text'].append(platform + " " + author + " " + text)
+        data_frame_input['text'].append(get_text_for_predict_from_post(platform, post, keys_to_source))
 
         for topic_id in topic_ids:
             if topic_id in post["topics"]:

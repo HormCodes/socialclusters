@@ -1,3 +1,5 @@
+import json
+import majka
 import pickle
 import sys
 import time
@@ -7,6 +9,7 @@ from flask import Flask, jsonify, request
 from facebook_data_to_mongo import download_facebook_data
 from reddit_data_to_mongo import download_reddit_data
 from rss_data_to_mongo import download_rss_data
+from text_cleaning import get_text_for_predict_from_post, get_post_with_cleaned_text
 from topic_classification_use import get_models, get_topics, suggest_topics
 from twitter_data_to_mongo import download_twitter_data
 
@@ -15,6 +18,8 @@ app = Flask(__name__)
 models = None
 last_training_timestamp = None
 last_suggestion_timestamp = None
+
+STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
 
 
 def load_models():
@@ -97,6 +102,42 @@ def suggest():
     last_suggestion_timestamp = int(time.time())
 
     return '42'
+
+
+@app.route('/model/predict')
+def predict():
+    global models
+    global last_suggestion_timestamp
+    try:
+        load_models()
+        print('model loaded')
+
+    except Exception as e:
+        print('No model here')
+        print('Train first')
+        return 'Train first'
+
+    data = json.loads(request.data)
+
+    with open(STOPWORDS_JSON_FILE_NAME) as file:
+        stopwords = json.load(file)['cs']  # TODO
+
+    morph = majka.Majka("../majka/majka.w-lt")
+
+    topics = []
+    text = get_text_for_predict_from_post(
+        data['platform'],
+        get_post_with_cleaned_text(data['post'], stopwords, morph),
+        data['keysToSource']
+    )
+
+    print(text)
+    if models:
+        for model in models:
+            if model['model'].predict([text])[0]:
+                topics.append(model['topic'])
+
+    return jsonify(topics)
 
 
 @app.route('/model/status')
