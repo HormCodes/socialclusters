@@ -5,7 +5,16 @@ services:
   # backend:
   # ml_backend:
 
-  ml_database:
+  backend:
+    image: socialclusters/backend
+    depends_on:
+      - content_database
+      - user_database
+    ports:
+      - "8080:8080"
+
+  content_database:
+    container_name: content_database
     image: mongo:latest
     volumes:
     - ./mongodb/data/db:/data/db
@@ -15,11 +24,12 @@ services:
     - MONGODB_DATABASE=content_database # TODO - Name
 
   user_database:
+    container_name: user_database
     image: postgres:10.5
     volumes:
     - ./postgres/data:/var/lib/postgresql/data
     ports:
-    - 127.0.0.1:3312:5432
+      - 5432:5432
     environment:
     - POSTGRES_DB=user_database # TODO - Name
     - POSTGRES_USER=postgres

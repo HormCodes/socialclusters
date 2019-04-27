@@ -53,6 +53,10 @@ class StatsService(
 
   }
 
+  fun getWordCounts(from: String, to: String): Any {
+    return 42
+  }
+
   fun getWithoutTopicCount(): Long {
     val platforms = listOf(
       Pair("twitter", tweetRepository), Pair("news", newsRepository), Pair("reddit", redditPostRepository), Pair("facebook", facebookPostRepository)
@@ -128,8 +132,8 @@ class StatsService(
     }
 
     fun getDaysBetweenRange(fromTimestamp: String, toTimestamp: String): List<Pair<OffsetDateTime, OffsetDateTime>> {
-      val from = getDateObject(fromTimestamp)
-      val to = getDateObject(toTimestamp)
+      val from = getDateObject(fromTimestamp).withHour(0).withMinute(0).withSecond(0)
+      val to = getDateObject(toTimestamp).withHour(0).withMinute(0).withSecond(0)
 
       val numOfDaysBetween = ChronoUnit.DAYS.between(from, to)
       return (0..numOfDaysBetween).map {

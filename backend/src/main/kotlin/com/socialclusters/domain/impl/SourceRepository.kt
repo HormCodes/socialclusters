@@ -53,11 +53,11 @@ class SourceRepository(
   private fun validateSource(source: Source) {
     when {
       platformIsUnknown(source.platform) -> throw IllegalArgumentException("Unknown platform")
-      valueTypeIsNotForPlatform(source.valueType, source.platform) -> throw IllegalArgumentException("Unknown value type for ${source.platform}")
+      valueTypeIsNotForPlatform(source.valueType) -> throw IllegalArgumentException("Unknown value type for ${source.platform}")
     }
   }
 
-  private fun valueTypeIsNotForPlatform(valueType: String?, platform: String?): Boolean {
+  private fun valueTypeIsNotForPlatform(valueType: String?): Boolean {
     return valueType.isNullOrEmpty() || !listOf(ACCOUNT, HASHTAG, WORD, PAGE, GROUP, FORUM, RSS, LOCATION).contains(valueType)
   }
 

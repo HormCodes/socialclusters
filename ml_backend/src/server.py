@@ -9,6 +9,7 @@ from flask import Flask, jsonify, request
 from facebook_data_to_mongo import download_facebook_data
 from reddit_data_to_mongo import download_reddit_data
 from rss_data_to_mongo import download_rss_data
+# from stats import get_word_cloud
 from text_cleaning import get_text_for_predict_from_post, get_post_with_cleaned_text
 from topic_classification_use import get_models, get_topics, suggest_topics
 from twitter_data_to_mongo import download_twitter_data
@@ -48,6 +49,11 @@ def data_facebook():
     download_facebook_data(request.args.get('accessToken', ''))
 
     return 'Done'
+
+
+@app.route('/data/wordcloud')
+def data_wordcloud():
+    return get_word_cloud()
 
 
 @app.route('/data/reddit')

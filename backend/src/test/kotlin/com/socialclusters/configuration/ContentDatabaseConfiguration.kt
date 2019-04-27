@@ -1,20 +1,20 @@
 package com.socialclusters.configuration
 
 import com.mongodb.MongoClient
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 
-@Configuration
+@TestConfiguration
 //@EnableReactiveMongoRepositories
 @EnableMongoRepositories(basePackages = ["com.socialclusters.domain.impl"])
 class ContentDatabaseConfiguration : AbstractMongoConfiguration() {
   @Bean
   override fun mongoClient(): MongoClient {
-    return MongoClient("content_database")
+    return MongoClient("localhost")
   }
 
   // ---------------------------------------------------- mongodb config

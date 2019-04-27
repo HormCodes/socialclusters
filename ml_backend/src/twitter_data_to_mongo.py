@@ -103,7 +103,7 @@ def get_twitter_search_tweets(words, twitter_keys):
     for word in words:
         session = requests.session()
         session.auth = get_twitter_auth(twitter_keys)
-        session.params = {'q': word + " AND -filter:retweets", 'tweet_mode': 'extended'}
+        session.params = {'q': word + " AND -filter:retweets", 'tweet_mode': 'extended', 'result_type': 'recent'}
         response = session.get(TWITTER_API_SEARCH_URL)
         results = json.loads(response.content)
         tweets.extend(results["statuses"])
@@ -128,7 +128,8 @@ def get_twitter_hashtag_tweets(hashtags, twitter_keys):
     for hashtag in hashtags:
         session = requests.session()
         session.headers = {"Authorization": "Bearer " + bearer_token}
-        session.params = {"q": '#' + hashtag + " AND -filter:retweets", 'tweet_mode': 'extended'}
+        session.params = {"q": '#' + hashtag + " AND -filter:retweets", 'tweet_mode': 'extended',
+                          'result_type': 'recent'}
 
         #  TODO - response = session.get(TWITTER_API_HASHTAG_URL)
         response = session.get(TWITTER_API_SEARCH_URL)
