@@ -32,7 +32,7 @@ with open(CONFIG_JSON_FILE_NAME) as file:
 
 session = requests.session()
 session.params = {}
-response = session.get("http://localhost:8080/sources/")
+response = session.get("http://backend:8080/sources/")
 sources_json = json.loads(response.content.decode("utf-8"))
 
 facebook_pages = get_facebook_pages(sources_json)
@@ -49,7 +49,7 @@ for page in facebook_pages:
     results = json.loads(response.content)
     facebook_posts.extend(results['data'])
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_client = MongoClient("mongodb://content_database:27017/")
 mongo_db = mongo_client['content_database']
 facebook_collection = mongo_db['facebook_posts']
 

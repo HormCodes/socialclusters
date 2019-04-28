@@ -3,7 +3,14 @@ services:
 
   # frontend:
   # backend:
-  # ml_backend:
+  ml_backend:
+    image: socialclusters/ml_backend
+    depends_on:
+      - backend
+      - content_database
+      - user_database
+    ports:
+      - "5000:5000"
 
   backend:
     image: socialclusters/backend

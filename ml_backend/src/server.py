@@ -1,7 +1,6 @@
 import json
 import majka
 import pickle
-import sys
 import time
 
 from flask import Flask, jsonify, request
@@ -20,7 +19,7 @@ models = None
 last_training_timestamp = None
 last_suggestion_timestamp = None
 
-STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
+STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
 
 
 def load_models():
@@ -163,10 +162,6 @@ def status():
 
 
 if __name__ == '__main__':
-    try:
-        port = int(sys.argv[1])
-    except Exception as e:
-        port = 5000
 
     try:
         load_models()
@@ -177,4 +172,4 @@ if __name__ == '__main__':
         print('Train first')
         clf = None
 
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', debug=True)

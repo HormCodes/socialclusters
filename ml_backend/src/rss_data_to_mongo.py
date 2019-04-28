@@ -10,10 +10,6 @@ from pymongo import MongoClient
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-session = requests.session()
-session.params = {}
-response = session.get("http://localhost:8080/sources/")
-sources_json = json.loads(response.content.decode("utf-8"))
 
 
 # TODO - Test
@@ -28,9 +24,13 @@ def get_rss_links(sources_json):
 
 
 def download_rss_data():
+    session = requests.session()
+    session.params = {}
+    response = session.get("http://backend:8080/sources/")
+    sources_json = json.loads(response.content.decode("utf-8"))
     rss_links = get_rss_links(sources_json)
 
-    mongo_client = MongoClient("mongodb://localhost:27017/")
+    mongo_client = MongoClient("mongodb://content_database:27017/")
     mongo_db = mongo_client['content_database']
     news_collection = mongo_db['news']
 

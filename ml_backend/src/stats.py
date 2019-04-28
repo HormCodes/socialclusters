@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from server import STOPWORDS_JSON_FILE_NAME
 from text_cleaning import get_post_with_cleaned_text
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_client = MongoClient("mongodb://content_database:27017/")
 mongo_db = mongo_client['content_database']
 
 platforms = [

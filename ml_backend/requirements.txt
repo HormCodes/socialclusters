@@ -4,10 +4,11 @@ pymongo
 nose
 sklearn
 pandas
-ufal.morphodita
 feedparser
 newspaper3k
 praw
 flask
 scikit-multilearn
 python-dateutil
+majka
+stop-words

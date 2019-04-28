@@ -11,7 +11,7 @@ from sklearn.svm import LinearSVC
 
 from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
 
-STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
+STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
 
 platforms = [
     {'collection': 'tweet', 'id': 'twitter', 'sourcePath': ["author", "username"]},
@@ -20,19 +20,19 @@ platforms = [
     {'collection': 'reddit_posts', 'id': 'reddit', 'sourcePath': ["author"]},
 ]
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_client = MongoClient("mongodb://content_database:27017/")
 mongo_db = mongo_client['content_database']
 
 with open(STOPWORDS_JSON_FILE_NAME) as file:
-    stopwords = json.load(file)['cs']  # TODO
+    stopwords = []
 
-morph = majka.Majka("../majka/majka.w-lt")
+morph = majka.Majka("majka/majka.w-lt")
 
 
 def get_topics():
     session = requests.session()
     session.params = {}
-    response = session.get("http://localhost:8080/topics/")
+    response = session.get("http://backend:8080/topics/")
     topics_json = json.loads(response.content.decode("utf-8"))
     topic_ids = []
     for topic in topics_json:
