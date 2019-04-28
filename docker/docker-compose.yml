@@ -1,8 +1,16 @@
 version: "3.3"
 services:
 
-  # frontend:
-  # backend:
+  frontend:
+    image: socialclusters/frontend
+    depends_on:
+      - content_database
+      - user_database
+      - backend
+      - ml_backend
+    ports:
+      - "3000:3000"
+
   ml_backend:
     image: socialclusters/ml_backend
     depends_on:
