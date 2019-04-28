@@ -1,6 +1,15 @@
 version: "3.3"
 services:
 
+  nginx:
+    image: socialclusters/nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+
   frontend:
     image: socialclusters/frontend
     depends_on:

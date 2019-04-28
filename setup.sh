@@ -13,4 +13,6 @@ cd ../frontend
 docker build -t socialclusters/frontend .
 
 cd ../docker
+docker build -t socialclusters/nginx .
+
 docker-compose up -d
