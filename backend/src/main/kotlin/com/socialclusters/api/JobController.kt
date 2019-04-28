@@ -17,7 +17,7 @@ class JobController(
   @RequestMapping("/job/timestamps")
   fun unifyTimestamps(): String {
     jobService.unifyTimestamps()
-    return "Done"
+    return "Done2"
   }
 
   // TODO - POST?

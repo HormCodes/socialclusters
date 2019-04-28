@@ -111,6 +111,7 @@ flyway {
 
 }
 
-generateUserDatabaseJooqSchemaSource.dependsOn flywayClean, flywayMigrate
+//generateUserDatabaseJooqSchemaSource.dependsOn flywayClean, flywayMigrate
+generateUserDatabaseJooqSchemaSource.dependsOn flywayMigrate
 compileKotlin.dependsOn generateUserDatabaseJooqSchemaSource
 
