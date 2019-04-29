@@ -1,5 +1,6 @@
 package com.socialclusters.services
 
+import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.pojos.Topic
 import com.socialclusters.domain.impl.*
 import com.socialclusters.pojos.*
@@ -27,10 +28,10 @@ class StatsServiceTest(
 ) : DescribeSpec() {
   override fun beforeTest(description: Description) {
     listOf(tweetRepository, redditPostRepository, facebookPostRepository, newsRepository).forEach {
-      //it.deleteAll()
+      it.deleteAll()
     }
 
-    //dslContext.deleteFrom(Tables.TOPIC).execute()
+    dslContext.deleteFrom(Tables.TOPIC).execute()
   }
 
   init {
@@ -113,7 +114,12 @@ class StatsServiceTest(
         tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 15 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
         tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
-        statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(DayNumbers("2019-01-14T00:00Z", 1, listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0)), listOf(), listOf(CountByPlatform("twitter", 1), CountByPlatform("news", 0), CountByPlatform("reddit", 0), CountByPlatform("facebook", 0))))
+        statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(
+          DayNumbers(
+            "2019-01-14T00:00Z", 1,
+            listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0)),
+            listOf(CountByTopic("culture", 0), CountByTopic("traffic", 0)),
+            listOf(CountByPlatform("twitter", 1), CountByPlatform("news", 0), CountByPlatform("reddit", 0), CountByPlatform("facebook", 0))))
       }
 
       it("should return special object with stats also for reddit time format") {
