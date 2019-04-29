@@ -15,4 +15,4 @@ docker build -t socialclusters/frontend .
 cd ../docker
 docker build -t socialclusters/nginx .
 
-docker-compose up -d
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d

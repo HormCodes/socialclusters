@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+  nginx:
+    image: socialclusters/nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+
+  frontend:
+    image: socialclusters/frontend
+    depends_on:
+      - content_database
+      - user_database
+      - backend
+      - ml_backend
+    ports:
+      - "3000:3000"
+
+  ml_backend:
+    image: socialclusters/ml_backend
+    depends_on:
+      - backend
+      - content_database
+      - user_database
+    ports:
+      - "5000:5000"
+
+  backend:
+    image: socialclusters/backend
+    depends_on:
+      - content_database
+      - user_database
+    ports:
+      - "8080:8080"
