@@ -1,6 +1,7 @@
 import json
 import pickle
 import time
+
 from flask import Flask, jsonify, request
 
 import majka
@@ -17,8 +18,6 @@ app = Flask(__name__)
 models = None
 last_training_timestamp = None
 last_suggestion_timestamp = None
-
-STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
 
 
 def load_models():

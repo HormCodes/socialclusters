@@ -1,4 +1,5 @@
 import json
+
 import pandas as pd
 import requests
 from pymongo import MongoClient
@@ -22,8 +23,7 @@ platforms = [
 mongo_client = MongoClient("mongodb://content_database:27017/")
 mongo_db = mongo_client['content_database']
 
-with open(STOPWORDS_JSON_FILE_NAME) as file:
-    stopwords = []
+stopwords = []
 
 morph = majka.Majka("majka/majka.w-lt")
 
