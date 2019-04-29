@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-import src
+
 from pojo import Tweet
 from topic_classification import remove_not_neccessary_chars, remove_stopwords_from_text
 

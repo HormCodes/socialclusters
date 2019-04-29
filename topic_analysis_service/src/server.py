@@ -1,10 +1,9 @@
 import json
-import majka
 import pickle
 import time
-
 from flask import Flask, jsonify, request
 
+import majka
 from facebook_data_to_mongo import download_facebook_data
 from reddit_data_to_mongo import download_reddit_data
 from rss_data_to_mongo import download_rss_data

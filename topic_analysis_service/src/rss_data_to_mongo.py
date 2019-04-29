@@ -1,8 +1,7 @@
-import json
-import ssl
-
 import feedparser
+import json
 import requests
+import ssl
 # TODO - Correct solution?
 from dateutil.parser import parser
 from pymongo import MongoClient

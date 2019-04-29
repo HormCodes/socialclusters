@@ -1,8 +1,7 @@
 import json
-import majka
-
 from pymongo import MongoClient
 
+import majka
 from server import STOPWORDS_JSON_FILE_NAME
 from text_cleaning import get_post_with_cleaned_text
 

@@ -1,10 +1,9 @@
 import json
-import majka
-from unittest import TestCase
-
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
+from unittest import TestCase
 
+import majka
 from text_cleaning import remove_stopwords, remove_mess_chars, convert_words_into_lemmas, get_data_frame_from_posts, \
     get_post_with_cleaned_text
 

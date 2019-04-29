@@ -1,5 +1,4 @@
 import json
-
 import requests
 from dateutil.parser import parser
 from pymongo import MongoClient

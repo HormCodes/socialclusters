@@ -1,8 +1,7 @@
 import json
-from datetime import datetime
-
 import praw
 import requests
+from datetime import datetime
 from pymongo import MongoClient
 
 

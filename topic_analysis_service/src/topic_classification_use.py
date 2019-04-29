@@ -1,6 +1,4 @@
 import json
-import majka
-
 import pandas as pd
 import requests
 from pymongo import MongoClient
@@ -9,6 +7,7 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
+import majka
 from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
 
 STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"

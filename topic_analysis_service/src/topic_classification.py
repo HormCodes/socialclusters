@@ -1,6 +1,4 @@
 import json
-import majka
-
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -13,6 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset
 
+import majka
 from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
 
 STOPWORDS_JSON_FILE_NAME = "../stopwords-iso.json"
