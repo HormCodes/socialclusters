@@ -11,4 +11,4 @@ import org.springframework.web.bind.annotation.RestController
 class NewsController(
   newsRepository: NewsRepository,
   jobService: JobService
-) : GenericController<News>(newsRepository, jobService)
+) : GenericPostController<News>(newsRepository, jobService)

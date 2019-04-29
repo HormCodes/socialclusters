@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.Query
 
-interface GenericRepository<E> : MongoRepository<E, String> {
+interface GenericPostRepository<E> : MongoRepository<E, String> {
 
   @Query(value = MongoQueries.withoutTopics)
   fun findWithoutTopics(pageable: Pageable): Page<E>

@@ -11,4 +11,4 @@ import org.springframework.web.bind.annotation.RestController
 class TwitterController(
   tweetRepository: TweetRepository,
   jobService: JobService
-) : GenericController<Tweet>(tweetRepository, jobService)
+) : GenericPostController<Tweet>(tweetRepository, jobService)

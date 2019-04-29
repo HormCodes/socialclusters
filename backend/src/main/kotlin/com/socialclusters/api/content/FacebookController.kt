@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 class FacebookController(
   facebookPostRepository: FacebookPostRepository,
   jobService: JobService
-) : GenericController<FacebookPost>(
+) : GenericPostController<FacebookPost>(
   facebookPostRepository, jobService
 )

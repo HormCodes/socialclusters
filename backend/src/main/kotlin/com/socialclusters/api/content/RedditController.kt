@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 class RedditController(
   redditPostRepository: RedditPostRepository,
   jobService: JobService
-) : GenericController<RedditPost>(
+) : GenericPostController<RedditPost>(
   redditPostRepository, jobService
 )

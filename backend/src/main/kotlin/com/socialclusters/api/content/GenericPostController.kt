@@ -1,6 +1,6 @@
 package com.socialclusters.api.content
 
-import com.socialclusters.domain.GenericRepository
+import com.socialclusters.domain.GenericPostRepository
 import com.socialclusters.pojos.Post
 import com.socialclusters.services.JobService
 import org.springframework.data.domain.Page
@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
-abstract class GenericController<E>(
-  private val repository: GenericRepository<E>,
+abstract class GenericPostController<E>(
+  private val postRepository: GenericPostRepository<E>,
   private val jobService: JobService
 ) {
 
@@ -25,40 +25,40 @@ abstract class GenericController<E>(
     println(pageable)
 
     if (withoutTopic) {
-      return repository.findWithoutTopics(pageable)
+      return postRepository.findWithoutTopics(pageable)
     }
 
     val topicList = topics.split(",")
 
     if (topics.isNotEmpty()) {
-      return repository.findByTopics(topicList, pageable)
+      return postRepository.findByTopics(topicList, pageable)
     }
 
-    return repository.findAll(pageable)
+    return postRepository.findAll(pageable)
   }
 
   @GetMapping("/{id}")
   fun getPost(@PathVariable id: String): E {
-    return repository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    return postRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 
   @DeleteMapping("/{id}")
   fun deletePost(@PathVariable id: String) {
-    if (!repository.existsById(id)) {
+    if (!postRepository.existsById(id)) {
       throw ResponseStatusException(HttpStatus.NOT_FOUND)
     }
 
-    repository.deleteById(id)
+    postRepository.deleteById(id)
   }
 
   @PatchMapping("/{id}/topics")
   fun setTopics(@PathVariable id: String, @RequestBody newTopics: List<String>): E {
-    val post: E = repository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    val post: E = postRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     (post as Post).topics = newTopics
     (post as Post).suggestedTopics = listOf()
 
-    repository.save(post)
+    postRepository.save(post)
 
     return post
   }
