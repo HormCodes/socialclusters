@@ -15,6 +15,7 @@ jobs:
     steps:
       - checkout
       - run: cd backend && ./gradlew build
+      - run: cd backend && ./gradlew test
 
 workflows:
   version: 2
