@@ -14,10 +14,8 @@ abstract class GenericController<E>(
   private val jobService: JobService
 ) {
 
-
-  // TODO - Method namings...
   @GetMapping
-  fun getTwitterContent(
+  fun getContent(
     @RequestParam(value = "withoutTopic", defaultValue = "false") withoutTopic: Boolean,
     @RequestParam(value = "topics", defaultValue = "") topics:
     String, pageable: Pageable
@@ -40,12 +38,12 @@ abstract class GenericController<E>(
   }
 
   @GetMapping("/{id}")
-  fun getTweet(@PathVariable id: String): E {
+  fun getPost(@PathVariable id: String): E {
     return repository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 
   @DeleteMapping("/{id}")
-  fun deleteTweet(@PathVariable id: String) {
+  fun deletePost(@PathVariable id: String) {
     if (!repository.existsById(id)) {
       throw ResponseStatusException(HttpStatus.NOT_FOUND)
     }

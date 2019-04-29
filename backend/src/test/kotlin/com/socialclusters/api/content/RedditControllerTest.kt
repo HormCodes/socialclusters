@@ -24,7 +24,7 @@ class RedditControllerTest(
         redditPostRepository.insert(RedditPost("123", "123", null, null, "", "", "", "", "", "", 0, 0))
         redditPostRepository.insert(RedditPost("124", "123", null, null, "", "", "", "", "", "", 1, 0))
 
-        val content = redditController.getTwitterContent(false, "", PageRequest(0, 20, Sort(Sort.Direction.DESC, "score")))
+        val content = redditController.getContent(false, "", PageRequest(0, 20, Sort(Sort.Direction.DESC, "score")))
         println(content)
 
         val highestScore = redditPostRepository.findAll().toList().sortedByDescending { it.score }.first().score
