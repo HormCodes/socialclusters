@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test_backend:
     docker:
-      - image: circleci/openjdk:9-jdk-sid-node-browsers
+      - image: circleci/openjdk:8
       - image: circleci/postgres:10.5
         environment:
           POSTGRES_USER: postgres
