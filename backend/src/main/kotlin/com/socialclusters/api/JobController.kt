@@ -14,14 +14,14 @@ class JobController(
 ) {
 
   // TODO - POST?
-  @RequestMapping("/job/timestamps")
+  @RequestMapping("/jobs/timestamps")
   fun unifyTimestamps(): String {
     jobService.unifyTimestamps()
     return "Done2"
   }
 
   // TODO - POST?
-  @RequestMapping("/job/data")
+  @RequestMapping("/jobs/data")
   fun scrapeData(@RequestParam(value = "facebookAccessToken", defaultValue = "") facebookAccessToken: String) {
     val uri = "$ML_BACKEND_API_URL/data/"
 
@@ -36,7 +36,7 @@ class JobController(
   }
 
   // TODO - POST?
-  @PostMapping("/job/model/train")
+  @PostMapping("/jobs/model/train")
   fun trainModel() {
 
   }

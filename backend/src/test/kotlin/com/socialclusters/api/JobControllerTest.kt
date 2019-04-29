@@ -29,11 +29,11 @@ class JobControllerTest(
   }
 
   init {
-    describe("/job/timestamps") {
+    describe("/jobs/timestamps") {
       it("should update twitter timestamp format to ISO") {
         tweetRepository.insert(Tweet("12", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/job/timestamps"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/jobs/timestamps"))
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
         tweetRepository.findById("12").get().timestamp shouldBe "2019-01-16T20:42:48Z"
@@ -43,7 +43,7 @@ class JobControllerTest(
         newsRepository.insert(News("12", "lorem ipsum", "...", "...", "Wed, 06 Mar 2019 10:39:00 GMT", "", "en", Publisher("username", "Brno, Czech Republic"), null, null))
         newsRepository.insert(News("13", "lorem ipsum", "...", "...", "Sun, 10 Mar 2019 19:10:00 +0100", "", "en", Publisher("username", "Brno, Czech Republic"), null, null))
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/job/timestamps"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/jobs/timestamps"))
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
         newsRepository.findById("12").get().timestamp shouldBe "2019-03-06T10:39:00Z"
