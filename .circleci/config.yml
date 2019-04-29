@@ -14,8 +14,8 @@ jobs:
           MONGODB_DATABASE: content_database
     steps:
       - checkout
-      - run: cd backend && ./gradlew build
-      - run: cd backend && ./gradlew test
+      - run: cd backend && gradle build
+      - run: cd backend && gradle test
 
 workflows:
   version: 2
