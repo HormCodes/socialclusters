@@ -6,8 +6,8 @@ cd backend
 
 docker build -t socialclusters/backend .
 
-cd ../ml_backend
-docker build -t socialclusters/ml_backend .
+cd ../topic_analysis_service
+docker build -t socialclusters/topic_analysis_service .
 
 cd ../frontend
 docker build -t socialclusters/frontend .

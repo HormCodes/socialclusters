@@ -12,3 +12,6 @@ scikit-multilearn
 python-dateutil
 majka
 stop-words
+flask-sqlalchemy
+langid
+iso-639

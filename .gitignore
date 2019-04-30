@@ -9,7 +9,7 @@ out
 gen
 .firebaserc
 
-/ml_backend/config.json
+/topic_analysis_service/config.json
 /ml_backend/__pycache__/
 node_modules/
 package-lock.json

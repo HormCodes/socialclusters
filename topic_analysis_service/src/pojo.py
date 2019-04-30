@@ -5,6 +5,13 @@ class TweetAuthor:
         self.followers = followers
 
 
+class Config:
+    def __init__(self, backendHost, contentDatabaseHost, userDatabaseHost):
+        self.backendHost = backendHost
+        self.contentDatabaseHost = contentDatabaseHost
+        self.userDatabaseHost = userDatabaseHost
+
+
 class Tweet:
     def __init__(self, text, timestamp, tweet_id, language, retweets, favourites, author):
         self.text = text

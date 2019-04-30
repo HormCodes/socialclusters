@@ -1,12 +1,19 @@
+import langid
 import pandas as pd
+from iso639 import languages
+from stop_words import safe_get_stop_words
 
 
-def remove_stopwords(text, stopwords):
+def remove_stopwords(text):
     tweet_words = text.lower().split()
+
+    text_language = langid.classify(text)[0]
+
+    stop_words = safe_get_stop_words(languages.get(part1=text_language).name.lower())
 
     words = ""
     for word in tweet_words:
-        if word not in stopwords:
+        if word not in stop_words:
             words = words + (" " + word)
 
     return words
@@ -75,10 +82,10 @@ def get_data_frame_from_posts(platform, posts, keys_to_source, topic_ids):
     return pd.DataFrame(data_frame_input)
 
 
-def get_post_with_cleaned_text(post, stopwords, morph):
-    post['text'] = convert_words_into_lemmas(remove_stopwords(remove_mess_chars(post['text']), stopwords), morph)
+def get_post_with_cleaned_text(post, morph):
+    post['text'] = convert_words_into_lemmas(remove_stopwords(remove_mess_chars(post['text'])), morph)
     return post
 
 
-def get_posts_with_cleaned_text(posts, stopwords, morph):
-    return map(lambda post: get_post_with_cleaned_text(post, stopwords, morph), posts)
+def get_posts_with_cleaned_text(posts, morph):
+    return map(lambda post: get_post_with_cleaned_text(post, morph), posts)

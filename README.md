@@ -13,6 +13,8 @@ cd docker
 docker-compose up -d
 ```
 
+ mongoimport --host 0.0.0.0 --port 27017 --db content_database --collection tweet --file twitter.json
+
 ### Firebase 
 
 First you have to install Firebase tools and log in:

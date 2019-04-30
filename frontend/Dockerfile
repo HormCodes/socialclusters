@@ -9,6 +9,7 @@ RUN npm install
 # Copy the current directory contents into the container at /frontend
 COPY . /frontend/
 # Make port 3000 available to the world outside this container
+ENV REACT_APP_API_URL=http://localhost/api
 EXPOSE 3000
 # Run the app when the container launches
-CMD ["API_URL=http://localhost/api", "npm", "start"]
+CMD ["npm", "start"]
