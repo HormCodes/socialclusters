@@ -75,9 +75,9 @@ def get_data_frame_from_posts(platform, posts, keys_to_source, topic_ids):
 
         for topic_id in topic_ids:
             if topic_id in post["topics"]:
-                data_frame_input[topic_id].append(True)
+                data_frame_input[topic_id].append(1)
             else:
-                data_frame_input[topic_id].append(False)
+                data_frame_input[topic_id].append(0)
 
     return pd.DataFrame(data_frame_input)
 

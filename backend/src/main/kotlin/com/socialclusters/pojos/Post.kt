@@ -6,4 +6,5 @@ abstract class Post {
   abstract var text: String
   abstract var topics: List<String>?
   abstract var suggestedTopics: List<String>?
+
 }
