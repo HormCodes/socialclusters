@@ -14,3 +14,10 @@ create table source (
 
 );
 
+create table "user" (
+  id       SERIAL not null primary key,
+  name text not null,
+  username text not null unique,
+  email text not null unique,
+  password text not null
+)

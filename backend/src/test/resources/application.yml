@@ -9,3 +9,4 @@ spring:
     jdbc-url: jdbc:postgresql://0.0.0.0:5432/user_database
     username: postgres
     password: postgres
+

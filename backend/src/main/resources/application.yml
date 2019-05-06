@@ -9,3 +9,7 @@ spring:
     jdbc-url: jdbc:postgresql://user_database:5432/user_database
     username: postgres
     password: postgres
+
+  application:
+    jwtSecret: JWTSuperSecretKey
+    jwtExpirationInMs: 604800000

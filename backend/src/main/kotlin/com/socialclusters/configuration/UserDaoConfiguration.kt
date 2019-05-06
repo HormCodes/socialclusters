@@ -2,6 +2,7 @@ package com.socialclusters.configuration
 
 import com.socialclusters.db.generated.user_database.tables.daos.SourceDao
 import com.socialclusters.db.generated.user_database.tables.daos.TopicDao
+import com.socialclusters.db.generated.user_database.tables.daos.UserDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -13,4 +14,7 @@ class UserDaoConfiguration {
 
   @Bean
   fun topicDao(configuration: org.jooq.Configuration) = TopicDao(configuration)
+
+  @Bean
+  fun userDao(configuration: org.jooq.Configuration) = UserDao(configuration)
 }

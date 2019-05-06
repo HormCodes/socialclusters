@@ -13,18 +13,20 @@ class Posts extends React.Component {
       <Switch>
         <Route exact path={"/posts"} component={() =>
           <div>
-            {platforms.map((platform, index) => <PlatformPostTable
-              key={index}
-              platformName={platform.name}
-              platform={platform.id}
-              columns={platform.columns}
-              topics={topics}
-              handleOpenPost={(post) => {
-                // TODO - Remove prop
-              }
-              }
-              deletePost={platform.deletePost}
-              getPostsAsPage={platform.getPostsAsPage}/>)}</div>
+            {
+              platforms.map((platform, index) =>
+                <PlatformPostTable
+                  key={index}
+                  platformName={platform.name}
+                  platform={platform.id}
+                  columns={platform.columns}
+                  topics={topics}
+                  handleOpenPost={(post) => {
+                    // TODO - Remove prop
+                  }
+                  }
+                  deletePost={platform.deletePost}
+                  getPostsAsPage={platform.getPostsAsPage}/>)}</div>
 
 
         }/>

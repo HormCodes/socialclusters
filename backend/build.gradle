@@ -44,10 +44,11 @@ dependencies {
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
+  compile "org.springframework.boot:spring-boot-starter-security"
   testCompile 'com.jayway.jsonpath:json-path'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
   compile "org.jetbrains.kotlin:kotlin-reflect"
-
+  implementation('io.jsonwebtoken:jjwt:0.2')
   compile 'org.jooq:jooq:+'
   compile 'org.jooq:jooq-meta:+'
   compile 'org.jooq:jooq-codegen:+'
