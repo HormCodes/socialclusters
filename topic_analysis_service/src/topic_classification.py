@@ -1,33 +1,32 @@
 import majka
-import majka
-import time
 
 import pandas as pd
 import psycopg2
+from pymongo import MongoClient
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
-from text_cleaning import remove_mess_chars, remove_stopwords, \
-    convert_words_into_lemmas
+from pojo import Config
+from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
+
+STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
+
+platforms = [
+    {'collection': 'tweet', 'id': 'twitter', 'sourcePath': ["author", "username"]},
+    {'collection': 'news', 'id': 'news', 'sourcePath': ["publisher", "name"]},
+    {'collection': 'facebook_posts', 'id': 'facebook', 'sourcePath': []},
+    {'collection': 'reddit_posts', 'id': 'reddit', 'sourcePath': ["author"]},
+]
+
+morph = majka.Majka("../majka/majka.w-lt")
 
 
-def get_data_frame_stats(data_frame):
-    df_toxic = data_frame.drop(['id', 'text'], axis=1)
-    counts = []
-    categories = list(df_toxic.columns.values)
-    for i in categories:
-        counts.append((i, df_toxic[i].sum()))
-    df_stats = pd.DataFrame(counts, columns=['category', 'number_of_tweets'])
-    return df_stats
-
-
-def get_topics():
+def get_topics(config):
     connection = psycopg2.connect(user="postgres",
                                   password="postgres",
-                                  host="localhost",
+                                  host=config.userDatabaseHost,
                                   port="5432",
                                   database="user_database")
     cursor = connection.cursor()
@@ -39,51 +38,69 @@ def get_topics():
     return topic_ids
 
 
-morph = majka.Majka("../majka/majka.w-lt")
-topic_ids = ['traffic', "sport", "work", "culture", "events", "politics"]
+def get_training_data_frame(config, topic_ids):
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
+    mongo_db = mongo_client['content_database']
+    data_frames = []
+    for platform in platforms:
+        posts = []
+        posts_collection = mongo_db[platform['collection']]
+        for post in posts_collection.find({'$and': [{'topics': {'$exists': True}}, {'topics': {'$ne': []}}]}):
+            posts.append(post)
 
-df = pd.read_csv("../dataset.csv", sep=';', )
-print(df.head())
+        data_frame = get_data_frame_from_posts(platform['id'],
+                                               get_posts_with_cleaned_text(posts, morph),
+                                               platform['sourcePath'], topic_ids)
 
-print("Tweet Count: {}".format(len(df)))
-print("Topic Stats")
-print(get_data_frame_stats(df))
-for x in reversed(range(1, 10, 1)):
-    pass
+        data_frames.append(data_frame)
 
-start = time.time()
-train, test = train_test_split(df.sort_values('sport'), random_state=42, test_size=x / 10, shuffle=True)
-X_train = train.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
-X_test = test.text
+    return pd.concat(data_frames)
 
-# MultiLabelBinarizer().fit_transform(train)
 
-NB_pipeline = Pipeline([
-    ('tfidf', TfidfVectorizer()),
-    ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
-    # ('clf', LinearSVC()),
-    #('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None), n_jobs=1)),
-    # ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
-])
-# drop = train.drop(['id', 'text', 'platform'], axis=1)
-# print(drop.head())
-# NB_pipeline.fit(X_train, drop)
-# print('Test accuracy is {}'.format(accuracy_score(test.drop(['id', 'text', 'platform'], axis=1), NB_pipeline.predict(X_test))))
-#
+def get_models(config):
+    topic_ids = get_topics(config)
+    training_data_frame = get_training_data_frame(config, topic_ids)
 
-topic_accuracy = []
-for topic_id in topic_ids:
-    NB_pipeline.fit(X_train, train[topic_id])
-    # prediction = NB_pipeline.predict(X_test)
+    models = []
+    for topic_id in topic_ids:
+        model = Pipeline([
+            ('tfidf', TfidfVectorizer()),
+            ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
+            # ('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None), n_jobs=1)),
+            # ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
+        ])
+        model.fit(training_data_frame.text, training_data_frame[topic_id])
+        models.append({"topic": topic_id, "model": model})
 
-    # topic_accuracy.append(accuracy_score(test[topic_id], prediction))
-    # print('{}: Test accuracy is {}'.format(topic_id, accuracy_score(test[topic_id], prediction)))
-    # for text in X_test:
-    #     if NB_pipeline.predict([text])[0]:
-    #         print(text)
-    #
-    # print()
+    return models
 
-print('Trained in %.1f seconds' % (time.time() - start))
 
-#print("{};{};{};{};{};{};{}".format(1 - x/10, topic_accuracy[0], topic_accuracy[1], topic_accuracy[2], topic_accuracy[3], topic_accuracy[4], topic_accuracy[5]))
+def suggest_topics(config, models):
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
+    mongo_db = mongo_client['content_database']
+    for platform in platforms:
+        posts = []
+        posts_collection = mongo_db[platform['collection']]
+        for post in posts_collection.find({'$or': [{'topics': {'$exists': False}}, {'topics': {'$eq': []}}]}):
+            posts.append(post)
+
+        data_frame = get_data_frame_from_posts(platform['id'],
+                                               get_posts_with_cleaned_text(posts, morph),
+                                               platform['sourcePath'], [])  # TODO - Refactor empty topics
+
+        for model in models:
+
+            print(model['topic'])
+            for post in data_frame.values:
+                if model['model'].predict([post[1]])[0]:
+                    print(post[0])
+                    print(post[1])
+                    # TODO - Run for all before suggestion posts_collection.update_one({'_id': post[0]}, {'$set': {'suggestedTopics': []}})
+                    posts_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': model['topic']}})
+
+            print()
+
+
+if __name__ == '__main__':
+    config = Config("localhost", "localhost", "localhost")
+    suggest_topics(config, get_models(config))

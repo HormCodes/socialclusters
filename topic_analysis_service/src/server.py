@@ -1,19 +1,17 @@
+import datetime
 import json
 import majka
 import os
 import pickle
 import time
 
+import psycopg2
 from flask import Flask, jsonify, request
 
-from facebook_data_to_mongo import download_facebook_data
 from pojo import Config
-from reddit_data_to_mongo import download_reddit_data
-from rss_data_to_mongo import download_rss_data
 # from stats import get_word_cloud
 from text_cleaning import get_text_for_predict_from_post, get_post_with_cleaned_text
-from topic_classification_use import get_models, get_topics
-from twitter_data_to_mongo import download_twitter_data
+from topic_classification import get_models, get_topics, suggest_topics
 
 app = Flask(__name__)
 
@@ -32,7 +30,7 @@ def get_config(env):
 config = get_config(os.environ['ENV'])
 
 
-def load_models():
+def load_models(config):
     global models
     models = []
 
@@ -41,42 +39,6 @@ def load_models():
         models.append({'topic': topic, 'model': topic_model})
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
-@app.route('/data/twitter')
-def data_twitter():
-    download_twitter_data()
-
-    return 'Done'
-
-
-@app.route('/data/facebook')
-def data_facebook():
-    download_facebook_data(request.args.get('accessToken', ''))
-
-    return 'Done'
-
-
-@app.route('/data/wordcloud')
-def data_wordcloud():
-    return get_word_cloud()
-
-
-@app.route('/data/reddit')
-def data_reddit():
-    download_reddit_data()
-
-    return 'Done'
-
-
-@app.route('/data/rss')
-def data_rss():
-    download_rss_data()
-
-    return 'Done'
 
 
 @app.route('/model/train', methods=['GET'])
@@ -86,37 +48,55 @@ def train():
     # using random forest as an example
     # can do the training separately and just update the pickles
     start = time.time()
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+
+    cursor.execute("INSERT INTO training (model_id, is_done, start) VALUES (%s,%s,%s) RETURNING id",
+                   ("topic_analysis", False, datetime.datetime.now()))
+    id_of_new_row = cursor.fetchone()[0]
+    connection.commit()
     models = get_models(config)
     print('Trained in %.1f seconds' % (time.time() - start))
+    time.sleep(20)
 
     for model in models:
         pickle.dump(model['model'], open('../models/' + model['topic'] + '_model.pkl', 'wb'))
 
     last_training_timestamp = int(time.time())
 
+    cursor = connection.cursor()
+    cursor.execute("UPDATE  training set is_done=%s, \"end\"=%s, accuracy=%s WHERE id=%s",
+                   (True, datetime.datetime.now(), 42.0, id_of_new_row))
+    connection.commit()
+
+
     return 'Success'
 
 
-# @app.route('/model/suggest')
-# def suggest():
-#     global models
-#     global last_suggestion_timestamp
-#     try:
-#         load_models(config)
-#         print('model loaded')
-#
-#     except Exception as e:
-#         print('No model here')
-#         print('Train first')
-#         return 'Train first'
-#
-#     if models:
-#         print('suggesting...')
-#         suggest_topics(models)
-#
-#     last_suggestion_timestamp = int(time.time())
-#
-#     return '42'
+@app.route('/model/suggest')
+def suggest():
+    global models
+    global last_suggestion_timestamp
+    try:
+        load_models(config)
+        print('model loaded')
+
+    except Exception as e:
+        print('No model here')
+        print('Train first')
+        return 'Train first'
+
+    if models:
+        print('suggesting...')
+        suggest_topics(config, models)
+
+    last_suggestion_timestamp = int(time.time())
+
+    return '42'
 
 
 @app.route('/model/predict')
@@ -124,7 +104,7 @@ def predict():
     global models
     global last_suggestion_timestamp
     try:
-        load_models()
+        load_models(config)
         print('model loaded')
 
     except Exception as e:
@@ -152,26 +132,12 @@ def predict():
     return jsonify(topics)
 
 
-@app.route('/model/status')
-def status():
-    global models
-    global last_suggestion_timestamp
-    global last_training_timestamp
-
-    try:
-        load_models()
-    except Exception as e:
-        return jsonify({'isTrained': False, 'lastTrainingTimestamp': last_training_timestamp,
-                        'lastSuggestionTimestamp': last_suggestion_timestamp})
-
-    return jsonify({'isTrained': True, 'lastTrainingTimestamp': last_training_timestamp,
-                    'lastSuggestionTimestamp': last_suggestion_timestamp})
 
 
 if __name__ == '__main__':
 
     try:
-        load_models()
+        load_models(config)
         print('model loaded')
 
     except Exception as e:
@@ -179,4 +145,4 @@ if __name__ == '__main__':
         print('Train first')
         clf = None
 
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, port=5000)

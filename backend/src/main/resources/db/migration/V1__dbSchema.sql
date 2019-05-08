@@ -14,6 +14,17 @@ create table source (
 
 );
 
+create table training
+(
+  id       SERIAL    not null primary key,
+  model_id text      not null,
+  is_done  BOOLEAN   not null,
+  start    TIMESTAMP not null,
+  "end"    TIMESTAMP,
+  accuracy DECIMAL
+
+);
+
 create table "user"
 (
   id       SERIAL not null primary key,
