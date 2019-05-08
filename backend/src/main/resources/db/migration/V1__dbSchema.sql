@@ -1,7 +1,7 @@
 create table topic (
-  id      SERIAL not null primary key,
-  name    text   not null,
-  text_id text   not null
+                     id      SERIAL not null primary key,
+                     name    text   not null,
+                     text_id text   not null unique
 
 
 );

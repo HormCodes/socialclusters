@@ -1,6 +1,9 @@
+import re
+
 import langid
 import pandas as pd
 from iso639 import languages
+from nltk import TweetTokenizer
 from stop_words import safe_get_stop_words
 
 
@@ -20,13 +23,17 @@ def remove_stopwords(text):
 
 
 def remove_mess_chars(text):
+    tokenizer = TweetTokenizer()
+    tokens = tokenizer.tokenize(re.sub(r'\d+\S\d+\S\d+', "DATE", text.lower()))
+
+
     chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!"]
     returned_text = text
 
     for char in chars:
         returned_text = returned_text.replace(char, "")
 
-    return returned_text
+    return " ".join(filter(lambda token: token not in chars, tokens))
 
 
 def convert_words_into_lemmas(text, morph):

@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
-class SecurityConfig(
+class AuthConfiguration(
   var customUserDetailsService: CustomUserDetailsService,
   val unauthorizedHandler: JwtAuthenticationEntryPoint
 ) : WebSecurityConfigurerAdapter() {
@@ -66,7 +66,7 @@ class SecurityConfig(
       .antMatchers("/users/checkUsernameAvailability", "/users/checkEmailAvailability")
       .permitAll()
       .anyRequest()
-      .authenticated()
+      .permitAll()
 
     // Add our custom JWT security filter
     http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)

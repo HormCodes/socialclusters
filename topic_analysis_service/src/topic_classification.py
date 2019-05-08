@@ -1,17 +1,17 @@
-import json
 import majka
+import majka
+import time
 
 import pandas as pd
-import requests
+import psycopg2
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.svm import LinearSVC
 
-from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
+from text_cleaning import remove_mess_chars, remove_stopwords, \
+    convert_words_into_lemmas
 
 
 def get_data_frame_stats(data_frame):
@@ -25,78 +25,65 @@ def get_data_frame_stats(data_frame):
 
 
 def get_topics():
-    session = requests.session()
-    session.params = {}
-    response = session.get("http://localhost:8080/topics/")
-    topics_json = json.loads(response.content.decode("utf-8"))
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host="localhost",
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from topic")
+    topics = cursor.fetchall()
     topic_ids = []
-    for topic in topics_json:
-        topic_ids.append(topic["textId"])
+    for topic in topics:
+        topic_ids.append(topic[2])
     return topic_ids
 
 
 morph = majka.Majka("../majka/majka.w-lt")
-topic_ids = []
+topic_ids = ['traffic', "sport", "work", "culture", "events", "politics"]
 
-for topic in get_topics():
-    topic_ids.append(topic)
+df = pd.read_csv("../dataset.csv", sep=';', )
+print(df.head())
 
-from pymongo import MongoClient
-
-mongo_client = MongoClient("mongodb://localhost:27017/")
-mongo_db = mongo_client['content_database']
-twitter_collection = mongo_db['tweet']
-
-tweets = []
-
-for tweet_object in twitter_collection.find({}):
-    if tweet_object is not None:
-        try:
-            test = tweet_object["topics"]
-        except KeyError:
-            pass
-        else:
-            tweets.append(tweet_object)
-
-tweets_data_frame = get_data_frame_from_posts("twitter", get_posts_with_cleaned_text(tweets, morph),
-                                              ["author", "username"], topic_ids)
-
-print("Tweet Count: {}".format(len(tweets_data_frame)))
+print("Tweet Count: {}".format(len(df)))
 print("Topic Stats")
-print(get_data_frame_stats(tweets_data_frame))
+print(get_data_frame_stats(df))
+for x in reversed(range(1, 10, 1)):
+    pass
 
-train, test = train_test_split(tweets_data_frame, random_state=42, test_size=0.33, shuffle=True)
-X_train = train.text
+start = time.time()
+train, test = train_test_split(df.sort_values('sport'), random_state=42, test_size=x / 10, shuffle=True)
+X_train = train.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
 X_test = test.text
 
-MultiLabelBinarizer().fit_transform(train)
+# MultiLabelBinarizer().fit_transform(train)
 
 NB_pipeline = Pipeline([
     ('tfidf', TfidfVectorizer()),
     ('clf', OneVsRestClassifier(LinearSVC(), n_jobs=1)),
     # ('clf', LinearSVC()),
-    # ('clf', MultinomialNB(fit_prior=True, class_prior=None)),
+    #('clf', OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None), n_jobs=1)),
     # ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
 ])
-# drop = train.drop(['id', 'text'], axis=1)
+# drop = train.drop(['id', 'text', 'platform'], axis=1)
 # print(drop.head())
 # NB_pipeline.fit(X_train, drop)
-# for text in X_test:
+# print('Test accuracy is {}'.format(accuracy_score(test.drop(['id', 'text', 'platform'], axis=1), NB_pipeline.predict(X_test))))
 #
-#     print()
-#     predictions = NB_pipeline.predict([text])
-#     print(text)
-#     for index, topic_id in enumerate(topic_ids):
-#         if predictions[0][index] == 1:
-#             print(topic_id)
 
+topic_accuracy = []
 for topic_id in topic_ids:
     NB_pipeline.fit(X_train, train[topic_id])
-    prediction = NB_pipeline.predict(X_test)
+    # prediction = NB_pipeline.predict(X_test)
 
-    print('{}: Test accuracy is {}'.format(topic_id, accuracy_score(test[topic_id], prediction)))
-    for text in X_test:
-        if NB_pipeline.predict([text])[0]:
-            print(text)
+    # topic_accuracy.append(accuracy_score(test[topic_id], prediction))
+    # print('{}: Test accuracy is {}'.format(topic_id, accuracy_score(test[topic_id], prediction)))
+    # for text in X_test:
+    #     if NB_pipeline.predict([text])[0]:
+    #         print(text)
+    #
+    # print()
 
-    print()
+print('Trained in %.1f seconds' % (time.time() - start))
+
+#print("{};{};{};{};{};{};{}".format(1 - x/10, topic_accuracy[0], topic_accuracy[1], topic_accuracy[2], topic_accuracy[3], topic_accuracy[4], topic_accuracy[5]))
