@@ -15,14 +15,14 @@ services:
       - content_database
       - user_database
       - backend
-      - ml_backend
+      - topic_analysis_service
+      - platform_api_service
     ports:
       - "3000:3000"
 
   topic_analysis_service:
     image: socialclusters/topic_analysis_service
     depends_on:
-      - backend
       - content_database
       - user_database
     ports:
@@ -31,7 +31,6 @@ services:
   platform_api_service:
     image: socialclusters/platform_api_service
     depends_on:
-      - backend
       - content_database
       - user_database
     ports:
@@ -42,5 +41,7 @@ services:
     depends_on:
       - content_database
       - user_database
+      - topic_analysis_service
+      - platform_api_service
     ports:
       - "8080:8080"
