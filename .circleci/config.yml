@@ -26,6 +26,7 @@ jobs:
     machine:
       enabled: true
     steps:
+      - checkout
       #      - run:
       #          name: Install Docker client
       #          command: |
