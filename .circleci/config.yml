@@ -45,9 +45,10 @@ jobs:
       - run:
           name: Build Backend
           command: |
-            cd backend && ./gradlew clean
-            cd backend && ./gradlew bootJar
-            cd backend && docker build -t socialclusters/backend .
+            cd backend
+            ./gradlew clean
+            ./gradlew bootJar
+            docker build -t socialclusters/backend .
       - run:
           name: Build Topic Analysis Service
           command: |
