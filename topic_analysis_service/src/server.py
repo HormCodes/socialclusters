@@ -11,7 +11,8 @@ from flask import Flask, jsonify, request
 from pojo import Config
 # from stats import get_word_cloud
 from text_cleaning import get_text_for_predict_from_post, get_post_with_cleaned_text
-from topic_classification import get_models, get_topics, suggest_topics
+from topic_classification import get_topics, suggest_topics, get_models
+from wordcounts import get_word_counts
 
 app = Flask(__name__)
 
@@ -37,6 +38,15 @@ def load_models(config):
     for topic in get_topics(config):
         topic_model = pickle.load(open('../models/' + topic + '_model.pkl', 'rb'))
         models.append({'topic': topic, 'model': topic_model})
+
+
+@app.route('/wordcounts', methods=['GET'])
+def wordcounts():
+    now = datetime.datetime.now()
+    week_ago = now - datetime.timedelta(days=7)
+    return jsonify(
+        get_word_counts(config, request.args.get('from', week_ago.isoformat()), request.args.get('to', now.isoformat()),
+                        request.args.get('count', 100)))
 
 
 @app.route('/train', methods=['GET'])
