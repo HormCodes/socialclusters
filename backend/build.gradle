@@ -109,6 +109,7 @@ jooq {
 flyway {
   url = 'jdbc:postgresql://localhost:5432/user_database'
   user = 'postgres'
+  password = 'postgres'
 
 }
 
