@@ -2,43 +2,45 @@ import json
 from datetime import datetime
 
 import praw
-import requests
+import psycopg2
 from pymongo import MongoClient
 
-
 # TODO - Test
-def get_subreddits(sources_json):
-    subreddits = []
-
-    for source in sources_json:
-        if source['platform'] == 'reddit':
-            subreddits.append(source['value'])
-
-    return subreddits
+from pojo import Config
 
 
-def download_reddit_data():
+def get_subreddits(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='reddit'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
+
+
+def download_reddit_data(config):
     CONFIG_JSON_FILE_NAME = "../config.json"
 
     with open(CONFIG_JSON_FILE_NAME) as file:
-        config = json.load(file)["keys"]['reddit']
+        config_keys = json.load(file)["keys"]['reddit']
 
-    reddit = praw.Reddit(client_id=config['clientId'],
-                         client_secret=config['clientSecret'],
-                         user_agent=config['userAgent'],
-                         username=config['username'],
-                         password=config['password'])
+    reddit = praw.Reddit(client_id=config_keys['clientId'],
+                         client_secret=config_keys['clientSecret'],
+                         user_agent=config_keys['userAgent'],
+                         username=config_keys['username'],
+                         password=config_keys['password'])
 
-    session = requests.session()
-    session.params = {}
-    response = session.get("http://backend:8080/sources/")
-    sources_json = json.loads(response.content.decode("utf-8"))
-
-    mongo_client = MongoClient("mongodb://content_database:27017/")
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
     mongo_db = mongo_client['content_database']
     reddit_collection = mongo_db['reddit_posts']
 
-    for subreddit in get_subreddits(sources_json):
+    for subreddit in get_subreddits(config):
         brno = reddit.subreddit(subreddit)  # TODO - Variable name
         for submission in brno.new(limit=100):
 
@@ -61,4 +63,5 @@ def download_reddit_data():
 
 
 if __name__ == '__main__':
-    download_reddit_data()
+    config = Config("localhost", "localhost", "localhost")
+    download_reddit_data(config)

@@ -12,7 +12,12 @@ def remove_stopwords(text):
 
     text_language = langid.classify(text)[0]
 
-    stop_words = safe_get_stop_words(languages.get(part1=text_language).name.lower())
+    stop_words = safe_get_stop_words(languages.get(part1=text_language).name.lower()) + ["ul", "b", "v", "a", "z", "li",
+                                                                                         "o", "s", "k", "i", "se",
+                                                                                         "u003e", "u003c", "u", "href",
+                                                                                         "u003cli", "u003ca", "u003cul",
+                                                                                         "u003cb", "httpslinkcomdate",
+                                                                                         "u003edalší", "n"]
 
     words = ""
     for word in tweet_words:
@@ -26,14 +31,13 @@ def remove_mess_chars(text):
     tokenizer = TweetTokenizer()
     tokens = tokenizer.tokenize(re.sub(r'\d+\S\d+\S\d+', "DATE", text.lower()))
 
-
-    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!"]
-    returned_text = text
+    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!", ":", "/", "\\", "=", "|", "“", "„"]
+    returned_text = " ".join(filter(lambda token: token not in chars, tokens))
 
     for char in chars:
         returned_text = returned_text.replace(char, "")
 
-    return " ".join(filter(lambda token: token not in chars, tokens))
+    return returned_text
 
 
 def convert_words_into_lemmas(text, morph):

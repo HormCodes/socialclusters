@@ -1,10 +1,12 @@
 import json
 
+import psycopg2
 import requests
 from dateutil.parser import parser
-from pojo import TweetAuthor, Tweet
 from pymongo import MongoClient
 from requests_oauthlib import OAuth1
+
+from pojo import TweetAuthor, Tweet, Config
 
 CONFIG_JSON_FILE_NAME = "../config.json"
 
@@ -22,38 +24,53 @@ TWITTER_API_HASHTAG_URL = "https://api.twitter.com/1.1/tweets/search/30day/%s.js
 
 # TODO - Test
 # TODO - Rename
-def get_twitter_accounts(sources_json):
-    accounts = []
-
-    for source in sources_json:
-        if source['platform'] == 'twitter' and source['valueType'] == 'account':
-            accounts.append(source['value'])
-
-    return accounts
-
-
-# TODO - Test
-# TODO - Rename
-def get_twitter_search_words(sources_json):
-    words = []
-
-    for source in sources_json:
-        if source['platform'] == 'twitter' and source['valueType'] == 'word':
-            words.append(source['value'])
-
-    return words
+def get_twitter_accounts(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='twitter' and value_type='account'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
 
 
 # TODO - Test
 # TODO - Rename
-def get_twitter_hashtags(sources_json):
-    hashtags = []
+def get_twitter_search_words(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='twitter' and value_type='word'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
 
-    for source in sources_json:
-        if source['platform'] == 'twitter' and source['valueType'] == 'hashtag':
-            hashtags.append(source['value'])
 
-    return hashtags
+# TODO - Test
+# TODO - Rename
+def get_twitter_hashtags(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='twitter' and value_type='hashtag'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
 
 
 # TODO - Test
@@ -138,25 +155,20 @@ def get_twitter_hashtag_tweets(hashtags, twitter_keys):
     return tweets
 
 
-def download_twitter_data():
+def download_twitter_data(config):
     with open(CONFIG_JSON_FILE_NAME) as file:
-        config = json.load(file)
+        config_keys = json.load(file)
 
-    session = requests.session()
-    session.params = {}
-    response = session.get("http://backend:8080/sources/")
-    sources_json = json.loads(response.content.decode("utf-8"))
-
-    twitter_keys = get_twitter_keys(config)
+    twitter_keys = get_twitter_keys(config_keys)
 
     tweet_responses = []
-    tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(sources_json), twitter_keys))
-    tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(sources_json), twitter_keys))
-    tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(sources_json), twitter_keys))
+    tweet_responses.extend(get_twitter_accounts_tweets(get_twitter_accounts(config), twitter_keys))
+    tweet_responses.extend(get_twitter_search_tweets(get_twitter_search_words(config), twitter_keys))
+    tweet_responses.extend(get_twitter_hashtag_tweets(get_twitter_hashtags(config), twitter_keys))
 
     texts = []
 
-    mongo_client = MongoClient("mongodb://content_database:27017/")
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
     mongo_db = mongo_client['content_database']
     twitter_collection = mongo_db['tweet']
 
@@ -176,4 +188,5 @@ def download_twitter_data():
 # TODO - Source validation
 
 if __name__ == '__main__':
-    download_twitter_data()
+    config = Config("localhost", "localhost", "localhost")
+    download_twitter_data(config)

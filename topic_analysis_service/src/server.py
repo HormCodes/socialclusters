@@ -39,9 +39,7 @@ def load_models(config):
         models.append({'topic': topic, 'model': topic_model})
 
 
-
-
-@app.route('/model/train', methods=['GET'])
+@app.route('/train', methods=['GET'])
 def train():
     global models
     global last_training_timestamp
@@ -77,7 +75,7 @@ def train():
     return 'Success'
 
 
-@app.route('/model/suggest')
+@app.route('/suggest')
 def suggest():
     global models
     global last_suggestion_timestamp
@@ -99,7 +97,7 @@ def suggest():
     return '42'
 
 
-@app.route('/model/predict')
+@app.route('/predict')
 def predict():
     global models
     global last_suggestion_timestamp

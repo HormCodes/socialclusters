@@ -1,35 +1,37 @@
-import json
 import ssl
 
 import feedparser
-import requests
+import psycopg2
 # TODO - Correct solution?
 from dateutil.parser import parser
 from pymongo import MongoClient
+
+from pojo import Config
 
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
 
 # TODO - Test
-def get_rss_links(sources_json):
-    rss_links = []
+def get_rss_links(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='news'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
 
-    for source in sources_json:
-        if source['valueType'] == 'rss':
-            rss_links.append(source['value'])
 
-    return rss_links
+def download_rss_data(config):
+    rss_links = get_rss_links(config)
 
-
-def download_rss_data():
-    session = requests.session()
-    session.params = {}
-    response = session.get("http://backend:8080/sources/")
-    sources_json = json.loads(response.content.decode("utf-8"))
-    rss_links = get_rss_links(sources_json)
-
-    mongo_client = MongoClient("mongodb://content_database:27017/")
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
     mongo_db = mongo_client['content_database']
     news_collection = mongo_db['news']
 
@@ -51,4 +53,5 @@ def download_rss_data():
 
 
 if __name__ == '__main__':
-    download_rss_data()
+    config = Config("localhost", "localhost", "localhost")
+    download_rss_data(config)

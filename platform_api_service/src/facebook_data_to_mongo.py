@@ -1,9 +1,12 @@
 # TODO - Facebook data to mongo
 import json
 
+import psycopg2
 import requests
 from dateutil.parser import parser
 from pymongo import MongoClient
+
+from pojo import Config
 
 CONFIG_JSON_FILE_NAME = "../config.json"
 FACEBOOK_KEY = "facebook"
@@ -18,26 +21,23 @@ def get_facebook_keys(config):
 
 
 # TODO - Test
-def get_facebook_pages(sources_json):
-    facebook_pages = []
+def get_facebook_pages(config):
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    cursor = connection.cursor()
+    cursor.execute("select * from source where platform='facebook'")
+    topics = cursor.fetchall()
+    topic_ids = []
+    for topic in topics:
+        topic_ids.append(topic[3])
+    return topic_ids
 
-    for source in sources_json:
-        if source['platform'] == 'facebook':
-            facebook_pages.append(source['value'])
 
-    return facebook_pages
-
-
-def download_facebook_data(access_token):
-    with open(CONFIG_JSON_FILE_NAME) as file:
-        config = json.load(file)
-
-    session = requests.session()
-    session.params = {}
-    response = session.get("http://backend:8080/sources/")
-    sources_json = json.loads(response.content.decode("utf-8"))
-
-    facebook_pages = get_facebook_pages(sources_json)
+def download_facebook_data(config, access_token):
+    facebook_pages = get_facebook_pages(config)
 
     facebook_access_token = access_token
 
@@ -51,7 +51,7 @@ def download_facebook_data(access_token):
         results = json.loads(response.content)
         facebook_posts.extend(results['data'])
 
-    mongo_client = MongoClient("mongodb://content_database:27017/")
+    mongo_client = MongoClient("mongodb://" + config.contentDatabaseHost + ":27017/")
     mongo_db = mongo_client['content_database']
     facebook_collection = mongo_db['facebook_posts']
 
@@ -87,4 +87,7 @@ def download_facebook_data(access_token):
 
 
 if __name__ == '__main__':
-    download_facebook_data()
+    print('Enter access token:')
+    access_token = input()
+    config = Config("localhost", "localhost", "localhost")
+    download_facebook_data(config, access_token)
