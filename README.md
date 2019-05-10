@@ -1,11 +1,60 @@
 # SocialClusters
-Web app for social media content aggregation and analysation (Bachelor thesis work)
+Web app for social media content aggregation and analysation (Bachelor's thesis work)
 
-Work in progress...
+## Tools
+
+- Docker
+- Node
+- JDK
+- Python
+
+#### Recommended Tools
+
+- Intellij IDEA
+- Postman
+- Google Chrome Dev Tools
+
+## Configuration
+
+1. Edit file `platform_api_service/config.json` for adding your API keys.
+2. In directory `topic_analysis_service/makjka` add dictionaries for word lemma converter called Majka with format `x.lt` where `x` is ISO language code, e.g. `cs`
+3. (For production deploy) In a file `nginx/conf.d` change domain `example.com` to your own. 
 
 ## Setup
 
-### Docker
+
+
+
+### Production
+Repository contains a production setup script `setup.sh` or you can execute these commands:
+```$xslt
+cd docker
+docker-compose up -d
+
+cd ../backend
+./gradlew clean
+./gradlew bootJar
+
+docker build -t socialclusters/backend .
+
+cd ../topic_analysis_service
+docker build -t socialclusters/topic_analysis_service .
+
+
+cd ../platform_api_service
+docker build -t socialclusters/platform_api_service .
+
+cd ../frontend
+docker build -t socialclusters/frontend .
+
+cd ../nginx
+docker build -t socialclusters/nginx .
+
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+```
+
+### Development
 
 You have tu setup docker containers for Mongo and Postgres Databases... 
 ```$xslt
@@ -13,33 +62,23 @@ cd docker
 docker-compose up -d
 ```
 
- mongoimport --host 0.0.0.0 --port 27017 --db content_database --collection tweet --file twitter.json
-
-### Firebase 
-
-First you have to install Firebase tools and log in:
+#### Backend
 ```$xslt
-npm install -g firebase-tools
-firebase login
+cd backend
+./gradlew build
 ```
 
+ 
+ #### Frontend
+ ```$xslt
+ cd frontend
+ npm install
+ npm start
+ ```
 
-Then you have to initialize project: 
-```$xslt
-firebase init hosting
-```
-
-## Deploy
-
-[//]: # "TODO - Add deploy info"
-...
 
 ## License & Credits
 
 Created by [Matěj Horák](https://horm.cz) as a bachelor thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) at BUT FIT and sources are under [BUT FIT Open Source License](https://github.com/Horm/socialclusters/blob/master/LICENSE).
-
-Used third party sources:
-
-- Stopwords list: [stopwords-iso](https://github.com/stopwords-iso/stopwords-iso)
 
 

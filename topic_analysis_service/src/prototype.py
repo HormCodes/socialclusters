@@ -66,7 +66,7 @@ for text in X_train.append(X_test):
 word_counter = collections.Counter(wordcount)
 n_print = int(input("How many most common words to print: "))
 for word, count in word_counter.most_common(n_print):
-    print(word, ": ", count)
+    print(count, word)
 # MultiLabelBinarizer().fit_transform(train)
 
 start = time.time()

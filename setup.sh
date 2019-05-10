@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-cd backend
+cd docker
+docker-compose up -d
+
+cd ../backend
 ./gradlew clean
 ./gradlew bootJar
 
