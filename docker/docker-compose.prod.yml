@@ -9,8 +9,14 @@ services:
       - "80:80"
       - "443:443"
 
-  #  ofelia:
-  #    image: mcuadros/ofelia:latest
+  job_scheduler:
+    image: mcuadros/ofelia:latest
+    volumes:
+      # the ofelia config file
+      - ../job_scheduler/:/etc/ofelia/
+      # your docker reg credentials
+      # the docker socket so ofelia can docker run ...
+      - /var/run/docker.sock:/var/run/docker.sock
 
   frontend:
     image: socialclusters/frontend

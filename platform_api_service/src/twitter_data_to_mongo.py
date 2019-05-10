@@ -181,7 +181,6 @@ def download_twitter_data(config):
                              tweet["favorite_count"], tweet_author)
         texts.append(tweet_object)
         if twitter_collection.find({'text': tweet_object.text, 'tweetId': tweet_object.tweet_id}).count() is 0:
-            print(tweet_object.get_dict_object())
             twitter_collection.insert_one(tweet_object.get_dict_object())
 
 

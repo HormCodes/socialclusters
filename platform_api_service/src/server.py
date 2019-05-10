@@ -42,7 +42,7 @@ def data_reddit():
     return 'Done'
 
 
-@app.route('/rss')
+@app.route('/news')
 def data_rss():
     download_rss_data(config)
 

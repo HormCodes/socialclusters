@@ -83,7 +83,6 @@ def download_facebook_data(config, access_token):
             }
 
             facebook_collection.insert_one(post_object)
-            print(post_object)
 
 
 if __name__ == '__main__':

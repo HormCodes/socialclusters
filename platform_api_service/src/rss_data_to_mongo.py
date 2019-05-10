@@ -48,7 +48,6 @@ def download_rss_data(config):
                 'language': feed.feed['language']
             }
             if news_collection.find({'url': entry['link']}).count() is 0:
-                print(article_object)
                 news_collection.insert_one(article_object)
 
 

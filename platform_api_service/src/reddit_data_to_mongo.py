@@ -59,7 +59,6 @@ def download_reddit_data(config):
                     'permalink': submission.permalink
                 }
                 reddit_collection.insert_one(post_object)
-                print(post_object)
 
 
 if __name__ == '__main__':
