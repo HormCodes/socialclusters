@@ -5,5 +5,7 @@ RUN pip3 install uwsgi
 COPY ./ ./app
 WORKDIR ./app
 RUN pip3 install -r requirements.txt
+WORKDIR ./src
+ENV ENV=prod
 ENTRYPOINT [ "python3" ]
-CMD [ "./src/server.py" ]
+CMD [ "./server.py" ]

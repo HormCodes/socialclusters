@@ -11,8 +11,6 @@ from sklearn.svm import LinearSVC
 from pojo import Config, platforms
 from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
 
-STOPWORDS_JSON_FILE_NAME = "stopwords-iso.json"
-
 morph = majka.Majka("../majka/majka.w-lt")
 
 

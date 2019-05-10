@@ -1,0 +1,11 @@
+schedules:
+  - every: 5 seconds
+    task: backup
+
+tasks:
+  docker:
+    - name: backup
+      image: debian:jessie
+      script-strict: true
+      script:
+        - echo Running the backup
