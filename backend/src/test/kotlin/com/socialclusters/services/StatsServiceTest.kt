@@ -36,6 +36,25 @@ class StatsServiceTest(
 
   init {
 
+    describe("getTweetAuthorCounts") {
+      it("should return counts by author") {
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-13T20:42:48.000Z", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-14T20:42:48.000Z", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-15T20:42:48.000Z", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
+
+        statsService.getTweetAuthorCounts("2019-01-13T20:42:46.000Z", "2019-01-16T20:42:49.000Z") shouldBe listOf(CountByAuthor("username", 4))
+      }
+      it("should return counts by author ordered") {
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-13T20:42:48.000Z", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-14T20:42:48.000Z", "124", "en", 0, 0, Author("username2", "Brno, Czech Republic", 0), listOf("culture"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-15T20:42:48.000Z", "125", "en", 0, 0, Author("username2", "Brno, Czech Republic", 0), listOf("traffic"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "126", "en", 0, 0, Author("username2", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
+
+        statsService.getTweetAuthorCounts("2019-01-13T20:42:46.000Z", "2019-01-16T20:42:49.000Z") shouldBe listOf(CountByAuthor("username2", 3), CountByAuthor("username", 1))
+      }
+    }
+
     describe("getDateObject") {
 
       it("should return same date object from timestamp string of both types") {

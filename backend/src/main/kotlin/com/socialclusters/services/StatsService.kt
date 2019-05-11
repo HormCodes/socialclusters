@@ -1,6 +1,7 @@
 package com.socialclusters.services
 
 import com.socialclusters.domain.impl.*
+import com.socialclusters.pojos.CountByAuthor
 import com.socialclusters.pojos.CountByPlatform
 import com.socialclusters.pojos.CountByTopic
 import com.socialclusters.pojos.DayNumbers
@@ -24,6 +25,15 @@ class StatsService(
   private val sourceRepository: SourceRepository,
   private val topicRepository: TopicRepository
 ) {
+
+  fun getTweetAuthorCounts(from: String, to: String): List<CountByAuthor> {
+    return tweetRepository.findByDateRange(getDateObject(from).toString(), getDateObject(to).toString())
+      .map { it.author.username }
+      .groupingBy { it }
+      .eachCount()
+      .map { CountByAuthor(it.key, it.value) }
+      .sortedByDescending { it.count }
+  }
 
   fun getDayCounts(from: String, to: String): List<DayNumbers> {
     // TODO - Check timestamps...
