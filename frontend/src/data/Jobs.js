@@ -3,5 +3,5 @@ import {API_URL} from "./Constants";
 
 
 export function scrapeData() {
-  return axios.get(`${API_URL}/job/data`)
+  return axios.get(`${API_URL}/jobs/data`)
 }

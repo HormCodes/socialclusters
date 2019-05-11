@@ -4,6 +4,7 @@ import majka
 import os
 import pickle
 import time
+from multiprocessing import Process
 
 import psycopg2
 from flask import Flask, jsonify, request
@@ -54,13 +55,32 @@ def wordcounts():
                         request.args.get('count', 100)))
 
 
+def rest_of_training(id_of_new_row):
+    start = time.time()
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host=config.userDatabaseHost,
+                                  port="5432",
+                                  database="user_database")
+    models = get_models(config)
+    print('Trained in %.1f seconds' % (time.time() - start))
+
+    for model in models:
+        pickle.dump(model['model'], open('../models/' + model['topic'] + '_model.pkl', 'wb'))
+
+    cursor = connection.cursor()
+    cursor.execute("UPDATE  training set is_done=%s, \"end\"=%s, accuracy=%s WHERE id=%s",
+                   (True, datetime.datetime.now(), 42.0, id_of_new_row))
+    connection.commit()
+
+
 @app.route('/train', methods=['GET'])
 def train():
     global models
     global last_training_timestamp
     # using random forest as an example
     # can do the training separately and just update the pickles
-    start = time.time()
+
     connection = psycopg2.connect(user="postgres",
                                   password="postgres",
                                   host=config.userDatabaseHost,
@@ -72,22 +92,12 @@ def train():
                    ("topic_analysis", False, datetime.datetime.now()))
     id_of_new_row = cursor.fetchone()[0]
     connection.commit()
-    models = get_models(config)
-    print('Trained in %.1f seconds' % (time.time() - start))
-    time.sleep(20)
 
-    for model in models:
-        pickle.dump(model['model'], open('../models/' + model['topic'] + '_model.pkl', 'wb'))
-
-    last_training_timestamp = int(time.time())
-
-    cursor = connection.cursor()
-    cursor.execute("UPDATE  training set is_done=%s, \"end\"=%s, accuracy=%s WHERE id=%s",
-                   (True, datetime.datetime.now(), 42.0, id_of_new_row))
-    connection.commit()
+    p = Process(target=rest_of_training, args=(id_of_new_row,))
+    p.start()
+    return str(id_of_new_row)
 
 
-    return 'Success'
 
 
 @app.route('/suggest')
@@ -101,7 +111,7 @@ def suggest():
     except Exception as e:
         print('No model here')
         print('Train first')
-        return 'Train first'
+        return 'Train first', 404
 
     if models:
         print('suggesting...')
@@ -109,7 +119,7 @@ def suggest():
 
     last_suggestion_timestamp = int(time.time())
 
-    return '42'
+    return 'Done'
 
 
 @app.route('/predict')
@@ -143,8 +153,6 @@ def predict():
                 topics.append(model['topic'])
 
     return jsonify(topics)
-
-
 
 
 if __name__ == '__main__':

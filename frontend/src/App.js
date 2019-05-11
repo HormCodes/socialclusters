@@ -8,7 +8,7 @@ import Settings from "./components/settings/Settings";
 import {addSource, deleteSource, getSources, saveSource} from "./data/Sources";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "./data/Topics";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {getCountsByDay, getWithoutTopicCount, getWithSuggestedTopicCount} from "./data/Stats";
+import {getCountsByDay} from "./data/Stats";
 import * as moment from "moment"
 import {
   deleteFacebookPost,
@@ -179,14 +179,11 @@ class App extends Component {
     this.fetchSources();
     this.fetchCountsByDay();
     this.fetchModelStatus();
-    this.fetchWithoutTopicCount();
-    this.fetchWithSuggestedTopicCount()
   }
 
   handleSuggestTopics = () => {
     suggestTopics().then(() => {
       this.fetchModelStatus();
-      this.fetchWithSuggestedTopicCount();
     })
   };
 
@@ -223,7 +220,7 @@ class App extends Component {
   fetchCountsByDay() {
     let applyResponseToState = response => {
       this.setState({
-        countsByDay: response.data
+        countsByDay: response.data.countsByDay
       })
     };
 
@@ -248,27 +245,6 @@ class App extends Component {
       .catch(error => console.log(error))
   }
 
-  fetchWithoutTopicCount() {
-    let applyResponseToState = response => {
-      this.setState({
-        withoutTopicCount: response.data
-      })
-    };
-    getWithoutTopicCount()
-      .then(applyResponseToState)
-      .catch(error => console.log(error))
-  }
-
-  fetchWithSuggestedTopicCount() {
-    let applyResponseToState = response => {
-      this.setState({
-        withSuggestedTopicCount: response.data
-      })
-    };
-    getWithSuggestedTopicCount()
-      .then(applyResponseToState)
-      .catch(error => console.log(error))
-  }
 
   handleSaveTopic = (topic) =>
     saveTopic(topic)

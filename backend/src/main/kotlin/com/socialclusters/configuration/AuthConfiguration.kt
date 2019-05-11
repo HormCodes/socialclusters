@@ -63,10 +63,8 @@ class AuthConfiguration(
       .authorizeRequests()
       .antMatchers("/auth/**")
       .permitAll()
-      .antMatchers("/users/checkUsernameAvailability", "/users/checkEmailAvailability")
-      .permitAll()
       .anyRequest()
-      .permitAll()
+      .authenticated()
 
     // Add our custom JWT security filter
     http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)

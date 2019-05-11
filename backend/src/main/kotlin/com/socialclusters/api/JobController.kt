@@ -1,8 +1,5 @@
 package com.socialclusters.api
 
-import com.socialclusters.configuration.ML_BACKEND_API_URL
-import com.socialclusters.services.JobService
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -10,24 +7,19 @@ import org.springframework.web.client.RestTemplate
 
 @RestController
 class JobController(
-  val jobService: JobService
+  val restTemplate: RestTemplate,
+  val platformAPIServiceUrl: String
 ) {
 
-  // TODO - POST?
-  @RequestMapping("/jobs/timestamps")
-  fun unifyTimestamps(): String {
-    jobService.unifyTimestamps()
-    return "Done2"
-  }
+
 
   // TODO - POST?
   @RequestMapping("/jobs/data")
   fun scrapeData(@RequestParam(value = "facebookAccessToken", defaultValue = "") facebookAccessToken: String) {
-    val uri = "$ML_BACKEND_API_URL/data/"
+    val uri = "$platformAPIServiceUrl/"
 
-    val restTemplate = RestTemplate()
     restTemplate.getForObject(uri + "twitter", String::class.java)
-    restTemplate.getForObject(uri + "rss", String::class.java)
+    restTemplate.getForObject(uri + "news", String::class.java)
     restTemplate.getForObject(uri + "reddit", String::class.java)
 
     if (facebookAccessToken != "") {
@@ -35,10 +27,5 @@ class JobController(
     }
   }
 
-  // TODO - POST?
-  @PostMapping("/jobs/model/train")
-  fun trainModel() {
-
-  }
 
 }

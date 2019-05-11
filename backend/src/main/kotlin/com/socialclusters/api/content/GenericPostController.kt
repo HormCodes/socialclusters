@@ -2,7 +2,6 @@ package com.socialclusters.api.content
 
 import com.socialclusters.domain.GenericPostRepository
 import com.socialclusters.pojos.Post
-import com.socialclusters.services.JobService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -10,8 +9,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 abstract class GenericPostController<E>(
-  private val postRepository: GenericPostRepository<E>,
-  private val jobService: JobService
+  private val postRepository: GenericPostRepository<E>
 ) {
 
   @GetMapping
@@ -21,8 +19,6 @@ abstract class GenericPostController<E>(
     String, pageable: Pageable
   ): Page<E> {
     // TODO - Without topic and topics exception
-
-    println(pageable)
 
     if (withoutTopic) {
       return postRepository.findWithoutTopics(pageable)

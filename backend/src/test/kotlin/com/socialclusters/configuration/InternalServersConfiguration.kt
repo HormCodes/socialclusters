@@ -13,5 +13,8 @@ class InternalServersConfiguration {
   fun restTemplate(): RestTemplate = RestTemplate()
 
   @Bean
-  fun mlBackendUrl() = "http://localhost:5000"
+  fun topicAnalysisServiceUrl() = "http://localhost:5000"
+
+  @Bean
+  fun platformAPIServiceUrl() = "http://localhost:6000"
 }
