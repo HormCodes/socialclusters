@@ -109,22 +109,25 @@ class StatsServiceTest(
         topicRepository.insert(Topic(null, "Culture", "culture"))
         topicRepository.insert(Topic(null, "Traffic", "traffic"))
 
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 13 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 14 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 15 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
-        tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-13T20:42:48.000Z", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-14T20:42:48.000Z", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-15T20:42:48.000Z", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
+        tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
-        statsService.getDayCounts("Wed Jan 14 20:42:48 +0000 2019", "Wed Jan 14 20:42:48 +0000 2019") shouldBe listOf(
+        statsService.getDayCounts("Wed Jan 14 20:41:48 +0000 2019", "Wed Jan 14 20:43:48 +0000 2019") shouldBe listOf(
           DayNumbers(
-            "2019-01-14T00:00Z", 1,
+            "2019-01-14T00:00Z",
+            1,
             listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0)),
             listOf(CountByTopic("culture", 0), CountByTopic("traffic", 0)),
-            listOf(CountByPlatform("twitter", 1), CountByPlatform("news", 0), CountByPlatform("reddit", 0), CountByPlatform("facebook", 0))))
+            listOf(CountByPlatform("twitter", 1), CountByPlatform("news", 0), CountByPlatform("reddit", 0), CountByPlatform("facebook", 0))
+          )
+        )
       }
 
       it("should return special object with stats also for reddit time format") {
-        val tweet = Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
-        val redditPost = RedditPost(null, "1547584968", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "", "author", "Brno", "...", 0, 0)
+        val tweet = Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
+        val redditPost = RedditPost(null, "2019-01-15T20:42:48+00:00", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "", "author", "Brno", "...", 0, 0)
 
         tweetRepository.insert(tweet)
         redditPostRepository.insert(redditPost)

@@ -19,6 +19,9 @@ interface GenericPostRepository<E> : MongoRepository<E, String> {
   @Query(value = MongoQueries.inDateRange)
   fun findByDateRange(fromTimestamp: String, toTimestamp: String, pageable: Pageable): Page<E>
 
+  @Query(value = MongoQueries.inDateRange)
+  fun findByDateRange(fromTimestamp: String, toTimestamp: String): List<E>
+
   //fun findByQuery(query: org.springframework.data.mongodb.core.query.Query, pageable: Pageable)
 
 }

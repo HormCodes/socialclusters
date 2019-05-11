@@ -4,7 +4,6 @@ import com.socialclusters.domain.impl.*
 import com.socialclusters.pojos.CountByPlatform
 import com.socialclusters.pojos.CountByTopic
 import com.socialclusters.pojos.DayNumbers
-import com.socialclusters.pojos.Post
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
@@ -36,7 +35,7 @@ class StatsService(
     )
 
     val posts = platforms.map { platform ->
-      Pair(platform.first, platform.second.findAll().map { it as Post }) // TODO - MongoDB find by timestamp
+      Pair(platform.first, platform.second.findByDateRange(getDateObject(from).toString(), getDateObject(to).toString()).map { it })
     }
 
 
@@ -51,10 +50,6 @@ class StatsService(
       DayNumbers(day.first.toString(), postFromDay.map { it.second }.flatten().size, countsByTopic, countsBySuggestedTopic, countsByPlatform)
     }
 
-  }
-
-  fun getWordCounts(from: String, to: String): Any {
-    return 42
   }
 
   fun getWithoutTopicCount(): Long {
