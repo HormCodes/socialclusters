@@ -1,5 +1,6 @@
 package com.socialclusters.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.pojos.Topic
 import com.socialclusters.domain.impl.*
@@ -12,18 +13,27 @@ import io.kotlintest.Description
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
 import org.jooq.DSLContext
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.test.web.client.MockRestServiceServer
+import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
+import org.springframework.web.client.RestTemplate
 
+@RunWith(MockitoJUnitRunner::class)
 @SpringBootTest
 class StatsServiceTest(
-  val statsService: StatsService,
   val tweetRepository: TweetRepository,
   val newsRepository: NewsRepository,
   val topicRepository: TopicRepository,
   val redditPostRepository: RedditPostRepository,
   val facebookPostRepository: FacebookPostRepository,
-  val dslContext: DSLContext
-
+  val dslContext: DSLContext,
+  val topicAnalysisServiceUrl: String,
+  val restTemplate: RestTemplate,
+  val statsService: StatsService
 
 ) : DescribeSpec() {
   override fun beforeTest(description: Description) {
@@ -35,6 +45,24 @@ class StatsServiceTest(
   }
 
   init {
+
+    describe("getWordCounts") {
+      it("should return list of words") {
+        val tweet = Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null)
+        val redditPost = RedditPost(null, "2019-01-15T20:42:48+00:00", listOf("traffic"), null, "lorem ipsum", "lorem ipsum", "lorem ipsum2", "author", "Brno", "...", 0, 0)
+
+        val from = "2019-01-14T20:41:48.000Z"
+        val to = "2019-01-18T20:42:48.000Z"
+
+        val mockServer = MockRestServiceServer.createServer(restTemplate)
+        mockServer.expect(requestTo("$topicAnalysisServiceUrl/wordcounts?from=$from&to=$to")).andRespond(withSuccess(ObjectMapper().writeValueAsString(arrayOf(WordCount("lorem", 2), WordCount("ipsum", 2))), MediaType.APPLICATION_JSON))
+
+        tweetRepository.insert(tweet)
+        redditPostRepository.insert(redditPost)
+
+        statsService.getWordCounts(from, to) shouldBe listOf(WordCount("lorem", 2), WordCount("ipsum", 2))
+      }
+    }
 
     describe("getTweetAuthorCounts") {
       it("should return counts by author") {
@@ -134,7 +162,7 @@ class StatsServiceTest(
         tweetRepository.insert(Tweet(null, "lorem ipsum", "2019-01-16T20:42:48.000Z", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
         statsService.getDayCounts("Wed Jan 14 20:41:48 +0000 2019", "Wed Jan 14 20:43:48 +0000 2019") shouldBe listOf(
-          DayNumbers(
+          DayCounts(
             "2019-01-14T00:00Z",
             1,
             listOf(CountByTopic("culture", 1), CountByTopic("traffic", 0)),

@@ -2,11 +2,17 @@ package com.socialclusters.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.client.RestTemplate
+
+
 
 
 @Configuration
 class InternalServersConfiguration {
 
   @Bean
-  fun mlBackendUrl() = "ml_backned:5000"
+  fun restTemplate(): RestTemplate = RestTemplate()
+
+  @Bean
+  fun topicAnalysisServiceUrl() = "http://topic_analysis_service:5000"
 }

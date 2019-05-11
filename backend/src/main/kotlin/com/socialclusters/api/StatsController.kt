@@ -9,21 +9,13 @@ import org.springframework.web.bind.annotation.RestController
 class StatsController(
   val statsService: StatsService
 ) {
-  @GetMapping("/stats/day/topic")
+  @GetMapping("/stats")
   fun getWeekData(
     @RequestParam(value = "from", defaultValue = "") from: String,
     @RequestParam(value = "to", defaultValue = "") to: String
-  ) = statsService.getDayCounts(from, to)
+  ) = statsService.getStats(from, to)
 
-  @GetMapping("/stats/withoutTopic")
-  fun getWithoutTopicCount(): Long {
-    return statsService.getWithoutTopicCount()
-  }
 
-  @GetMapping("/stats/withSuggestedTopic")
-  fun getWithSuggestedTopicCount(): Long {
-    return statsService.getWithSuggestedTopicCount()
-  }
 
 
 

@@ -36,7 +36,7 @@ def get_word_counts(config, from_timestamp, to_timestamp, count):
     word_counter = collections.Counter(wordcount)
     words = []
     for word in word_counter.most_common(count):
-        words.append({'text': word[0], 'value': word[1]})
+        words.append({'word': word[0], 'count': word[1]})
     return words
 
 

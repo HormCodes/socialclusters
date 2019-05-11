@@ -20,6 +20,11 @@ models = None
 last_training_timestamp = None
 last_suggestion_timestamp = None
 
+try:
+    env = os.environ['ENV']
+except:
+    os.environ['ENV'] = 'dev'
+
 
 def get_config(env):
     if env == "prod":
