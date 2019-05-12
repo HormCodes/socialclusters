@@ -6,11 +6,10 @@ import {Card, CardActions, CardContent, Typography} from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {Route, Switch, withRouter} from "react-router-dom";
-import {API_URL} from "../../data/Constants";
-import axios from "axios";
 import TwitterDetail from "./details/TwitterDetail";
 import NewsDetail from "./details/NewsDetail";
 import RedditDetail from "./details/RedditDetail";
+import {getPost, savePostTopics} from "../../data/Posts";
 
 const styles = theme => ({
   chip: {
@@ -27,10 +26,6 @@ function isTopicAlreadyAdded(topics, chip) {
   return topics.indexOf(chip) !== -1;
 }
 
-
-function getPostUrl(platform, postId) {
-  return `${API_URL}/contents/${platform}/${postId}`;
-}
 
 class PostDetail extends React.Component {
 
@@ -62,8 +57,7 @@ class PostDetail extends React.Component {
     const platform = this.props.match.params.platform;
     const postId = this.props.match.params.postId;
 
-    console.log(this.state.topics, this.state.suggestedTopics)
-    axios.patch(getPostUrl(platform, postId) + "/topics", this.state.topics, {headers: {'Content-Type': 'application/json'}})
+    savePostTopics(platform, postId, this.state.topics)
       .then(() => {
         this.props.history.push('/posts')
       })
@@ -76,7 +70,7 @@ class PostDetail extends React.Component {
     const platform = this.props.match.params.platform;
     const postId = this.props.match.params.postId;
 
-    axios.get(getPostUrl(platform, postId)).then(response => {
+    getPost(platform, postId).then(response => {
       this.setState({post: response.data})
       this.setState({topics: (response.data.topics || [])})
       this.setState({suggestedTopics: (response.data.suggestedTopics || [])})

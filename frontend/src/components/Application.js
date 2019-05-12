@@ -21,7 +21,6 @@ import {scrapeData} from "../data/Jobs";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "../data/Topics";
 import {addSource, deleteSource, getSources, saveSource} from "../data/Sources";
 import * as moment from "moment";
-import {getStats} from "../data/Stats";
 import Dashboard from "./dashboard/Dashboard";
 import Topics from "./topics/Topics";
 import Sources from "./sources/Sources";
@@ -172,8 +171,6 @@ class Application extends React.Component {
     isLoading: true,
     topics: [],
     sources: [],
-    stats: {},
-    isScrapeTokenDialogOpened: false,
   };
 
   componentDidMount() {
@@ -181,11 +178,10 @@ class Application extends React.Component {
     const to = now.toISOString();
     const from = now.subtract(7, 'days').toISOString();
 
-    Promise.all([getTopics(), getSources(), getStats(from, to)]).then((results) => {
+    Promise.all([getTopics(), getSources()]).then((results) => {
       this.setState({
         topics: results[0].data,
         sources: results[1].data,
-        stats: results[2].data,
       })
 
       this.setState({
@@ -231,22 +227,7 @@ class Application extends React.Component {
       .catch(error => console.log(error))
   };
 
-  fetchStats() {
-    let applyResponseToState = response => {
-      this.setState({
-        stats: response.data
-      })
-    };
 
-    let now = moment();
-    const to = now.format("X");
-    const from = now.subtract(7, 'days').format("X");
-
-
-    getStats(from, to)
-      .then(applyResponseToState)
-      .catch(error => console.log(error))
-  }
 
 
 

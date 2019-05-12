@@ -24,17 +24,26 @@ function getPostsAsPage(platform, filterWithoutTopic, topics, pageSize, pageNumb
   return axios.get(`${API_URL}/contents/${platform}/`, config);
 }
 
+export function getPost(platform, postId) {
+  return axios.get(`${API_URL}/contents/${platform}/${postId}`, {
+    headers: getAuthHeaders()
+  })
+}
+
+export function savePostTopics(platform, postId, topics) {
+  let headers = getAuthHeaders();
+  headers['Content-Type'] = 'application/json';
+  return axios.put(`${API_URL}/contents/${platform}/${postId}/topics`, topics, {
+    headers: headers
+  })
+}
+
 function deletePost(platform, postId) {
   return axios.delete(`${API_URL}/contents/${platform}/${postId}`, {
     headers: getAuthHeaders()
   })
 }
 
-function savePostTopics(platform, postId, topics) {
-  return axios.patch(`${API_URL}/contents/${platform}/${postId}/topics`, topics, {
-    headers: getAuthHeaders()
-  })
-}
 
 
 export function getTwitterPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
