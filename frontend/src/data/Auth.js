@@ -34,3 +34,9 @@ export function getCurrentUser() {
 
   return Promise.resolve({name: 'Admin'})
 }
+
+export function getAuthHeaders() {
+  return {
+    Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN)
+  }
+}

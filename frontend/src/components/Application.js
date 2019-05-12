@@ -16,12 +16,12 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from '@material-ui/icons/Menu';
 import AppBar from "@material-ui/core/AppBar";
-import {getModelStatus, suggestTopics} from "../data/Model";
+import {suggestTopics} from "../data/Model";
 import {scrapeData} from "../data/Jobs";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "../data/Topics";
 import {addSource, deleteSource, getSources, saveSource} from "../data/Sources";
-import * as moment from "../App";
-import {getCountsByDay} from "../data/Stats";
+import * as moment from "moment";
+import {getStats} from "../data/Stats";
 import Settings from "./settings/Settings";
 import Dashboard from "./dashboard/Dashboard";
 import Topics from "./topics/Topics";
@@ -40,6 +40,8 @@ import {
 import Posts from "./posts/Posts";
 import Button from "@material-ui/core/Button";
 import {removeAccessToken} from "../data/Auth";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Grid from "@material-ui/core/Grid";
 
 const drawerWidth = 240;
 
@@ -47,6 +49,9 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     display: 'flex',
+  },
+  fullHeight: {
+    height: '80vh',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -164,18 +169,29 @@ class Application extends React.Component {
 
   state = {
     mobileOpen: false,
+    isLoading: true,
     topics: [],
     sources: [],
-    posts: [],
-    countsByDay: [],
-    modelStatus: {
-      isTrained: false,
-      lastSuggestionTimestamp: 0,
-      lastTrainingTimestamp: 0,
-    },
-    withoutTopicCount: 0,
-    withSuggestedTopicCount: 0,
+    stats: {},
     isScrapeTokenDialogOpened: false,
+  };
+
+  componentDidMount() {
+    let now = moment();
+    const to = now.format("X");
+    const from = now.subtract(7, 'days').format("X");
+
+    Promise.all([getTopics(), getSources(), getStats(from, to)]).then((results) => {
+      this.setState({
+        topics: results[0].data,
+        sources: results[1].data,
+        stats: results[2].data,
+      })
+
+      this.setState({
+        isLoading: false
+      })
+    });
   }
 
 
@@ -215,10 +231,10 @@ class Application extends React.Component {
       .catch(error => console.log(error))
   };
 
-  fetchCountsByDay() {
+  fetchStats() {
     let applyResponseToState = response => {
       this.setState({
-        countsByDay: response.data.countsByDay
+        stats: response.data
       })
     };
 
@@ -227,21 +243,12 @@ class Application extends React.Component {
     const from = now.subtract(7, 'days').format("X");
 
 
-    getCountsByDay(from, to)
+    getStats(from, to)
       .then(applyResponseToState)
       .catch(error => console.log(error))
   }
 
-  fetchModelStatus() {
-    let applyResponseToState = response => {
-      this.setState({
-        modelStatus: response.data
-      })
-    };
-    getModelStatus()
-      .then(applyResponseToState)
-      .catch(error => console.log(error))
-  }
+
 
 
   handleSaveTopic = (topic) =>
@@ -305,14 +312,11 @@ class Application extends React.Component {
         url: '/',
         component: () =>
           <Dashboard
-            countsByDay={this.state.countsByDay}
+            stats={this.state.stats}
             topics={this.state.topics}
             platforms={platforms}
-            modelStatus={this.state.modelStatus}
-            withoutTopicCount={this.state.withoutTopicCount}
             handleScrapeData={this.handleScrapeData}
             handleSuggestTopics={this.handleSuggestTopics}
-            withSuggestedTopicCount={this.state.withSuggestedTopicCount}
           />
       },
       {
@@ -429,9 +433,23 @@ class Application extends React.Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar}/>
-          <Switch>
-            {(appItems.concat(settingItems)).map(itemToRouteComponent)}
-          </Switch>
+
+          {this.state.isLoading ?
+            <Grid
+              className={classes.fullHeight}
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item><CircularProgress color={"secondary"}/></Grid>
+            </Grid>
+            :
+            <Switch>
+              {(appItems.concat(settingItems)).map(itemToRouteComponent)}
+            </Switch>
+          }
+
         </main>
       </div>
     );

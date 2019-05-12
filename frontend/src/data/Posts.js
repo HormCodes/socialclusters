@@ -7,9 +7,11 @@ import {
   PLATFORM_REDDIT,
   PLATFORM_TWITTER
 } from "./Constants";
+import {getAuthHeaders} from "./Auth";
 
 function getPostsAsPage(platform, filterWithTopic, pageSize, pageNumber, sort) {
   let config = {
+    headers: getAuthHeaders(),
     params: {
       withoutTopic: filterWithTopic,
       size: pageSize,
@@ -22,11 +24,15 @@ function getPostsAsPage(platform, filterWithTopic, pageSize, pageNumber, sort) {
 }
 
 function deletePost(platform, postId) {
-  return axios.delete(`${API_URL}/contents/${platform}/${postId}`)
+  return axios.delete(`${API_URL}/contents/${platform}/${postId}`, {
+    headers: getAuthHeaders()
+  })
 }
 
 function savePostTopics(platform, postId, topics) {
-  return axios.patch(`${API_URL}/contents/${platform}/${postId}/topics`, topics)
+  return axios.patch(`${API_URL}/contents/${platform}/${postId}/topics`, topics, {
+    headers: getAuthHeaders()
+  })
 }
 
 
