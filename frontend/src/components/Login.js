@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {ACCESS_TOKEN} from "../data/Constants";
 import {getAccessToken} from "../data/Auth";
 import {compose, withHandlers, withState} from "recompose";
 import {TextField} from "@material-ui/core";
@@ -111,7 +110,7 @@ export default compose(
     handleSubmit: props => event => {
       getAccessToken(props.usernameOrEmail, props.password)
         .then(response => {
-          localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+
           props.handleLogin();
         })
         .catch(error => {

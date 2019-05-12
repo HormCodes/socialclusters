@@ -7,7 +7,16 @@ export function getAccessToken(usernameOrEmail, password) {
   return axios.post(`${API_URL}/auth/signin`, {
     usernameOrEmail,
     password
+  }).then(response => {
+    localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+    return Promise.resolve()
   })
+}
+
+// TODO - URL
+export function removeAccessToken() {
+  localStorage.removeItem(ACCESS_TOKEN);
+  return Promise.resolve()
 }
 
 

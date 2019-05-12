@@ -84,15 +84,15 @@ class App extends Component {
   render() {
 
 
-
+    // Login route has to be before application route
     return (
       <div>
 
         <Switch>
-          <PrivateRoute authenticated={this.state.isAuthenticated} exact path={"/"} component={() => <Application
+          <Route exact path={"/login"} component={() => <Login handleLogin={this.handleLogin.bind(this)}/>}/>
+          <PrivateRoute authenticated={this.state.isAuthenticated} path={"/"} component={() => <Application
             mobileOpen={this.state.mobileOpen}
             handleDrawerToggle={this.handleDrawerToggle}/>}/>
-          <Route path={"/login"} component={() => <Login handleLogin={this.handleLogin.bind(this)}/>}/>
         </Switch>
 
 

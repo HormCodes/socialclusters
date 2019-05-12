@@ -38,6 +38,8 @@ import {
   saveTwitterPostTopics
 } from "../data/Posts";
 import Posts from "./posts/Posts";
+import Button from "@material-ui/core/Button";
+import {removeAccessToken} from "../data/Auth";
 
 const drawerWidth = 240;
 
@@ -51,6 +53,10 @@ const styles = theme => ({
       width: drawerWidth,
       flexShrink: 0,
     },
+  },
+
+  grow: {
+    flexGrow: 1,
   },
   appBar: {
     marginLeft: drawerWidth,
@@ -359,7 +365,7 @@ class Application extends React.Component {
         </ListItem>
       </Link>;
 
-    let itemToRouteComponent = item => <Route key={item.url} exact={item.url === '/'} path={item.url}
+    let itemToRouteComponent = item => <Route key={item.url} path={item.url} exact={item.url === "/"}
                                               component={item.component}/>;
 
     const drawer = (
@@ -390,9 +396,15 @@ class Application extends React.Component {
             >
               <MenuIcon/>
             </IconButton>
-            <Typography variant="h6" color="inherit" noWrap>
+            <Typography variant="h6" color="inherit" className={classes.grow}>
               SocialClusters
             </Typography>
+            <Button color="inherit" onClick={() => {
+              removeAccessToken()
+              this.props.history.push('/')
+            }}>
+              Logout
+            </Button>
           </Toolbar>
         </AppBar>
         <nav className={classes.drawer}>
