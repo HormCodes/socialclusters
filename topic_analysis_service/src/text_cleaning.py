@@ -1,3 +1,4 @@
+import majka
 import re
 
 import langid
@@ -7,10 +8,8 @@ from nltk import TweetTokenizer
 from stop_words import safe_get_stop_words
 
 
-def remove_stopwords(text):
+def remove_stopwords(text, text_language):
     tweet_words = text.lower().split()
-
-    text_language = langid.classify(text)[0]
 
     stop_words = safe_get_stop_words(languages.get(part1=text_language).name.lower()) + ["ul", "b", "v", "a", "z", "li",
                                                                                          "o", "s", "k", "i", "se",
@@ -41,8 +40,13 @@ def remove_mess_chars(text):
     return returned_text
 
 
-def convert_words_into_lemmas(text, morph):
+def convert_words_into_lemmas(text, text_language):
     result = ""
+
+    try:
+        morph = majka.Majka("../majka/" + text_language + ".w-lt")
+    except:
+        return result
 
     for word in text.split():
         lemma_result = morph.find(word)
@@ -94,10 +98,16 @@ def get_data_frame_from_posts(platform, posts, keys_to_source, topic_ids):
     return pd.DataFrame(data_frame_input)
 
 
-def get_post_with_cleaned_text(post, morph):
-    post['text'] = convert_words_into_lemmas(remove_stopwords(remove_mess_chars(post['text'])), morph)
+def get_cleaned_text(text):
+    text_language = langid.classify(text)[0]
+    return convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text), text_language), text_language)
+
+
+def get_post_with_cleaned_text(post):
+    text = post['text']
+    post['text'] = get_cleaned_text(text)
     return post
 
 
-def get_posts_with_cleaned_text(posts, morph):
-    return map(lambda post: get_post_with_cleaned_text(post, morph), posts)
+def get_posts_with_cleaned_text(posts):
+    return map(lambda post: get_post_with_cleaned_text(post), posts)

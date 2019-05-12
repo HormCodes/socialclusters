@@ -17,7 +17,7 @@ Web app for social media content aggregation and analysation (Bachelor's thesis 
 ## Configuration
 
 1. Edit file `platform_api_service/config.json` for adding your API keys.
-2. In directory `topic_analysis_service/makjka` add dictionaries for word lemma converter called Majka with format `x.lt` where `x` is ISO language code, e.g. `cs`
+2. In directory `topic_analysis_service/makjka` add dictionaries for word lemma converter called [Majka](https://nlp.fi.muni.cz/ma/) with format `x.lt` where `x` is ISO language code, e.g. `cs`
 3. (For production deploy) In a file `nginx/conf.d` change domain `example.com` to your own. 
 
 ## Setup

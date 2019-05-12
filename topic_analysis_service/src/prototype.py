@@ -1,5 +1,3 @@
-import majka
-import majka
 import time
 
 import pandas as pd
@@ -11,8 +9,7 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-from text_cleaning import remove_mess_chars, remove_stopwords, \
-    convert_words_into_lemmas
+from text_cleaning import get_cleaned_text
 
 
 def get_data_frame_stats(data_frame):
@@ -25,7 +22,6 @@ def get_data_frame_stats(data_frame):
     return df_stats
 
 
-morph = majka.Majka("../majka/majka.w-lt")
 # topic_ids = ['World', "Business", "Sports", "SciTech"]
 # with open('../dataset_news.json') as json_file:
 #     data = json.load(json_file)
@@ -52,8 +48,8 @@ print("Topic Stats")
 print(get_data_frame_stats(df))
 
 train, test = train_test_split(df, random_state=42, test_size=0.33, shuffle=True)
-X_train = train.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
-X_test = test.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
+X_train = train.text.apply(lambda text: get_cleaned_text(text))
+X_test = test.text.apply(lambda text: get_cleaned_text(text))
 
 wordcount = {}
 for text in X_train.append(X_test):
@@ -72,8 +68,8 @@ for word, count in word_counter.most_common(n_print):
 start = time.time()
 
 train, test = train_test_split(df, random_state=42, test_size=0.33, shuffle=True)
-X_train = train.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
-X_test = test.text.apply(lambda text: convert_words_into_lemmas(remove_stopwords(remove_mess_chars(text)), morph))
+X_train = train.text.apply(lambda text: get_cleaned_text(text))
+X_test = test.text.apply(lambda text: get_cleaned_text(text))
 
 NB_pipeline = Pipeline([
     ('tfidf', TfidfVectorizer()),

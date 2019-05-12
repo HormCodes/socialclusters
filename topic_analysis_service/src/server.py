@@ -1,6 +1,5 @@
 import datetime
 import json
-import majka
 import os
 import pickle
 import time
@@ -137,12 +136,12 @@ def predict():
 
     data = json.loads(request.data)
 
-    morph = majka.Majka("../majka/majka.w-lt")
+
 
     topics = []
     text = get_text_for_predict_from_post(
         data['platform'],
-        get_post_with_cleaned_text(data['post'], morph),
+        get_post_with_cleaned_text(data['post']),
         data['keysToSource']
     )
 

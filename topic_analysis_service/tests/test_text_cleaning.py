@@ -20,7 +20,7 @@ class TextCleaning(TestCase):
         ...
 
     def test_convert_words_into_lemmas(self):
-        morph = majka.Majka("../majka/majka.w-lt")
+        morph = majka.Majka("../majka/cs.w-lt")
 
         # TODO - Space at start
         self.assertEqual(' tramvaj jet člověk', convert_words_into_lemmas('tramvají jedou lidé', morph))
@@ -39,6 +39,6 @@ class TextCleaning(TestCase):
 
     def test_get_post_with_cleaned_text(self):
         post = {'text': 'a ! ahoj tramvají'}
-        morph = majka.Majka("../majka/majka.w-lt")
+        morph = majka.Majka("../majka/cs.w-lt")
 
         self.assertEqual({'text': ' ahoj tramvaj'}, get_post_with_cleaned_text(post, morph))

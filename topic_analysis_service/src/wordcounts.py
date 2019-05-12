@@ -1,11 +1,10 @@
 import datetime
-import majka
 
 from nltk import collections
 from pymongo import MongoClient
 
 from pojo import platforms, Config
-from text_cleaning import convert_words_into_lemmas, remove_stopwords, remove_mess_chars
+from text_cleaning import get_cleaned_text
 
 
 def get_posts_from_range(config, from_timestamp, to_timestamp):
@@ -21,12 +20,11 @@ def get_posts_from_range(config, from_timestamp, to_timestamp):
 
 
 def get_word_counts(config, from_timestamp, to_timestamp, count):
-    morph = majka.Majka("../majka/majka.w-lt")
 
     posts = get_posts_from_range(config, from_timestamp, to_timestamp)
     wordcount = {}
     for post in posts:
-        words = convert_words_into_lemmas(remove_stopwords(remove_mess_chars(post['text'])), morph).split()
+        words = get_cleaned_text(post['text']).split()
         for word in words:
             if word not in wordcount:
                 wordcount[word] = 1

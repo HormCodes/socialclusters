@@ -47,7 +47,7 @@ abstract class GenericPostController<E>(
     postRepository.deleteById(id)
   }
 
-  @PatchMapping("/{id}/topics")
+  @PutMapping("/{id}/topics")
   fun setTopics(@PathVariable id: String, @RequestBody newTopics: List<String>): E {
     val post: E = postRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 

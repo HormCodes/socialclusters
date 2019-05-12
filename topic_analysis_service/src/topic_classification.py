@@ -1,5 +1,3 @@
-import majka
-
 import pandas as pd
 import psycopg2
 from pymongo import MongoClient
@@ -10,8 +8,6 @@ from sklearn.svm import LinearSVC
 
 from pojo import Config, platforms
 from text_cleaning import get_data_frame_from_posts, get_posts_with_cleaned_text
-
-morph = majka.Majka("../majka/majka.w-lt")
 
 
 def get_topics(config):
@@ -40,7 +36,7 @@ def get_training_data_frame(config, topic_ids):
             posts.append(post)
 
         data_frame = get_data_frame_from_posts(platform['id'],
-                                               get_posts_with_cleaned_text(posts, morph),
+                                               get_posts_with_cleaned_text(posts),
                                                platform['sourcePath'], topic_ids)
 
         data_frames.append(data_frame)
@@ -77,7 +73,7 @@ def suggest_topics(config, models):
             posts.append(post)
 
         data_frame = get_data_frame_from_posts(platform['id'],
-                                               get_posts_with_cleaned_text(posts, morph),
+                                               get_posts_with_cleaned_text(posts),
                                                platform['sourcePath'], [])  # TODO - Refactor empty topics
 
         for model in models:
