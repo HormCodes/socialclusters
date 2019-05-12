@@ -22,7 +22,6 @@ import {addTopic, deleteTopic, getTopics, saveTopic} from "../data/Topics";
 import {addSource, deleteSource, getSources, saveSource} from "../data/Sources";
 import * as moment from "moment";
 import {getStats} from "../data/Stats";
-import Settings from "./settings/Settings";
 import Dashboard from "./dashboard/Dashboard";
 import Topics from "./topics/Topics";
 import Sources from "./sources/Sources";
@@ -352,15 +351,6 @@ class Application extends React.Component {
       },
     ];
 
-    const settingItems = [
-      {
-        name: 'Settings',
-        icon: 'settings',
-        url: '/settings',
-        component: Settings
-      },
-    ];
-
 
     let itemsToHTML = (item) =>
       <Link to={item.url} key={item.url} style={{textDecoration: 'none'}}>
@@ -379,10 +369,6 @@ class Application extends React.Component {
         <Divider/>
         <List>
           {appItems.map(itemsToHTML)}
-        </List>
-        <Divider/>
-        <List>
-          {settingItems.map(itemsToHTML)}
         </List>
       </div>
     );
@@ -447,7 +433,7 @@ class Application extends React.Component {
             </Grid>
             :
             <Switch>
-              {(appItems.concat(settingItems)).map(itemToRouteComponent)}
+              {appItems.map(itemToRouteComponent)}
             </Switch>
           }
 

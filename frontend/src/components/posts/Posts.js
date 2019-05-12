@@ -2,6 +2,7 @@ import React from 'react';
 import PlatformPostTable from "./PlatformPostTable";
 import PostDetail from "./PostDetail";
 import {Route, Switch} from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
 
 
 class Posts extends React.Component {
@@ -12,21 +13,25 @@ class Posts extends React.Component {
     return (
       <Switch>
         <Route exact path={"/posts"} component={() =>
-          <div>
+          <Grid
+            spacing={16}
+            container
+          >
             {
               platforms.map((platform, index) =>
-                <PlatformPostTable
-                  key={index}
-                  platformName={platform.name}
-                  platform={platform.id}
-                  columns={platform.columns}
-                  topics={topics}
-                  handleOpenPost={(post) => {
-                    // TODO - Remove prop
-                  }
-                  }
-                  deletePost={platform.deletePost}
-                  getPostsAsPage={platform.getPostsAsPage}/>)}</div>
+                <Grid item xs={12}>
+                  <PlatformPostTable
+                    key={index}
+                    platformName={platform.name}
+                    platform={platform.id}
+                    columns={platform.columns}
+                    topics={topics}
+                    handleOpenPost={(post) => {
+                      // TODO - Remove prop
+                    }
+                    }
+                    deletePost={platform.deletePost}
+                    getPostsAsPage={platform.getPostsAsPage}/></Grid>)}</Grid>
 
 
         }/>
