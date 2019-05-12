@@ -71,6 +71,63 @@ class TopicAnalysisControllerTest(
 
       }
     }
+
+    describe("/analysis/topic/trainings/last") {
+      it("should return not found for  table without finished models") {
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+
+        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/last")
+        mockMvc.perform(request)
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+
+      }
+
+      it("should return last finished training") {
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
+        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+
+        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/last")
+        mockMvc.perform(request)
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+          .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.`is`(2)))
+
+      }
+    }
+
+    describe("/analysis/topic/trainings/running") {
+      it("should return last model in training") {
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
+        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(Training(4, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+
+        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running")
+        mockMvc.perform(request)
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
+          .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.`is`(4)))
+
+      }
+      it("should return not found for no training models") {
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
+        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+
+        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running")
+        mockMvc.perform(request)
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+
+      }
+      it("should return not found for training models where is trained after in training") {
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
+        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+
+        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running")
+        mockMvc.perform(request)
+          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+
+      }
+    }
   }
 
   companion object {

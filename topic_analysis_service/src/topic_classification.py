@@ -72,6 +72,7 @@ def suggest_topics(config, models):
     for platform in platforms:
         posts = []
         posts_collection = mongo_db[platform['collection']]
+        posts_collection.update_many({}, {'$set': {'suggestedTopics': []}})
         for post in posts_collection.find({'$or': [{'topics': {'$exists': False}}, {'topics': {'$eq': []}}]}):
             posts.append(post)
 
@@ -84,9 +85,8 @@ def suggest_topics(config, models):
             print(model['topic'])
             for post in data_frame.values:
                 if model['model'].predict([post[1]])[0]:
-                    print(post[0])
-                    print(post[1])
-                    # TODO - Run for all before suggestion posts_collection.update_one({'_id': post[0]}, {'$set': {'suggestedTopics': []}})
+                    # print(post[0])
+                    # print(post[1])
                     posts_collection.update_one({'_id': post[0]}, {'$addToSet': {'suggestedTopics': model['topic']}})
 
             print()

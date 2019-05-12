@@ -11,6 +11,8 @@ import InfoCard from "./actions/InfoCard";
 import {getStats} from "../../data/Stats";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
+import {getLastModelInTraining, getLastTrainedModel, suggestTopics, trainModel} from "../../data/TopicAnalysis";
+import {scrapeData} from "../../data/Jobs";
 
 
 const styles = {
@@ -32,11 +34,18 @@ class Dashboard extends React.Component {
       newsPublisherCounts: [],
       withSuggestedTopic: 0,
       withoutTopic: 0,
-    }
+    },
+    lastModel: {},
+    modelInTraining: false
   };
 
   componentDidMount() {
+    this.fetchStats();
+  }
+
+  fetchStats() {
     this.setState({isLoading: true});
+    this.fetchModel();
 
     let applyResponseToState = response => {
       this.setState({
@@ -56,8 +65,37 @@ class Dashboard extends React.Component {
       .catch(error => console.log(error))
   }
 
+  suggestTopics() {
+    suggestTopics()
+  }
+
+  trainTopicModel() {
+    trainModel()
+  }
+
+  downloadData() {
+    scrapeData()
+  }
+
+  fetchModel() {
+    let applyResponseToState1 = response => {
+      this.setState({
+        lastModel: response.data,
+      })
+    };
+
+    let applyResponseToState2 = response => {
+      this.setState({
+        modelInTraining: true,
+      })
+    };
+
+    getLastTrainedModel().then(applyResponseToState1);
+    getLastModelInTraining().then(applyResponseToState2)
+  }
+
   render() {
-    const {classes, topics, platforms, handleScrapeData, handleSuggestTopics} = this.props
+    const {classes, topics, platforms} = this.props
 
     return (<div>
         {this.state.isLoading ?
@@ -76,7 +114,10 @@ class Dashboard extends React.Component {
               <Grid item xs={12} sm={4}>
                 <InfoCard numberOfWithoutTopic={this.state.stats.withoutTopic}
                           numberOfWithSuggestedTopic={this.state.stats.withSuggestedTopic}
-                          handleDownload={handleScrapeData} handleSuggest={handleSuggestTopics}/>
+                          handleDownload={this.downloadData} handleSuggest={this.suggestTopics}
+                          handleTrain={this.trainTopicModel}
+                          currentTopicModelTrainingTimestamp={this.state.lastModel.end}
+                          isTopicModelInTraining={this.state.modelInTraining}/>
               </Grid>
 
 

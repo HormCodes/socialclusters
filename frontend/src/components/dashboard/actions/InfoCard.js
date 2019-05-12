@@ -17,7 +17,7 @@ const InfoCard = ({
                     handleDownload,
                     currentTopicModelTrainingTimestamp,
                     isTopicModelInTraining,
-                    handleTraining
+                    handleTrain
                   }) =>
   <Card>
     <CardContent style={{height: 235}}>
@@ -43,7 +43,7 @@ const InfoCard = ({
       <Button size="small" color="primary" onClick={handleSuggest}>
         Suggest Topics
       </Button>
-      {!isTopicModelInTraining ? <Button size="small" color="primary" onClick={handleTraining}>
+      {!isTopicModelInTraining ? <Button size="small" color="primary" onClick={handleTrain}>
         Train Topic Analysis Model
       </Button> : <div/>}
     </CardActions>

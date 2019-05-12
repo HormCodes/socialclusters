@@ -193,7 +193,7 @@ class Application extends React.Component {
 
   handleSuggestTopics = () => {
     suggestTopics().then(() => {
-      this.fetchModelStatus();
+
     })
   };
 

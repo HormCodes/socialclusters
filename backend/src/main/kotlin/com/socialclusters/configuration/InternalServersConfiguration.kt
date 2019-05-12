@@ -17,5 +17,5 @@ class InternalServersConfiguration {
   fun topicAnalysisServiceUrl() = "http://topic_analysis_service:5000"
 
   @Bean
-  fun platformAPIServiceUrl() = "http://platform_api_service:5000"
+  fun platformAPIServiceUrl() = "http://platform_api_service:6000"
 }
