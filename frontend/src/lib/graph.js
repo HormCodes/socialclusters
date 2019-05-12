@@ -2,7 +2,7 @@ const moment = require("moment"); // TODO - New imports
 
 const getTopicNames = (topics) => topics.map(topic => topic.name);
 const getPlatformNames = (platforms) => platforms.map(platform => platform.name);
-const getDateString = (timestamp) => moment(timestamp).format("D.M.Y");
+const getDateString = (timestamp) => moment(timestamp).format("M/D/Y");
 
 const getCountsByTopic = (countsByTopic, topics) => topics.map(topic => topic.textId).map(id => countsByTopic[countsByTopic.map(countByTopic => countByTopic.topic).indexOf(id)].count);
 

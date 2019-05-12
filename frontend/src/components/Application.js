@@ -16,7 +16,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from '@material-ui/icons/Menu';
 import AppBar from "@material-ui/core/AppBar";
-import {suggestTopics} from "../data/Model";
+import {suggestTopics} from "../data/TopicAnalysis";
 import {scrapeData} from "../data/Jobs";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "../data/Topics";
 import {addSource, deleteSource, getSources, saveSource} from "../data/Sources";
