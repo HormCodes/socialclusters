@@ -10,9 +10,20 @@ const WordCountsGraph = ({wordCounts}) =>
   <GraphCard
     title={"Words"}
   >
-    <ReactWordcloud words={wordCounts.map(wordCount => {
-      return {text: wordCount.word, value: wordCount.count}
-    })}/>
+    <div>
+      <ReactWordcloud
+        options={{
+          fontFamily: "Roboto",
+          fontSizes: [20, 30, 40, 50, 60, 70, 80, 90, 100].map(value => value * 1.5),
+          colors: ["#4285f4", "#db4437", "#f4b400", "#109c58"],
+          rotations: 0
+        }}
+        words={wordCounts.map(wordCount => {
+          return {text: wordCount.word, value: wordCount.count}
+        })}/>
+    </div>
+
+
   </GraphCard>;
 
 WordCountsGraph.propTypes = {

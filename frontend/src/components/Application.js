@@ -81,6 +81,7 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
+    width: "100%",
     padding: theme.spacing.unit * 3,
   },
 });
@@ -178,8 +179,8 @@ class Application extends React.Component {
 
   componentDidMount() {
     let now = moment();
-    const to = now.format("X");
-    const from = now.subtract(7, 'days').format("X");
+    const to = now.toISOString();
+    const from = now.subtract(7, 'days').toISOString();
 
     Promise.all([getTopics(), getSources(), getStats(from, to)]).then((results) => {
       this.setState({

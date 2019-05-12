@@ -12,6 +12,7 @@ import PostsBySuggestedTopicGraph from "./graphs/PostsBySuggestedTopicGraph";
 import PropTypes from "prop-types"
 import WordCountsGraph from "./graphs/WordCountsGraph";
 
+
 const styles = {
 }
 
@@ -32,27 +33,29 @@ const Dashboard = ({classes, value, topics, stats, platforms, withoutTopicCount,
         <Grid item xs={12} sm={4}>
           <ScrapeDataCard handleScrapeButtonClick={handleScrapeData}/>
         </Grid>
+
         <Grid item xs={12} sm={4}>
           <WordCountsGraph wordCounts={stats.wordCounts}/>
         </Grid>
 
 
         <Grid item xs={12} sm={12}>
-          <PostsByTopicGraph countsByDay={stats.countsByDay} topics={topics}/>
+          <PostsByTopicGraph countsByDay={stats.dayCounts} topics={topics}/>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <PostsByPlatformGraph countsByDay={stats.countsByDay} platforms={platforms}/>
+          <PostsByPlatformGraph countsByDay={stats.dayCounts} platforms={platforms}/>
 
         </Grid>
         <Grid item xs={12} sm={6}>
-          <PostsGraph countsByDay={stats.countsByDay}/>
+          <PostsGraph countsByDay={stats.dayCounts}/>
         </Grid>
 
 
         <Grid item xs={12} sm={12}>
-          <PostsBySuggestedTopicGraph countsByDay={stats.countsByDay} topics={topics}/>
+          <PostsBySuggestedTopicGraph countsByDay={stats.dayCounts} topics={topics}/>
         </Grid>
+
 
       </Grid>
 
