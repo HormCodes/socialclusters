@@ -27,7 +27,7 @@ class AuthController(
 ) {
 
 
-  @PostMapping("/signin")
+  @PostMapping("/accessToken")
   fun authenticateUser(@RequestBody loginRequest: LoginRequest): JwtAuthenticationResponse {
 
     val authentication = authenticationManager.authenticate(
@@ -43,7 +43,7 @@ class AuthController(
     return JwtAuthenticationResponse(jwt)
   }
 
-  @PostMapping("/signup")
+  @PostMapping("/firstUser")
   fun registerUser(@RequestBody signUpRequest: User) {
     if (userDao.findAll().size != 0) {
       throw ResponseStatusException(HttpStatus.FORBIDDEN)
