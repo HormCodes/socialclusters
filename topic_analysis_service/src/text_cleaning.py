@@ -31,7 +31,7 @@ def remove_mess_chars(text):
     tokenizer = TweetTokenizer()
     tokens = tokenizer.tokenize(re.sub(r'\d+\S\d+\S\d+', "DATE", text.lower()))
 
-    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!", ":", "/", "\\", "=", "|", "“", "„", "…", "+"]
+    chars = [".", ",", "-", "(", ")", "\"", "\'", "?", "–", "!", ":", "/", "\\", "=", "|", "“", "„", "…", "+", ">", "<"]
     returned_text = " ".join(filter(lambda token: token not in chars, tokens))
 
     for char in chars:

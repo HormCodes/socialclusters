@@ -44,10 +44,12 @@ let PostsToolbar = props => {
 
   const {
     title,
+    topics,
     numSelected,
     classes,
     anchorEl,
     filterWithTopic,
+    filterWithoutTopic,
     handleDeletePosts,
     handleCloseMenu,
     handleOpenMenu,
@@ -67,10 +69,18 @@ let PostsToolbar = props => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleFilterTopicSwitch}>
-          <Checkbox checked={filterWithTopic}/>
+        <MenuItem onClick={() => {
+          handleFilterTopicSwitch()
+        }}>
+          <Checkbox checked={filterWithoutTopic}/>
           <ListItemText>Without Topic</ListItemText>
         </MenuItem>
+        {topics.map((topic, index) => <MenuItem key={index} onClick={() => {
+          handleFilterTopicSwitch(topic.textId)
+        }}>
+          <Checkbox checked={!!filterWithTopic[topic.textId]}/>
+          <ListItemText>{topic.name}</ListItemText>
+        </MenuItem>)}
       </Menu>
     </div>;
 
@@ -110,7 +120,8 @@ let PostsToolbar = props => {
 
 PostsToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  filterWithTopic: PropTypes.bool.isRequired,
+  filterWithTopic: PropTypes.object.isRequired,
+  filterWithoutTopic: PropTypes.bool.isRequired,
   handleFilterTopicSwitch: PropTypes.func.isRequired,
   handleDeletePosts: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
@@ -120,7 +131,8 @@ PostsToolbar.propTypes = {
 PostsToolbar.defaultProps = {
   numSelected: 0,
   isMenuOpened: false,
-  filterWithTopic: false,
+  filterWithTopic: {},
+  filterWithoutTopic: false,
   handleFilterTopicSwitch: () => {
   },
   handleDeletePosts: () => {

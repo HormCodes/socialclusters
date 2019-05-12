@@ -9,11 +9,12 @@ import {
 } from "./Constants";
 import {getAuthHeaders} from "./Auth";
 
-function getPostsAsPage(platform, filterWithTopic, pageSize, pageNumber, sort) {
+function getPostsAsPage(platform, filterWithoutTopic, topics, pageSize, pageNumber, sort) {
   let config = {
     headers: getAuthHeaders(),
     params: {
-      withoutTopic: filterWithTopic,
+      withoutTopic: filterWithoutTopic,
+      topics: topics.join(),
       size: pageSize,
       page: pageNumber,
       sort: sort || ''
@@ -36,8 +37,8 @@ function savePostTopics(platform, postId, topics) {
 }
 
 
-export function getTwitterPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
-  return getPostsAsPage(PLATFORM_TWITTER, filterWithTopic, pageSize, pageNumber, sort)
+export function getTwitterPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
+  return getPostsAsPage(PLATFORM_TWITTER, filterWithoutTopic, topics, pageSize, pageNumber, sort)
 }
 
 export function deleteTwitterPost(postId) {
@@ -49,8 +50,8 @@ export function saveTwitterPostTopics(postId, topics) {
 }
 
 
-export function getFacebookPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
-  return getPostsAsPage(PLATFORM_FACEBOOK, filterWithTopic, pageSize, pageNumber, sort)
+export function getFacebookPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
+  return getPostsAsPage(PLATFORM_FACEBOOK, filterWithoutTopic, topics, pageSize, pageNumber, sort)
 }
 
 export function deleteFacebookPost(postId) {
@@ -62,8 +63,8 @@ export function saveFacebookPostTopics(postId, topics) {
 }
 
 
-export function getNewsPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
-  return getPostsAsPage(PLATFORM_NEWS, filterWithTopic, pageSize, pageNumber, sort)
+export function getNewsPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
+  return getPostsAsPage(PLATFORM_NEWS, filterWithoutTopic, topics, pageSize, pageNumber, sort)
 }
 
 export function deleteNewsPost(postId) {
@@ -75,8 +76,8 @@ export function saveNewsPostTopics(postId, topics) {
 }
 
 
-export function getRedditPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
-  return getPostsAsPage(PLATFORM_REDDIT, filterWithTopic, pageSize, pageNumber, sort)
+export function getRedditPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
+  return getPostsAsPage(PLATFORM_REDDIT, filterWithoutTopic, topics, pageSize, pageNumber, sort)
 }
 
 export function deleteRedditPost(postId) {
@@ -88,8 +89,8 @@ export function saveRedditPostTopics(postId, topics) {
 }
 
 
-export function getMeetupPostsAsPage(pageSize, pageNumber, filterWithTopic, sort) {
-  return getPostsAsPage(PLATFORM_MEETUP, filterWithTopic, pageSize, pageNumber, sort)
+export function getMeetupPostsAsPage(pageSize, pageNumber, filterWithoutTopic, topics, sort) {
+  return getPostsAsPage(PLATFORM_MEETUP, filterWithoutTopic, topics, pageSize, pageNumber, sort)
 }
 
 export function deleteMeetupPost(postId) {

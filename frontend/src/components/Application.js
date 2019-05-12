@@ -117,20 +117,6 @@ const platforms = [
     savePostTopics: saveTwitterPostTopics,
   },
   {
-    id: "facebook",
-    name: "Facebook",
-    columns: [
-      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
-      {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
-      {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
-      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
-    ],
-
-    // TODO - Implement backend
-    getPostsAsPage: getFacebookPostsAsPage,
-    deletePost: deleteFacebookPost,
-  },
-  {
     id: "news",
     name: "News",
     columns: [
@@ -162,6 +148,20 @@ const platforms = [
     // TODO - Implement backend
     getPostsAsPage: getRedditPostsAsPage,
     deletePost: deleteRedditPost,
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    columns: [
+      {id: 'timestamp', valuePath: ['timestamp'], label: 'Timestamp', valueFormatter: getDate},
+      {id: 'author', valuePath: ['author'], label: 'Author', valueFormatter: (value) => value},
+      {id: 'text', valuePath: ['text'], label: 'Text', valueFormatter: (value) => value},
+      {id: 'topics', valuePath: ['topics'], label: 'Topics', valueFormatter: getTopicsString},
+    ],
+
+    // TODO - Implement backend
+    getPostsAsPage: getFacebookPostsAsPage,
+    deletePost: deleteFacebookPost,
   },
 ];
 
@@ -303,7 +303,7 @@ class Application extends React.Component {
 
 
   render() {
-    const {classes, theme, handleDrawerToggle, mobileOpen} = this.props;
+    const {classes, theme, mobileOpen} = this.props;
 
     const appItems = [
       {
@@ -401,7 +401,8 @@ class Application extends React.Component {
         <nav className={classes.drawer}>
           {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
           <Hidden smUp implementation="css">
-            <Drawer container={this.props.container} variant="temporary" open={mobileOpen} onClose={handleDrawerToggle}
+            <Drawer container={this.props.container} variant="temporary" open={this.state.mobileOpen}
+                    onClose={this.handleDrawerToggle}
                     anchor={theme.direction === 'rtl' ? 'right' : 'left'}
                     classes={{
                       paper: classes.drawerPaper,
@@ -449,16 +450,9 @@ Application.propTypes = {
   // You won't need it on your project.
   container: PropTypes.object,
   theme: PropTypes.object.isRequired,
-  appItems: PropTypes.array.isRequired,
-  settingItems: PropTypes.array.isRequired,
-  mobileOpen: PropTypes.bool.isRequired,
-  handleDrawerToggle: PropTypes.func.isRequired
 };
 
 Application.defaultProps = {
-  appItems: [],
-  settingItems: [{name: 'Settings', icon: 'settings', url: 'settings'}],
-  mobileOpen: false
 };
 
 // TODO - Correct style for pipeline?

@@ -19,9 +19,9 @@ class Posts extends React.Component {
           >
             {
               platforms.map((platform, index) =>
-                <Grid item xs={12}>
+                <Grid item xs={12} key={index}>
                   <PlatformPostTable
-                    key={index}
+
                     platformName={platform.name}
                     platform={platform.id}
                     columns={platform.columns}

@@ -7,6 +7,7 @@ import PostsToolbar from "./PostsToolbar";
 import PostsTableHead from "./PostsTableHead";
 import PostsTableBody from "./PostsTableBody";
 import * as PropTypes from "prop-types";
+import {getTopicsForAPI} from "../../lib/topics";
 
 const styles = (theme) => ({
   table: {
@@ -30,7 +31,8 @@ class PlatformPostTable extends React.Component {
   getPostsAsPage = this.props.getPostsAsPage;
 
   state = {
-    filterWithTopic: false,
+    filterWithTopic: {},
+    filterWithoutTopic: false,
     orderBy: "timestamp",
     order: "desc",
     twitter: [],
@@ -42,13 +44,32 @@ class PlatformPostTable extends React.Component {
   };
 
 
-  handleFilterTopicSwitch = () => {
-    this.setState(prevState => {
-      this.fetchPosts(this.state.rowsPerPage, this.state.page, !prevState.filterWithTopic); // TODO - Refactor
-      return {
-        filterWithTopic: !prevState.filterWithTopic
-      }
-    });
+  handleFilterTopicSwitch = (topicId) => {
+    console.log(topicId);
+    if (!topicId) {
+      this.setState(prevState => {
+        this.fetchPosts(this.state.rowsPerPage, this.state.page, !prevState.filterWithoutTopic, {}); // TODO - Refactor
+        return {
+          filterWithoutTopic: !prevState.filterWithoutTopic,
+          filterWithTopic: {}
+        }
+      });
+      console.log(this.state.filterWithTopic)
+    } else {
+      this.setState(prevState => {
+        const newObject = prevState.filterWithTopic;
+        newObject[topicId] = !!!newObject[topicId];
+        this.fetchPosts(this.state.rowsPerPage, this.state.page, false, newObject); // TODO - Refactor
+
+        return {
+          filterWithTopic: newObject,
+          filterWithoutTopic: false
+        }
+      });
+    }
+
+
+
 
 
   };
@@ -60,12 +81,12 @@ class PlatformPostTable extends React.Component {
     if (field === this.state.orderBy) {
       // TODO - Asc Dsc constants
       this.setState(prevState => {
-        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithTopic, `${prevState.orderBy},${getOppositeOrder(prevState)}`)
+        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithoutTopic, prevState.filterWithTopic, `${prevState.orderBy},${getOppositeOrder(prevState)}`)
         return {order: getOppositeOrder(prevState)}
       })
     } else {
       this.setState(prevState => {
-        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithTopic, `${field},${prevState.order}`);
+        this.fetchPosts(prevState.size, prevState.page, prevState.filterWithoutTopic, prevState.filterWithTopic, `${field},${prevState.order}`);
         return {orderBy: field}
       })
     }
@@ -132,7 +153,7 @@ class PlatformPostTable extends React.Component {
   }
 
 
-  fetchPosts(size = this.state.rowsPerPage, page = this.state.page, filterWithTopic = this.state.filterWithTopic, sort = `${this.state.orderBy},${this.state.order}`) {
+  fetchPosts(size = this.state.rowsPerPage, page = this.state.page, filterWithoutTopic = this.state.filterWithoutTopic, filterWithTopic = this.state.filterWithTopic, sort = `${this.state.orderBy},${this.state.order}`) {
     let applyResponseToState = response => {
       this.setState({
         page: response.data.number,
@@ -142,8 +163,9 @@ class PlatformPostTable extends React.Component {
       })
     };
 
+    const topics = getTopicsForAPI(this.state.filterWithTopic);
 
-    this.getPostsAsPage(size, page, filterWithTopic, sort)
+    this.getPostsAsPage(size, page, filterWithoutTopic, topics, sort)
       .then(applyResponseToState)
       .catch(error => console.log(error))
   }
@@ -162,6 +184,8 @@ class PlatformPostTable extends React.Component {
           handleDeletePosts={this.handleDeletePosts.bind(this)}
           handleFilterTopicSwitch={this.handleFilterTopicSwitch}
           filterWithTopic={this.state.filterWithTopic}
+          filterWithoutTopic={this.state.filterWithoutTopic}
+          topics={topics}
         />
 
 
