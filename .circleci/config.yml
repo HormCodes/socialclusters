@@ -96,9 +96,11 @@ workflows:
       - test_backend
       - test_frontend
       - test_topic_analysis_service
+      - test_platform_api_service
       - deploy:
           requires:
             - test_backend
             - test_frontend
             - test_topic_analysis_service
+            - test_platform_api_service
 
