@@ -2,11 +2,11 @@ import json
 
 import psycopg2
 import requests
-from dateutil.parser import parser
 from pymongo import MongoClient
 from requests_oauthlib import OAuth1
 
 from pojo import TweetAuthor, Tweet, Config
+from timestamps import get_iso_timestamp_from_string
 
 CONFIG_JSON_FILE_NAME = "../config.json"
 
@@ -175,7 +175,7 @@ def download_twitter_data(config):
     for tweet in tweet_responses:
         tweet_author = TweetAuthor(tweet["user"]["screen_name"], tweet["user"]["location"],
                                    tweet["user"]["followers_count"])
-        tweet_object = Tweet(tweet["full_text"], parser().parse(tweet["created_at"]).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        tweet_object = Tweet(tweet["full_text"], get_iso_timestamp_from_string(tweet['created_at']),
                              tweet["id_str"], tweet["lang"],
                              tweet["retweet_count"],
                              tweet["favorite_count"], tweet_author)

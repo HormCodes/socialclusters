@@ -3,10 +3,10 @@ import ssl
 import feedparser
 import psycopg2
 # TODO - Correct solution?
-from dateutil.parser import parser
 from pymongo import MongoClient
 
 from pojo import Config
+from timestamps import get_iso_timestamp_from_string
 
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -41,7 +41,7 @@ def download_rss_data(config):
             article_object = {
                 'title': entry['title'],
                 'summary': entry['summary'].replace('\xa0', ' '),
-                'timestamp': parser().parse(entry['published']).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                'timestamp': get_iso_timestamp_from_string(entry['published']),
                 'url': entry['link'],
                 'text': entry['title'] + ' ' + entry['summary'].replace('\xa0', ' '),
                 'publisher': {'name': feed.feed['title'], 'url': feed.feed['title']},

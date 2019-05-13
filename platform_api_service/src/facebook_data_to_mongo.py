@@ -3,10 +3,10 @@ import json
 
 import psycopg2
 import requests
-from dateutil.parser import parser
 from pymongo import MongoClient
 
 from pojo import Config
+from timestamps import get_iso_timestamp_from_string
 
 CONFIG_JSON_FILE_NAME = "../config.json"
 FACEBOOK_KEY = "facebook"
@@ -71,7 +71,7 @@ def download_facebook_data(config, access_token):
             message = post["message"]
 
         if facebook_collection.find(
-            {'timestamp': parser().parse(post['created_time']).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            {'timestamp': get_iso_timestamp_from_string(post['created_at']),
              'text': message}).count() is 0 and message is not "":
             post_object = {
                 'text': message,

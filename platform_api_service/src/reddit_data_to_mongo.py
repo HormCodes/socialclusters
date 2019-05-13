@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 import praw
 import psycopg2
@@ -7,6 +6,7 @@ from pymongo import MongoClient
 
 # TODO - Test
 from pojo import Config
+from timestamps import get_iso_timestamp_from_unix_timestamp
 
 
 def get_subreddits(config):
@@ -53,8 +53,7 @@ def download_reddit_data(config):
                     'subreddit': submission.subreddit_name_prefixed,
                     'author': submission.author.name,
                     'score': submission.score,
-                    'timestamp': datetime.utcfromtimestamp((int(submission.created_utc))).strftime(
-                        "%Y-%m-%dT%H:%M:%SZ"),
+                    'timestamp': get_iso_timestamp_from_unix_timestamp(submission.created_utc),
                     'comments': submission.num_comments,
                     'permalink': submission.permalink
                 }
