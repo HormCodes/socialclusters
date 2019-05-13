@@ -1,13 +1,11 @@
-import sys
 
-sys.path.append('..')
 
 from unittest import TestCase
 
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
 
-from text_cleaning import remove_stopwords, remove_mess_chars, convert_words_into_lemmas, get_data_frame_from_posts, \
+from src.text_cleaning import remove_stopwords, remove_mess_chars, get_data_frame_from_posts, \
     get_post_with_cleaned_text
 
 STOPWORDS_JSON_FILE_NAME = '../stopwords-iso.json'
@@ -22,11 +20,6 @@ class TextCleaning(TestCase):
         self.assertEqual('', remove_mess_chars('!'))
         ...
 
-    def test_convert_words_into_lemmas(self):
-
-        # TODO - Space at start
-        self.assertEqual(' tramvaj jet člověk', convert_words_into_lemmas('tramvají jedou lidé', 'cs'))
-
     def test_get_data_frame_from_posts(self):
         posts = [{'text': 'ahoj', '_id': '123', 'author': {'username': 'horm'}}]
         topics = []
@@ -40,8 +33,9 @@ class TextCleaning(TestCase):
         self.assertEqual(True, True)  # Remove static warning
 
     def test_get_post_with_cleaned_text(self):
-        post = {'text': 'Jak se máš? a ! ahoj tramvají'}
+        post = {'text': 'Jak se máš? a ahoj tramvají!'}
         post2 = {'text': 'afa alk uajd akgks akhf'}
 
-        self.assertEqual({'text': ' tramvaj'}, get_post_with_cleaned_text(post))
+        self.assertEqual(' tramvají', remove_stopwords(remove_mess_chars(post['text']), 'cs'))
+        self.assertEqual({'text': ' tramvají'}, get_post_with_cleaned_text(post))
         self.assertEqual({'text': ' afa alk uajd akgks akhf'}, get_post_with_cleaned_text(post2))

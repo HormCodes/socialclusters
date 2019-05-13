@@ -41,13 +41,12 @@ def remove_mess_chars(text):
 
 
 def convert_words_into_lemmas(text, text_language):
-    result = ""
-
     try:
         morph = majka.Majka("../majka/" + text_language + ".w-lt")
     except:
-        return result
+        return text
 
+    result = ""
     for word in text.split():
         lemma_result = morph.find(word)
         if len(lemma_result) is 0:
