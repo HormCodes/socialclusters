@@ -22,6 +22,13 @@ jobs:
       - checkout
       - run: cd frontend && npm install
       - run: cd frontend && npm run test-libs
+  test_topic_analysis_service:
+    docker:
+      - image: circleci/python:3.6.4
+    steps:
+      - checkout
+      - run: cd topic_analysis_service && pip3 install -r requirements.txt
+      - run: cd topic_analysis_service && python3 -m unittest discover tests
   deploy:
     machine:
       enabled: true
@@ -81,8 +88,10 @@ workflows:
     jobs:
       - test_backend
       - test_frontend
+      - test_topic_analysis_service
       - deploy:
           requires:
             - test_backend
             - test_frontend
+            - test_topic_analysis_service
 

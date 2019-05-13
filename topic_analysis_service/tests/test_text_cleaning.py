@@ -1,4 +1,3 @@
-import majka
 from unittest import TestCase
 
 import pandas as pd
@@ -12,18 +11,17 @@ STOPWORDS_JSON_FILE_NAME = '../stopwords-iso.json'
 
 class TextCleaning(TestCase):
     def test_remove_stopwords(self):
-        self.assertEqual('', remove_stopwords(''))
-        self.assertEqual('', remove_stopwords('a a a'))
+        self.assertEqual('', remove_stopwords('', 'cs'))
+        self.assertEqual('', remove_stopwords('a a a', 'cs'))
 
     def test_remove_mess_chars(self):
         self.assertEqual('', remove_mess_chars('!'))
         ...
 
     def test_convert_words_into_lemmas(self):
-        morph = majka.Majka("../majka/cs.w-lt")
 
         # TODO - Space at start
-        self.assertEqual(' tramvaj jet člověk', convert_words_into_lemmas('tramvají jedou lidé', morph))
+        self.assertEqual(' tramvaj jet člověk', convert_words_into_lemmas('tramvají jedou lidé', 'cs'))
 
     def test_get_data_frame_from_posts(self):
         posts = [{'text': 'ahoj', '_id': '123', 'author': {'username': 'horm'}}]
@@ -38,7 +36,8 @@ class TextCleaning(TestCase):
         self.assertEqual(True, True)  # Remove static warning
 
     def test_get_post_with_cleaned_text(self):
-        post = {'text': 'a ! ahoj tramvají'}
-        morph = majka.Majka("../majka/cs.w-lt")
+        post = {'text': 'Jak se máš? a ! ahoj tramvají'}
+        post2 = {'text': 'afa alk uajd akgks akhf'}
 
-        self.assertEqual({'text': ' ahoj tramvaj'}, get_post_with_cleaned_text(post, morph))
+        self.assertEqual({'text': ' tramvaj'}, get_post_with_cleaned_text(post))
+        self.assertEqual({'text': ' afa alk uajd akgks akhf'}, get_post_with_cleaned_text(post2))
