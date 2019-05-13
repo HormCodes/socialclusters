@@ -7,7 +7,6 @@
 *.iml
 out
 gen
-.firebaserc
 
 /platform_api_service/config.json
 /ml_backend/__pycache__/
