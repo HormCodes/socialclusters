@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from timestamps import get_iso_timestamp_from_string, get_iso_timestamp_from_unix_timestamp
+from src.timestamps import get_iso_timestamp_from_string, get_iso_timestamp_from_unix_timestamp
 
 
 class TestTimestamps(TestCase):
