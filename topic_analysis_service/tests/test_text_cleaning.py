@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('..')
+
 from unittest import TestCase
 
 import pandas as pd
