@@ -4,7 +4,7 @@ import {ACCESS_TOKEN, API_URL} from "./Constants";
 
 // TODO - URL
 export function getAccessToken(usernameOrEmail, password) {
-  return axios.post(`${API_URL}/auth/signin`, {
+  return axios.post(`${API_URL}/auth/accessToken`, {
     usernameOrEmail,
     password
   }).then(response => {

@@ -38,7 +38,7 @@ const InfoCard = ({
     </CardContent>
     <CardActions>
       <Button size="small" color="primary" onClick={handleDownload}>
-        Download Data
+        Download Content
       </Button>
       <Button size="small" color="primary" onClick={handleSuggest}>
         Suggest Topics

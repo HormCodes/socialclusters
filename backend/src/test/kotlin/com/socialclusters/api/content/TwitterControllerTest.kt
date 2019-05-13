@@ -148,7 +148,7 @@ class TwitterControllerTest(
           val id = "5c3fa21b26582c07b6db3109"
           tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
 
-          mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           tweetRepository.findById(id).get().topics.orEmpty() should contain("culture")
@@ -161,7 +161,7 @@ class TwitterControllerTest(
           val id = "5c3fa21b26582c07b6db3109"
           tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "events"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           val topics = tweetRepository.findById(id).get().topics.orEmpty()
@@ -176,7 +176,7 @@ class TwitterControllerTest(
         it("should return not found for non existing tweet for specified id") {
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.patch("/contents/twitter/123/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/123/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
         }
