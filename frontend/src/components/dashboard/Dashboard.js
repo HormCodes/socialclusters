@@ -13,6 +13,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
 import {getLastModelInTraining, getLastTrainedModel, suggestTopics, trainModel} from "../../data/TopicAnalysis";
 import {scrapeData} from "../../data/Jobs";
+import Snackbar from "@material-ui/core/Snackbar";
 
 
 const styles = {
@@ -26,6 +27,8 @@ class Dashboard extends React.Component {
 
   state = {
     isLoading: false,
+    snackbarOpen: false,
+    snackbarMessage: "Lorem Ipsum",
     stats: {
       wordCounts: [],
       dayCounts: [],
@@ -38,6 +41,15 @@ class Dashboard extends React.Component {
     lastModel: {},
     modelInTraining: false
   };
+
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({snackbarOpen: false});
+  };
+
 
   componentDidMount() {
     this.fetchStats();
@@ -67,14 +79,26 @@ class Dashboard extends React.Component {
 
   suggestTopics() {
     suggestTopics()
+    this.setState({
+      snackbarMessage: "Topics will be suggested...",
+      snackbarOpen: true
+    })
   }
 
   trainTopicModel() {
     trainModel()
+    this.setState({
+      snackbarMessage: "Model will be trained...",
+      snackbarOpen: true
+    })
   }
 
   downloadData() {
     scrapeData()
+    this.setState({
+      snackbarMessage: "Content will be downloaded...",
+      snackbarOpen: true
+    })
   }
 
   fetchModel() {
@@ -109,13 +133,30 @@ class Dashboard extends React.Component {
             <Grid item><CircularProgress color={"secondary"}/></Grid>
           </Grid>
           :
+
           <div>
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              open={this.state.snackbarOpen}
+              autoHideDuration={4000}
+              message={this.state.snackbarMessage}
+              onClose={this.handleClose}
+            />
             <Grid container spacing={16}>
               <Grid item xs={12} sm={4}>
                 <InfoCard numberOfWithoutTopic={this.state.stats.withoutTopic}
                           numberOfWithSuggestedTopic={this.state.stats.withSuggestedTopic}
-                          handleDownload={this.downloadData} handleSuggest={this.suggestTopics}
-                          handleTrain={this.trainTopicModel}
+                          handleDownload={() => {
+                            this.downloadData()
+                          }} handleSuggest={() => {
+                  this.suggestTopics()
+                }}
+                          handleTrain={() => {
+                            this.trainTopicModel()
+                          }}
                           currentTopicModelTrainingTimestamp={this.state.lastModel.end}
                           isTopicModelInTraining={this.state.modelInTraining}/>
               </Grid>
