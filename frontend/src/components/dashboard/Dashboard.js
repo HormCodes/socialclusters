@@ -14,6 +14,8 @@ import moment from "moment";
 import {getLastModelInTraining, getLastTrainedModel, suggestTopics, trainModel} from "../../data/TopicAnalysis";
 import {scrapeData} from "../../data/Jobs";
 import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = {
@@ -21,7 +23,7 @@ const styles = {
     height: '80vh',
   },
 
-}
+};
 
 class Dashboard extends React.Component {
 
@@ -144,6 +146,17 @@ class Dashboard extends React.Component {
               autoHideDuration={4000}
               message={this.state.snackbarMessage}
               onClose={this.handleClose}
+              action={[
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  className={classes.close}
+                  onClick={this.handleClose}
+                >
+                  <CloseIcon/>
+                </IconButton>,
+              ]}
             />
             <Grid container spacing={16}>
               <Grid item xs={12} sm={4}>
