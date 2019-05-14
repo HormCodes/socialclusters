@@ -1,4 +1,3 @@
-# TODO - Facebook data to mongo
 import json
 
 import psycopg2

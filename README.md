@@ -5,14 +5,25 @@ Web app for social media content aggregation and analysation (Bachelor's thesis 
 
 - Docker
 - Node
-- JDK
-- Python
+- JDK 1.8
+- Python 3.6
 
 #### Recommended Tools
 
 - Intellij IDEA
 - Postman
 - Google Chrome Dev Tools
+
+## Project structure
+
+- `.circleci` - CI/CD Configuration
+- `backend` - Backend
+- `docker` - Container Configuration
+- `fronted` - Frontend
+- `job_scheduler` - Job Configuration
+- `nginx` - Request Proxy Configuration
+- `platfrom_api_service` - Platform API Service
+- `topic_analysis_sevice` - Topic Analysis Service
 
 ## Configuration
 
@@ -74,11 +85,20 @@ cd backend
  cd frontend
  npm install
  npm start
+ # For backend execute setup.sh from root directory (after npm start)
+ ```
+ 
+ #### Internal Services
+ Platform API Service and Topic Analysis Service has same setup:
+ ```$xslt
+ cd service_directory
+ pip3 install -r requirements.txt
+ python3 src/server.py
  ```
 
 
 ## License & Credits
 
-Created by [Matěj Horák](https://horm.cz) as a bachelor thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) at BUT FIT and sources are under [BUT FIT Open Source License](https://github.com/Horm/socialclusters/blob/master/LICENSE).
+Created by [Matěj Horák](https://horm.cz) as a bachelor's thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) at BUT FIT and sources are under [BUT FIT Open Source License](https://github.com/Horm/socialclusters/blob/master/LICENSE).
 
 

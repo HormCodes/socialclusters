@@ -15,7 +15,7 @@ export function getLastModelInTraining() {
 }
 
 export function suggestTopics() {
-  return axios.get(`${API_URL}/analysis/topic/suggestion`, {
+  return axios.post(`${API_URL}/analysis/topic/suggestions`, {}, {
     headers: getAuthHeaders()
   });
 }

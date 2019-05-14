@@ -4,7 +4,7 @@ import {getAuthHeaders} from "./Auth";
 
 
 export function scrapeData() {
-  return axios.get(`${API_URL}/jobs/data`, {
+  return axios.post(`${API_URL}/jobs/contentDownloads`, {}, {
     headers: getAuthHeaders()
   })
 }

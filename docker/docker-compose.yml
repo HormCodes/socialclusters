@@ -11,7 +11,7 @@ services:
     ports:
     - "27017:27017"
     environment:
-    - MONGODB_DATABASE=content_database # TODO - Name
+      - MONGODB_DATABASE=content_database
 
   user_database:
     container_name: user_database
@@ -21,6 +21,6 @@ services:
     ports:
       - 5432:5432
     environment:
-    - POSTGRES_DB=user_database # TODO - Name
+      - POSTGRES_DB=user_database
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
