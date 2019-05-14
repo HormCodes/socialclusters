@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
 
-class UserPrincipal(val id: Long?, val name: String, private val username: String, @field:JsonIgnore
+class UserPrincipal(val id: Long?, val name: String?, private val username: String, @field:JsonIgnore
 val email: String, @field:JsonIgnore
                     private val password: String, private val authorities: Collection<GrantedAuthority>) : UserDetails {
 
