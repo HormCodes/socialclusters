@@ -7,15 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
 
-class UserPrincipal(val id: Long?, val name: String?, private val username: String, @field:JsonIgnore
-val email: String, @field:JsonIgnore
-                    private val password: String, private val authorities: Collection<GrantedAuthority>) : UserDetails {
+class UserPrincipal(val id: Long?, val name: String?, private val username: String?, @field:JsonIgnore
+val email: String?, @field:JsonIgnore
+                    private val password: String?, private val authorities: Collection<GrantedAuthority>) : UserDetails {
 
-  override fun getUsername(): String {
+  override fun getUsername(): String? {
     return username
   }
 
-  override fun getPassword(): String {
+  override fun getPassword(): String? {
     return password
   }
 
