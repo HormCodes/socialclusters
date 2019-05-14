@@ -8,6 +8,7 @@
 out
 gen
 
+/platform_api_service/config.json
 /ml_backend/__pycache__/
 node_modules/
 package-lock.json
