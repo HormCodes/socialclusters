@@ -65,23 +65,23 @@ jobs:
             cd backend
             ./gradlew clean
             ./gradlew bootJar
-            docker build -t socialclusters/backend .
+            docker build --no-cache -t socialclusters/backend .
       - run:
           name: Build Topic Analysis Service
           command: |
-            cd topic_analysis_service && docker build -t socialclusters/topic_analysis_service .
+            cd topic_analysis_service && docker build --no-cache -t socialclusters/topic_analysis_service .
       - run:
           name: Build API Call Service
           command: |
-            cd platform_api_service && docker build -t socialclusters/platform_api_service .
+            cd platform_api_service && docker build --no-cache -t socialclusters/platform_api_service .
       - run:
           name: Build Frontend
           command: |
-            cd frontend && docker build -t socialclusters/frontend .
+            cd frontend && docker build --no-cache -t socialclusters/frontend .
       - run:
           name: Build NGINX
           command: |
-            cd nginx && docker build -t socialclusters/nginx .
+            cd nginx && docker build --no-cache -t socialclusters/nginx .
       - run:
           name: Compose
           command: |

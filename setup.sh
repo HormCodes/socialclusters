@@ -7,20 +7,20 @@ cd ../backend
 ./gradlew clean
 ./gradlew bootJar
 
-docker build -t socialclusters/backend .
+docker build --no-cache -t socialclusters/backend .
 
 cd ../topic_analysis_service
-docker build -t socialclusters/topic_analysis_service .
+docker build --no-cache -t socialclusters/topic_analysis_service .
 
 
 cd ../platform_api_service
-docker build -t socialclusters/platform_api_service .
+docker build --no-cache -t socialclusters/platform_api_service .
 
 cd ../frontend
-docker build -t socialclusters/frontend .
+docker build --no-cache -t socialclusters/frontend .
 
 cd ../nginx
-docker build -t socialclusters/nginx .
+docker build --no-cache -t socialclusters/nginx .
 
 cd ../docker
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
