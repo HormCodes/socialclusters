@@ -37,10 +37,10 @@ class UserController(
   }
 
   @GetMapping("/users/{id}")
-  fun getUser(@PathVariable(name = "id") id: String, @CurrentUser currentUser: UserPrincipal): User {
+  fun getUser(@PathVariable(name = "id") id: String, @CurrentUser currentUser: UserPrincipal?): User {
     return when (id) {
       "me" -> {
-        val requestUserId = currentUser.id?.toInt() ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+        val requestUserId = currentUser?.id?.toInt() ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
         userDao.findById(requestUserId).apply { password = "" }
       }
       else -> userDao.findById(id.toInt()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
