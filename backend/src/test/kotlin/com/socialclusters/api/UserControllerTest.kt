@@ -105,6 +105,7 @@ class UserControllerTest(
           //mockMvc.perform(MockMvcRequestBuilders.get("/users/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
           //.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
+          // TODO - Not in CI
           userDao shouldNotBe null
         }
 
@@ -112,6 +113,7 @@ class UserControllerTest(
           //          mockMvc.perform(MockMvcRequestBuilders.get("/users/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
 //            .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
+          // TODO - Not in CI
           userDao shouldNotBe null
         }
       }
