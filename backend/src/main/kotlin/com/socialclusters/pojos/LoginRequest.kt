@@ -9,3 +9,4 @@ class LoginRequest {
   @NotBlank
   var password: String? = null
 }
+

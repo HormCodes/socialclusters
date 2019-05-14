@@ -77,7 +77,7 @@ class StatsControllerTest(
 
         val request = MockMvcRequestBuilders.get("/stats/")
           .param("from", from)
-          .param("to", to)
+          .param("to", to).header("Authorization", "Bearer " + getAccessToken(mockMvc))
 
         mockMvc
           .perform(request)

@@ -1,5 +1,6 @@
 package com.socialclusters.api.content
 
+import com.socialclusters.api.getAccessToken
 import com.socialclusters.domain.impl.TweetRepository
 import com.socialclusters.pojos.Author
 import com.socialclusters.pojos.Tweet
@@ -39,7 +40,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "123", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
 
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].text", Matchers.`is`("lorem ipsum")))
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].tweetId", Matchers.`is`("123")))
@@ -50,7 +51,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
 
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("withoutTopic", "true"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("withoutTopic", "true").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(1)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].text", Matchers.`is`("lorem ipsum")))
@@ -65,7 +66,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("topics", "traffic,culture"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("topics", "traffic,culture").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(3)))
         }
@@ -79,7 +80,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet(null, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "culture"), null))
 
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("size", "3"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter").param("size", "3").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(3)))
         }
@@ -97,7 +98,7 @@ class TwitterControllerTest(
         it("should return one existing tweet for specified id") {
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/5c3fa21b26582c07b6db3109"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/5c3fa21b26582c07b6db3109").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.text", Matchers.`is`("lorem ipsum")))
 
@@ -106,7 +107,7 @@ class TwitterControllerTest(
         it("should return not found for non existing tweet for specified id") {
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/123"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/twitter/123").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
         }
@@ -118,7 +119,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3110", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3111", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/5c3fa21b26582c07b6db3109"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/5c3fa21b26582c07b6db3109").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           tweetRepository.findAll().orEmpty().size shouldBe 2
@@ -129,7 +130,7 @@ class TwitterControllerTest(
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3110", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "125", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic"), null))
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3111", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "126", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("events"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/123"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/contents/twitter/123").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
           tweetRepository.findAll().orEmpty().size shouldBe 3
@@ -148,7 +149,7 @@ class TwitterControllerTest(
           val id = "5c3fa21b26582c07b6db3109"
           tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), null, null))
 
-          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           tweetRepository.findById(id).get().topics.orEmpty() should contain("culture")
@@ -161,7 +162,7 @@ class TwitterControllerTest(
           val id = "5c3fa21b26582c07b6db3109"
           tweetRepository.insert(Tweet(id, "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("traffic", "events"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/5c3fa21b26582c07b6db3109/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           val topics = tweetRepository.findById(id).get().topics.orEmpty()
@@ -176,7 +177,7 @@ class TwitterControllerTest(
         it("should return not found for non existing tweet for specified id") {
           tweetRepository.insert(Tweet("5c3fa21b26582c07b6db3109", "lorem ipsum", "Wed Jan 16 20:42:48 +0000 2019", "124", "en", 0, 0, Author("username", "Brno, Czech Republic", 0), listOf("culture"), null))
 
-          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/123/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]"))
+          mockMvc.perform(MockMvcRequestBuilders.put("/contents/twitter/123/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("[\"culture\"]").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
         }

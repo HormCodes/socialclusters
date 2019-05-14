@@ -20,7 +20,6 @@ import {suggestTopics} from "../data/TopicAnalysis";
 import {scrapeData} from "../data/Jobs";
 import {addTopic, deleteTopic, getTopics, saveTopic} from "../data/Topics";
 import {addSource, deleteSource, getSources, saveSource} from "../data/Sources";
-import * as moment from "moment";
 import Dashboard from "./dashboard/Dashboard";
 import Topics from "./topics/Topics";
 import Sources from "./sources/Sources";
@@ -174,9 +173,6 @@ class Application extends React.Component {
   };
 
   componentDidMount() {
-    let now = moment();
-    const to = now.toISOString();
-    const from = now.subtract(7, 'days').toISOString();
 
     Promise.all([getTopics(), getSources()]).then((results) => {
       this.setState({

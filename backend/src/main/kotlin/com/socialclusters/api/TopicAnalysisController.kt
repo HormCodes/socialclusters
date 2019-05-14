@@ -40,7 +40,7 @@ class TopicAnalysisController(
   @GetMapping("/trainings")
   fun getTrainings(): List<Training> = trainingDao.fetchByModelId("topic_analysis")
 
-  @GetMapping("/suggestion")
+  @PostMapping("/suggestions")
   fun getSuggestion() {
 
     val message = restTemplate.getForObject("$topicAnalysisServiceUrl/suggest", String::class.java)
@@ -48,6 +48,8 @@ class TopicAnalysisController(
     if (message != "Done") {
       throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
     }
+
+    // TODO - Return something
   }
 
   @GetMapping("/trainings/{id}")

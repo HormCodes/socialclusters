@@ -51,7 +51,7 @@ class SourceControllerTest(
 
           sourceDao.insert(listOf(Source().withoutId(platform, valueType, value)))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/sources"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/sources").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$[0].id", notNullValue()))
             .andExpect(jsonPath("$[0].platform", `is`(platform)))
@@ -62,7 +62,7 @@ class SourceControllerTest(
         it("for call with inStructure param should return sources json structure") {
           sourceDao.insert(listOf(Source().withoutId(platform, valueType, value)))
 
-          val result = mockMvc.perform(MockMvcRequestBuilders.get("/sources").param("inStructure", "true"))
+          val result = mockMvc.perform(MockMvcRequestBuilders.get("/sources").param("inStructure", "true").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString
 
@@ -75,7 +75,7 @@ class SourceControllerTest(
       context("POST") {
         it("should create new source") {
           val source = Source().withoutId(platform, valueType, value)
-          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.id", notNullValue()))
@@ -91,14 +91,14 @@ class SourceControllerTest(
 
           sourceDao.insert(source)
 
-          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
         }
 
         it("should create new source for json without id field") {
           val source = Source().withoutId(platform, valueType, value)
-          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content("{\"platform\":\"$platform\",\"valueType\":\"$valueType\",\"value\":\"$value\"}")
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content("{\"platform\":\"$platform\",\"valueType\":\"$valueType\",\"value\":\"$value\"}").header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.id", notNullValue()))
@@ -111,7 +111,7 @@ class SourceControllerTest(
 
         it("should return bad request for not existing platform") {
           val source = Source().withoutId("platform", valueType, value)
-          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
 
@@ -120,7 +120,7 @@ class SourceControllerTest(
 
         it("should return bad request for not existing valueType for platform") {
           val source = Source().withoutId(platform, "valueType", value)
-          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.post("/sources").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
 
@@ -140,12 +140,12 @@ class SourceControllerTest(
         it("for  existing id should return source entry") {
           sourceDao.insert(listOf(Source(9, platform, valueType, value)))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/sources/9"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/sources/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
         }
 
         it("for non existing id GET should return not found") {
-          mockMvc.perform(MockMvcRequestBuilders.get("/sources/9"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/sources/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
         }
       }
@@ -156,7 +156,7 @@ class SourceControllerTest(
 
           val source = Source(8, platform, valueType, "username2")
 
-          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc)).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
 
@@ -168,7 +168,7 @@ class SourceControllerTest(
 
           val source = Source(9, platform, valueType, "username2")
 
-          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.id", notNullValue()))
@@ -187,7 +187,7 @@ class SourceControllerTest(
 
           val source = Source(9, "unknown", valueType, "username2")
 
-          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
 
@@ -202,7 +202,7 @@ class SourceControllerTest(
 
           val source = Source(9, "unknown", "valueType", "username2")
 
-          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isBadRequest)
 
@@ -216,7 +216,7 @@ class SourceControllerTest(
 
           val source = Source(9, platform, valueType, "username2")
 
-          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString())
+          val request = MockMvcRequestBuilders.put("/sources/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(source.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.id", notNullValue()))
@@ -235,14 +235,14 @@ class SourceControllerTest(
       context("DELETE") {
 
         it("should throw not found for not existing source") {
-          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
         }
 
         it("should delete existing source") {
           sourceDao.insert(listOf(Source(9, platform, valueType, value)))
 
-          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/sources/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           sourceDao.findAll().size shouldBe 0

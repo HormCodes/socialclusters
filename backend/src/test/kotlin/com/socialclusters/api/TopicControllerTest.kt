@@ -45,7 +45,7 @@ class TopicControllerTest(
 
           topicDao.insert(listOf(Topic().withoutId(name, textId)))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/topics"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/topics").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.notNullValue()))
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].textId", Matchers.`is`(textId)))
@@ -56,7 +56,7 @@ class TopicControllerTest(
       context("POST") {
         it("should create new topic") {
           val topic = Topic().withoutId(name, textId)
-          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString())
+          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
@@ -71,14 +71,14 @@ class TopicControllerTest(
 
           topicDao.insert(topic)
 
-          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString())
+          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
         }
 
         it("should create new topic for json without id field") {
           val topic = Topic().withoutId(name, textId)
-          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("{\"name\":\"$name\",\"textId\":\"$textId\"}")
+          val request = MockMvcRequestBuilders.post("/topics").contentType(MediaType.APPLICATION_JSON_UTF8).content("{\"name\":\"$name\",\"textId\":\"$textId\"}").header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
@@ -101,12 +101,12 @@ class TopicControllerTest(
         it("for  existing id should return topic entry") {
           topicDao.insert(listOf(Topic(9, name, textId)))
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/topics/9"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/topics/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
         }
 
         it("for non existing id GET should return not found") {
-          mockMvc.perform(MockMvcRequestBuilders.get("/topics/9"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/topics/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
         }
       }
@@ -117,7 +117,7 @@ class TopicControllerTest(
 
           val topic = Topic(8, name, textId)
 
-          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString())
+          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isConflict)
 
@@ -129,7 +129,7 @@ class TopicControllerTest(
 
           val topic = Topic(9, "Kultura", textId)
 
-          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString())
+          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
@@ -146,7 +146,7 @@ class TopicControllerTest(
 
           val topic = Topic(9, name, textId)
 
-          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString())
+          val request = MockMvcRequestBuilders.put("/topics/9").contentType(MediaType.APPLICATION_JSON_UTF8).content(topic.toJsonString()).header("Authorization", "Bearer " + getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
@@ -164,14 +164,14 @@ class TopicControllerTest(
       context("DELETE") {
 
         it("should throw not found for not existing topic") {
-          mockMvc.perform(MockMvcRequestBuilders.delete("/topics/9"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/topics/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
         }
 
         it("should delete existing topic") {
           topicDao.insert(listOf(Topic(9, name, textId)))
 
-          mockMvc.perform(MockMvcRequestBuilders.delete("/topics/9"))
+          mockMvc.perform(MockMvcRequestBuilders.delete("/topics/9").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
 
           topicDao.findAll().size shouldBe 0

@@ -1,6 +1,6 @@
 package com.socialclusters.api
 
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
@@ -12,9 +12,7 @@ class JobController(
 ) {
 
 
-
-  // TODO - POST?
-  @RequestMapping("/jobs/data")
+  @PostMapping("/jobs/contentDownloads")
   fun scrapeData(@RequestParam(value = "facebookAccessToken", defaultValue = "") facebookAccessToken: String) {
     val uri = "$platformAPIServiceUrl/"
 

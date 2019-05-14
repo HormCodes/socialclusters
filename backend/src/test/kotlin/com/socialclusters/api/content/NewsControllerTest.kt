@@ -1,5 +1,6 @@
 package com.socialclusters.api.content
 
+import com.socialclusters.api.getAccessToken
 import com.socialclusters.domain.impl.NewsRepository
 import com.socialclusters.pojos.News
 import com.socialclusters.pojos.Publisher
@@ -44,7 +45,7 @@ class NewsControllerTest(
             listOf(), null)
           newsRepository.insert(news)
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/news"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/news").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].title", Matchers.`is`("Title")))
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].url", Matchers.`is`("url")))
@@ -85,7 +86,7 @@ class NewsControllerTest(
             listOf(), null)
           newsRepository.insert(newsWithEmptyTopics)
 
-          mockMvc.perform(MockMvcRequestBuilders.get("/contents/news").param("withoutTopic", "true"))
+          mockMvc.perform(MockMvcRequestBuilders.get("/contents/news").param("withoutTopic", "true").header("Authorization", "Bearer " + getAccessToken(mockMvc)))
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()", Matchers.`is`(2)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].title", Matchers.`is`("Title")))

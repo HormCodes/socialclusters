@@ -2,6 +2,7 @@ package com.socialclusters.utils
 
 import com.socialclusters.db.generated.user_database.tables.pojos.Source
 import com.socialclusters.db.generated.user_database.tables.pojos.Topic
+import com.socialclusters.db.generated.user_database.tables.pojos.User
 
 fun Source.withoutId(platform: String, valueType: String, value: String) = this.apply {
   this.platform = platform
@@ -16,3 +17,4 @@ fun Topic.withoutId(name: String, textId: String) = this.apply {
 
 fun Source.toJsonString(): String = "{\"id\":${this.id},\"platform\":\"${this.platform}\",\"valueType\":\"${this.valueType}\",\"value\":\"${this.value}\"}"
 fun Topic.toJsonString(): String = "{\"id\":${this.id},\"name\":\"${this.name}\",\"textId\":\"${this.textId}\"}"
+fun User.toJsonString(): String = "{\"id\":${this.id},\"name\":\"${this.name}\",\"username\":\"${this.username}\",\"password\":\"${this.password}\",\"email\":\"${this.email}\"}"
