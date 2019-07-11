@@ -101,6 +101,8 @@ cd backend
 
 ## License & Credits
 
-Created by [Matěj Horák](https://horm.cz) as a bachelor's thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) at BUT FIT and sources are under [BUT FIT Open Source License](https://github.com/Horm/socialclusters/blob/master/LICENSE).
+Created by [Matěj Horák](https://horm.cz). This project was originally part of a bachelor's thesis with supervision by [Ing. Radek Burget, Ph.D.](http://www.fit.vutbr.cz/~burgetr/index.php.cs) Now, the project is independent and [this commit](https://github.com/Horm/socialclusters/commit/f4836dbf5fc352ee4a0956b0f29cd224a61bbb1b) is last one from bachelor's thesis. 
+
+Project is under [MIT license](https://github.com/Horm/socialclusters/blob/master/LICENSE) 
 
 
