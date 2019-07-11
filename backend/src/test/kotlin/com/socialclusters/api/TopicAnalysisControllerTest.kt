@@ -3,6 +3,8 @@ package com.socialclusters.api
 import com.socialclusters.db.generated.user_database.Tables
 import com.socialclusters.db.generated.user_database.tables.daos.TrainingDao
 import com.socialclusters.db.generated.user_database.tables.pojos.Training
+import com.socialclusters.utils.getGetRequest
+import com.socialclusters.utils.getPostRequest
 import io.kotlintest.Description
 import io.kotlintest.specs.DescribeSpec
 import org.hamcrest.Matchers
@@ -14,7 +16,6 @@ import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.test.web.client.match.MockRestRequestMatchers
 import org.springframework.test.web.client.response.MockRestResponseCreators
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.web.client.RestTemplate
@@ -36,10 +37,16 @@ class TopicAnalysisControllerTest(
 
   init {
 
+    val timestamp = Timestamp.from(OffsetDateTime.now().toInstant())
+    val firstTraining = Training(1, TOPIC_MODEL_NAME, true, timestamp, timestamp, 32.1.toBigDecimal())
+    val secondTraining = Training(2, TOPIC_MODEL_NAME, true, timestamp, timestamp, 42.1.toBigDecimal())
+    val thirdTraining = Training(3, TOPIC_MODEL_NAME, false, timestamp, null, null)
+    val fourthTraining = Training(4, TOPIC_MODEL_NAME, false, timestamp, null, null)
+
     describe("/analysis/topic/trainings") {
       context("POST") {
         it("should start new training") {
-          trainingDao.insert(Training(1, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+          trainingDao.insert(Training(1, TOPIC_MODEL_NAME, false, timestamp, null, null))
 
 
           val mockServer = MockRestServiceServer.createServer(restTemplate)
@@ -48,7 +55,7 @@ class TopicAnalysisControllerTest(
             .andRespond(MockRestResponseCreators.withSuccess("1", MediaType.TEXT_HTML))
 
 
-          val request = MockMvcRequestBuilders.post("/analysis/topic/trainings").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+          val request = getPostRequest("/analysis/topic/trainings", getAccessToken(mockMvc))
           mockMvc.perform(request)
             .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.modelId", Matchers.`is`("topic_analysis")))
@@ -60,11 +67,11 @@ class TopicAnalysisControllerTest(
 
     describe("/analysis/topic/accuracy") {
       it("should return accuracy percentage for last trained model and non trained model should be ignored") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
-        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
-        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(firstTraining)
+        trainingDao.insert(secondTraining)
+        trainingDao.insert(thirdTraining)
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/accuracy").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+        val request = getGetRequest("/analysis/topic/accuracy", getAccessToken(mockMvc))
         mockMvc.perform(request)
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
           .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.`is`(42.1)))
@@ -74,20 +81,20 @@ class TopicAnalysisControllerTest(
 
     describe("/analysis/topic/trainings/last") {
       it("should return not found for  table without finished models") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, false, timestamp, null, null))
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/last").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+        val request = getGetRequest("/analysis/topic/trainings/last", getAccessToken(mockMvc))
         mockMvc.perform(request)
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
       }
 
       it("should return last finished training") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
-        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
-        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(firstTraining)
+        trainingDao.insert(secondTraining)
+        trainingDao.insert(thirdTraining)
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/last").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+        val request = getGetRequest("/analysis/topic/trainings/last", getAccessToken(mockMvc))
         mockMvc.perform(request)
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
           .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.`is`(2)))
@@ -97,34 +104,37 @@ class TopicAnalysisControllerTest(
 
     describe("/analysis/topic/trainings/running") {
       it("should return last model in training") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
-        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
-        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
-        trainingDao.insert(Training(4, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
+        trainingDao.insert(firstTraining)
+        trainingDao.insert(secondTraining)
+        trainingDao.insert(thirdTraining)
+        trainingDao.insert(fourthTraining)
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+        val request = getGetRequest("/analysis/topic/trainings/running", getAccessToken(mockMvc))
         mockMvc.perform(request)
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk)
           .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.`is`(4)))
 
       }
       it("should return not found for no training models") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
-        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+        trainingDao.insert(firstTraining)
+        trainingDao.insert(secondTraining)
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running").header("Authorization", "Bearer " + getAccessToken(mockMvc))
+        val request = getGetRequest("/analysis/topic/trainings/running", getAccessToken(mockMvc))
         mockMvc.perform(request)
           .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
 
       }
       it("should return not found for training models where is trained after in training") {
-        trainingDao.insert(Training(1, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 32.1.toBigDecimal()))
-        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, false, Timestamp.from(OffsetDateTime.now().toInstant()), null, null))
-        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, true, Timestamp.from(OffsetDateTime.now().toInstant()), Timestamp.from(OffsetDateTime.now().toInstant()), 42.1.toBigDecimal()))
+        trainingDao.insert(firstTraining)
+        trainingDao.insert(Training(2, TOPIC_MODEL_NAME, false, timestamp, null, null))
+        trainingDao.insert(Training(3, TOPIC_MODEL_NAME, true, timestamp, timestamp, 42.1.toBigDecimal()))
 
-        val request = MockMvcRequestBuilders.get("/analysis/topic/trainings/running").header("Authorization", "Bearer " + getAccessToken(mockMvc))
-        mockMvc.perform(request)
-          .andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isNotFound)
+        val request = getGetRequest("/analysis/topic/trainings/running", getAccessToken(mockMvc))
+
+        mockMvc
+          .perform(request)
+          .andDo(MockMvcResultHandlers.print())
+          .andExpect(MockMvcResultMatchers.status().isNotFound)
 
       }
     }
