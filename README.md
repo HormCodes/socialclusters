@@ -1,5 +1,5 @@
 # SocialClusters
-Web app for social media content aggregation and analysation (Bachelor's thesis work)
+Web app for social media content aggregation and analysation.
 
 ## Tools
 
