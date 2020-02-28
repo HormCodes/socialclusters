@@ -7,7 +7,7 @@ buildscript {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
     classpath 'org.postgresql:postgresql:42.2.4'
     classpath 'nu.studer:gradle-jooq-plugin:+'
-
+    classpath 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
   }
 }
 
@@ -21,7 +21,6 @@ plugins {
   id "io.spring.dependency-management" version "1.0.6.RELEASE"
 
   id "nu.studer.jooq" version "3.0.2"
-
   id "com.github.ben-manes.versions" version "0.20.0"
 
   id "org.flywaydb.flyway" version "5.2.4"
@@ -67,6 +66,10 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude module: "junit"
   }
+
+  jooqRuntime group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.1'
+
+  jooqRuntime group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
 }
 
 
